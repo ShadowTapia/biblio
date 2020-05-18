@@ -15,12 +15,17 @@ class FormChangeDatos extends model{
     {
         return [
             ['UserMail','required','message'=>'Campo requerido'],
-            ['UserMail','match','pattern'=>"/^.{5,80}$/",'message'=>utf8_encode('M�nimo 5 y m�ximo 80 caracteres')],
-            ['UserMail','email','message'=>utf8_encode('Formato no v�lido')],
+            ['UserMail','match','pattern'=>"/^.{5,80}$/",'message'=>'Mínimo 5 y máximo 80 caracteres'],
+            ['UserMail','email','message'=>'Formato no válido'],
             ['UserMail','email_existe'],
         ];
     }
-    
+
+    /**
+     * @param $attribute
+     * @param $params
+     * Verifica que no exista el mail
+     */
     public function email_existe($attribute,$params)
     {
         //Buscar e-mail en la tabla

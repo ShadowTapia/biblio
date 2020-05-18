@@ -3,14 +3,14 @@
 use yii\grid\GridView;
 use yii\helpers\Html;
 
-$this->title= utf8_encode('Administrar A�os');
+$this->title= 'Administrar Años';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <h1><?= Html::encode($this->title) ?></h1>
 
 <p>
-    <?= Html::a(Yii::t('app', utf8_encode('Crear A�os'),['modelClass' => 'anos',]),['crearanos'],['class'=>'btn btn-success']) ?>
+    <?= Html::a(Yii::t('app', 'Crear Años',['modelClass' => 'anos',]),['crearanos'],['class'=>'btn btn-success']) ?>
 </p>
 
 <div class="grid-view">
@@ -45,7 +45,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'headerOptions' => ['width'=> '110'],
                     'template'=> '{update} {delete}',
                     'buttons' => [
-                        'update' => function ($url,$model,$key){
+                        'update' => function ($url,$model){
                         return Html::a("<span class='glyphicon glyphicon-pencil'></span>",[
                             'updateanos','id' => $model->idano],['class' => 'btn btn-circle btn-primary','title' => 'Actualizar']);                        
                         },
@@ -54,7 +54,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             [
                                 'class' => ['btn btn-danger btn-circle','title' => 'Borrar'],
                                 'data' => [
-                                    'confirm' => utf8_encode('Estas seguro de borrar este A�o?'),
+                                    'confirm' => 'Estas seguro de borrar este Año?',
                                     'method' => 'post',
                                 ],
                             ]);

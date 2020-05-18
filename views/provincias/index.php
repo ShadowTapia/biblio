@@ -42,7 +42,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],           
             [
                 'attribute' => 'regionNombre',
-                'label' => utf8_encode('Regi�n'), 
+                'label' => 'Región',
             ],            
             [
                 'class' => 'yii\grid\ActionColumn',
@@ -50,7 +50,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'headerOptions' => ['width'=> '110'],
                 'template'=>'{update} {delete}',
                 'buttons'=> [
-                    'update' => function ($url,$model,$key){
+                    'update' => function ($url,$model){
                         return Html::a("<span class='glyphicon glyphicon-pencil'></span>",[
                             'update','id' => $model->idProvincia],['class' => 'btn btn-circle btn-primary']);                        
                     },
@@ -58,7 +58,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         return Html::a('<span class="glyphicon glyphicon-trash"></span>',['delete','id' => $model->idProvincia],
                         [   'class' => 'btn btn-circle btn-danger',
                             'data' => [
-                                'confirm' => utf8_encode('Estas seguro de borrar esta Provincia?'),
+                                'confirm' => 'Estas seguro de borrar esta Provincia?',
                                 'method' => 'post',
                             ],
                         ]);

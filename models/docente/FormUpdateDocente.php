@@ -28,12 +28,12 @@ class FormUpdateDocente extends model
     {
         return [
             [['nombres','paterno','materno',],'required','message'=>'Campo requerido'],
-            ['nombres','match','pattern'=>"/^.{3,25}$/",'message'=>utf8_encode('M�nimo 3 y m�ximo 25 caracteres')],
-            [['paterno','materno'],'match','pattern'=>"/^.{3,20}$/",'message'=>utf8_encode('M�nimo 3 y m�ximo 20 caracteres')],
-            [['nombres','paterno','materno'],'match','pattern' => "/^([a-zA-Z�-�\u00f1\u00d1\u00E0-\u00FC])\w+/",'message'=>utf8_encode('S�lo se aceptan letras')],
+            ['nombres','match','pattern'=>"/^.{3,25}$/",'message'=>'Mínimo 3 y máximo 25 caracteres'],
+            [['paterno','materno'],'match','pattern'=>"/^.{3,20}$/",'message'=>'Mínimo 3 y máximo 20 caracteres'],
+            [['nombres','paterno','materno'],'match','pattern' => "/^([a-zA-Zñ-Ñ\u00f1\u00d1\u00E0-\u00FC])\w+/",'message'=>'Sólo se aceptan letras'],
             [['calle','telefono','numero','depto','block','villa','codRegion','idProvincia','codComuna'],'safe'],
-            ['email','match','pattern'=>"/^.{5,80}$/",'message'=>utf8_encode('M�nimo 5 y m�ximo 80 caracteres')],
-            ['email','email','message'=>utf8_encode('Formato no v�lido')],
+            ['email','match','pattern'=>"/^.{5,80}$/",'message'=>'Mínimo 5 y máximo 80 caracteres'],
+            ['email','email','message'=>'Formato no válido'],
         ];
     }
 }

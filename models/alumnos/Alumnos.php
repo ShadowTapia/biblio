@@ -33,6 +33,13 @@ namespace app\models\alumnos;
  * @property Apoderados[] $apoderados
  * @property Pivot[] $pivots
  */
+
+use app\models\apoderados\Apoderados;
+use app\models\Comunas;
+use app\models\pivot\Pivot;
+use app\models\Provincias;
+use app\models\Regiones;
+
 class Alumnos extends \yii\db\ActiveRecord
 {
     /**
@@ -98,7 +105,6 @@ class Alumnos extends \yii\db\ActiveRecord
             'idalumno' => 'Idalumno',
         ];
     }
-
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -138,4 +144,22 @@ class Alumnos extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Pivot::className(), ['idalumno' => 'idalumno']);
     }
+
+    /**
+     * @return null
+     */
+    public static function dropdownalus()
+    {
+        static $dropdown;
+        if($dropdown===null)
+        {
+            $models=static::find()->all();
+            foreach ($models as $model)
+            {
+                $dropdown[$model->idalumno]=$model->paternoalu . ' ' . $model->maternoalu .','. $model->nombrealu;
+            }
+        }
+        return $dropdown;
+    }
+
 }

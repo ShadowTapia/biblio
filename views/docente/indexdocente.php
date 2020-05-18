@@ -43,7 +43,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'label' => 'Nombre',
                 'format' => 'html',
                 'value' => function($model){
-                    return !empty($model->nombres) ? $model->nombres : '<span class="glyphicon glyphicon-question-sign"></span>';
+                    return !empty($model->nombres) ? strtoupper($model->nombres)  : '<span class="glyphicon glyphicon-question-sign"></span>';
                 }
             ],
             [
@@ -51,7 +51,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'label' => 'Paterno',
                 'format' => 'html',
                 'value' => function($model){
-                    return !empty($model->paterno) ? $model->paterno : '<span class="glyphicon glyphicon-question-sign"></span>';
+                    return !empty($model->paterno) ? strtoupper($model->paterno)  : '<span class="glyphicon glyphicon-question-sign"></span>';
                 }
             ],
             [
@@ -59,7 +59,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'label' => 'Materno',
                 'format' => 'html',
                 'value' => function($model){
-                    return !empty($model->materno) ? $model->materno : '<span class="glyphicon glyphicon-question-sign"></span>';
+                    return !empty($model->materno) ? strtoupper($model->materno) : '<span class="glyphicon glyphicon-question-sign"></span>';
                 }
             ],
             [
@@ -76,7 +76,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'headerOptions' => ['width'=> '120'],
                 'template'=> '{update} {delete}',
                 'buttons' => [
-                    'update' => function($url,$model,$key){
+                    'update' => function($url,$model){
                         return Html::a("<span class='glyphicon glyphicon-pencil'></span>",[
                             'updateprofe','id' => $model->rutdocente],['class' => 'btn btn-circle btn-primary','title'=>'Actualizar docente','data-toggle'=>'tooltip']);  
                     },

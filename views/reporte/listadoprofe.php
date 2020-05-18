@@ -25,8 +25,8 @@ function getPlantilla($profes)
           $contador++;  
           $plantilla .= '<tr>
             <td class="no">'. $contador .'</td>
-            <td class="desc">'. $docente["rutdocente"]. "-". $docente["digito"].'</td>
-            <td class="unit">'. $docente["nombres"]. " ". $docente["paterno"]. " ". $docente["materno"]. '</td>
+            <td class="desc">'. number_format($docente["rutdocente"],0,  ",",  ".") . "-". $docente["digito"].'</td>
+            <td class="unit">'. strtoupper($docente["nombres"]) . " ". strtoupper($docente["paterno"]) . " ". strtoupper($docente["materno"]) . '</td>
             <td class="qty">'. $docente["email"] .'</td>
           </tr>';
         }
@@ -36,7 +36,7 @@ function getPlantilla($profes)
       
     </main>
     <footer>';
-        $plantilla .= utf8_encode("The Kingstown School - Fundaci�n Educacional Bosques de Santa Julia 2019.").'
+        $plantilla .= "The Kingstown School - Fundación Educacional Bosques de Santa Julia 2019.".'
         
     </footer>
   </body>';

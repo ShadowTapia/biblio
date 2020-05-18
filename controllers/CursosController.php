@@ -7,14 +7,17 @@ use app\models\cursos\FormCreaCursos;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Url;
+use yii\web\Controller;
+use yii\web\Response;
+use yii\widgets\ActiveForm;
 
-class CursosController extends \yii\web\Controller
+class CursosController extends Controller
 {
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider(['query' => Cursos::find()]);
         $dataProvider->sort->defaultOrder = ['Orden' => SORT_ASC];
-        return $this->render('index',['dataProvider' => $dataProvider]);
+        return $this->render('index',compact('dataProvider'));
     }
     
     /**

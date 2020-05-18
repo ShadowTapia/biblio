@@ -17,12 +17,12 @@ class FormUpdateRegiones extends model
     {
         return [
             [['region'],'required','message' => 'Campo requerido'],
-            [['orden'],'integer','message'=>utf8_encode('S�lo se aceptan valores n�mericos')],
+            [['orden'],'integer','message'=>'Sólo se aceptan valores númericos'],
             //validamos que los valores no sean mayores de a 127
             [['orden'],'compare','compareValue' => 128, 'operator' => '<','message'=>'No se aceptan valores mayores a 127'],
             //Validamos que los valores sean mayores de 0
             [['orden'],'compare','compareValue' => 0, 'operator' => '>','message' => 'No se aceptan valores menores que 0'],
-            [['region'],'match','pattern' => "/^([a-zA-Z�-�\u00f1\u00d1\u00E0-\u00FC])\w+/", 'message' => utf8_encode('S�lo se aceptan letras')],
+            [['region'],'match','pattern' => "/^([a-zA-Zñ-Ñ\u00f1\u00d1\u00E0-\u00FC])\w+/", 'message' => 'Sólo se aceptan letras'],
         ];
     }
 }

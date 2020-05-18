@@ -20,7 +20,7 @@ class UsersController extends Controller
     {
         $dataProvider = new ActiveDataProvider(['query' => Users::find()]);
         $dataProvider->sort->defaultOrder = ['UserLastName' => SORT_ASC];
-        return $this->render('index', ['dataProvider' => $dataProvider]);
+        return $this->render('index', compact('dataProvider'));
     }
     
     /**
@@ -230,14 +230,14 @@ class UsersController extends Controller
                             \raoul2000\widget\pnotify\PNotify::widget([
                                 'pluginOptions' => [
                                 'title' => 'Usuarios',
-                                'text' => utf8_encode('La contrase�a fue actualizada correctamente.'),
+                                'text' => utf8_encode('La contraseña fue actualizada correctamente.'),
                                 'type' => 'success',
 		                      ]]);                            
                         } else {
                             \raoul2000\widget\pnotify\PNotify::widget([
                                 'pluginOptions' => [
                                 'title' => 'Error',
-                                'text' => utf8_encode('La contrase�a no pudo ser actualizada.'),
+                                'text' => utf8_encode('La contraseña no pudo ser actualizada.'),
                                 'type' => 'error',
 		                      ]]);                            
                         }
@@ -246,7 +246,7 @@ class UsersController extends Controller
                         \raoul2000\widget\pnotify\PNotify::widget([
                                 'pluginOptions' => [
                                 'title' => 'Error',
-                                'text' => utf8_encode('La contrase�a anterior no coincide con nuestros registros.- '),
+                                'text' => utf8_encode('La contraseña anterior no coincide con nuestros registros.- '),
                                 'type' => 'error',
 		                      ]]);                        
                     }
@@ -391,12 +391,12 @@ class UsersController extends Controller
                     $table->UserPass = crypt($run, Yii::$app->params["salt"]);
                     if ($table->update()) {
                             $transaction->commit();
-                            Yii::$app->session->setFlash('success', utf8_encode('Se ha actualizado correctamente la contrase�a .-'));
+                            Yii::$app->session->setFlash('success', utf8_encode('Se ha actualizado correctamente la contraseña .-'));
                             echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("users/index") .
                             "'>";
                         } else {
                             $transaction->rollBack();
-                            Yii::$app->session->setFlash('error', utf8_encode('Ocurrio un error, al actualizar la contrase�a .-'));
+                            Yii::$app->session->setFlash('error', utf8_encode('Ocurrio un error, al actualizar la contraseña .-'));
                             echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("users/index") .
                             "'>";
                         }   

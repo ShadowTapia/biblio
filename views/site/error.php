@@ -18,7 +18,7 @@ $this->title = $name;
     </div>
 
     <p>
-        El error anterior ocurrió mientras el servidor web procesaba su solicitud. 
+        El error anterior ocurriÃ³ mientras el servidor web procesaba su solicitud.
     </p>
     <p>
         Por favor contactanos si piensas que este es un problema del servidor. Gracias.

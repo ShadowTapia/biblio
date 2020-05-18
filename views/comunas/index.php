@@ -39,7 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'attribute' => 'nombreRegion',
-                'label' => utf8_encode('Regi�n')
+                'label' => 'Región'
             ],
             [
                 'class' => 'yii\grid\ActionColumn',
@@ -51,7 +51,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         return Html::a('<span class="glyphicon glyphicon-trash"></span>',['delete','id' => $model->codComuna],
                         [   'class' => 'btn btn-danger btn-circle',
                             'data' => [
-                                'confirm' => utf8_encode('Estas seguro de borrar esta Comuna?'),
+                                'confirm' => 'Estas seguro de borrar esta Comuna?',
                                 'method' => 'post',
                             ],
                         ]);

@@ -5,11 +5,11 @@
  * @copyright 2019
  */
 
+use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
 
 
-$this->title= utf8_encode('Actualizar Regi�n');
+$this->title= 'Actualizar Región';
 $this->params['breadcrumbs'][] = ['label' => 'Administrar', 'url' => ['create']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -21,7 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ]);
 ?>
 <div class="form-group">
-    <?= $form->field($model,"region")->input("text",['style'=>'width:450px; text-transform: uppercase;'])->label(utf8_encode('Regi�n')) ?>
+    <?= $form->field($model,"region")->input("text",['style'=>'width:450px; text-transform: uppercase;'])->label('Región') ?>
 </div>
 <div class="form-group">
     <?= $form->field($model,"orden")->input("text",['style'=>'width:100px;'])->label('Orden') ?>

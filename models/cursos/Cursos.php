@@ -2,6 +2,9 @@
 
 namespace app\models\cursos;
 
+use app\models\pivot\Pivot;
+use yii\db\ActiveRecord;
+
 /**
  * This is the model class for table "cursos".
  *
@@ -12,7 +15,7 @@ namespace app\models\cursos;
  *
  * @property Pivot[] $pivots
  */
-class Cursos extends \yii\db\ActiveRecord
+class Cursos extends ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -54,5 +57,13 @@ class Cursos extends \yii\db\ActiveRecord
     public function getPivots()
     {
         return $this->hasMany(Pivot::className(), ['idCurso' => 'idCurso']);
+    }
+
+    /**
+     * @return array
+     */
+    public static function getListCursos()
+    {
+        return self::find()->select(['Nombre','idCurso'])->where(['visible' => '1'])->indexBy('idCurso')->orderBy('Orden')->column();
     }
 }

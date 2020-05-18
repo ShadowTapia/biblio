@@ -24,15 +24,15 @@ class FormRegister extends model{
         return [
             [['UserRut','UserName','UserMail','idroles','UserPass','UserPass_repeat'],'required','message'=>'Campo requerido'],
             ['UserRut','validateRut'], 
-            ['UserName','match','pattern'=>"/^.{3,45}$/",'message'=>utf8_encode('M�nimo 3 y m�ximo 50 caracteres')],
-            ['UserName','match','pattern' => "/^([a-zA-Z�-�\u00f1\u00d1\u00E0-\u00FC])\w+/",'message'=>utf8_encode('S�lo se aceptan letras')],
-            ['UserLastName','match','pattern' => "/^([a-zA-Z�-�\u00f1\u00d1\u00E0-\u00FC])\w+/",'message'=>utf8_encode('S�lo se aceptan letras')],
-            ['UserMail','match','pattern'=>"/^.{5,80}$/",'message'=>utf8_encode('M�nimo 5 y m�ximo 80 caracteres')],
-            ['UserMail','email','message'=>utf8_encode('Formato no v�lido')],
+            ['UserName','match','pattern'=>"/^.{3,45}$/",'message'=>'Mínimo 3 y máximo 50 caracteres'],
+            ['UserName','match','pattern' => "/^([a-zA-Zñ-Ñ\u00f1\u00d1\u00E0-\u00FC])\w+/",'message'=>'Sólo se aceptan letras'],
+            ['UserLastName','match','pattern' => "/^([a-zA-Zñ-Ñ\u00f1\u00d1\u00E0-\u00FC])\w+/",'message'=>'Sólo se aceptan letras'],
+            ['UserMail','match','pattern'=>"/^.{5,80}$/",'message'=>'Mínimo 5 y máximo 80 caracteres'],
+            ['UserMail','email','message'=>'Formato no válido'],
             ['activate','safe'],
             ['UserMail','email_existe'],
-            ['UserPass','match','pattern'=>"/^.{7,16}$/",'message'=>utf8_encode('M�nimo 7 y m�ximo 16 caracteres')],
-            ['UserPass_repeat','compare','compareAttribute'=>'UserPass','message'=>utf8_encode('Las contrase�as no coinciden')],
+            ['UserPass','match','pattern'=>"/^.{7,16}$/",'message'=>'Mínimo 7 y máximo 16 caracteres'],
+            ['UserPass_repeat','compare','compareAttribute'=>'UserPass','message'=>'Las contraseñas no coinciden'],
         ];
     }
     
@@ -82,7 +82,7 @@ class FormRegister extends model{
         }
         if($verificador!=$dv)
         {
-            $this->addError($attribute,utf8_encode("Rut Inv�lido"));
+            $this->addError($attribute,"Rut Inválido");
         }
     }   
     

@@ -9,6 +9,8 @@ use Yii;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Url;
 use yii\web\Controller;
+use yii\web\Response;
+use yii\widgets\ActiveForm;
 
 class AnosController extends Controller
 {
@@ -33,14 +35,14 @@ class AnosController extends Controller
     {
         $dataProvider = new ActiveDataProvider(['query' => Anos::find()]);
         $dataProvider->sort->defaultOrder = ['idano' => SORT_ASC];
-        return $this->render('selectano',['dataProvider' => $dataProvider]);
+        return $this->render('selectano',compact('dataProvider'));
     }
     
     public function actionSeleccionaano($id)
     {
         if (Yii::$app->session['anoActivo']==$id)
         {
-            Yii::$app->session->setFlash('error', utf8_encode('Ocurrio un error, este a�o ya se encuentra seleccionado.-'));
+            Yii::$app->session->setFlash('error', utf8_encode('Ocurrio un error, este año ya se encuentra seleccionado.-'));
             echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("anos/selectano") .
                     "'>";     
         }
@@ -52,7 +54,7 @@ class AnosController extends Controller
                     ->one();
             Yii::$app->session['anoActivo'] = $year->idano;
             Yii::$app->session['nameAno'] = $year->nombreano;
-            Yii::$app->session->setFlash('success', utf8_encode('Se ha seleccionado el a�o '. Yii::$app->session['nameAno']));
+            Yii::$app->session->setFlash('success', utf8_encode('Se ha seleccionado el año '. Yii::$app->session['nameAno']));
                         echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("anos/selectano") .
                             "'>";
         }
@@ -92,14 +94,14 @@ class AnosController extends Controller
                         {
                             $transaction->commit();
                             \raoul2000\widget\pnotify\PNotify::widget(['pluginOptions' => ['title' =>
-                                utf8_encode('A�os'), 'text' => utf8_encode('El A�o se ha actualizado exitosamente.-'), 'type' =>
+                                utf8_encode('Años'), 'text' => utf8_encode('El Año se ha actualizado exitosamente.-'), 'type' =>
                                 'success', ]]);
                                 echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("anos/index") .
                             "'>";
                         }else{
                             $transaction->rollBack();
                             \raoul2000\widget\pnotify\PNotify::widget(['pluginOptions' => ['title' =>
-                                utf8_encode('A�os'), 'text' => utf8_encode('No se ha actualizado el A�o.-'), 'type' => 'error', ]]);
+                                utf8_encode('A�os'), 'text' => utf8_encode('No se ha actualizado el Año.-'), 'type' => 'error', ]]);
                         }
                     }   
                 }
@@ -159,8 +161,8 @@ class AnosController extends Controller
                         $model->nombreano = null;
                         \raoul2000\widget\pnotify\PNotify::widget([
 		                  'pluginOptions' => [
-			                 'title' => utf8_encode('A�os'),
-			                 'text' => utf8_encode('Se ha creado correctamente el <b>A�o</b>.-.') ,
+			                 'title' => utf8_encode('Años'),
+			                 'text' => utf8_encode('Se ha creado correctamente el <b>Año</b>.-.') ,
                              'type' => 'info',
 		                      ]
 	                       ]);
@@ -170,7 +172,7 @@ class AnosController extends Controller
                         \raoul2000\widget\pnotify\PNotify::widget([
 		                  'pluginOptions' => [
                             'title' => 'Error',
-                            'text' => utf8_encode('Ocurrio un error, al ingresar un <b>A�o</b>.-') ,
+                            'text' => utf8_encode('Ocurrio un error, al ingresar un <b>Año</b>.-') ,
                             'type' => 'error',
 		                      ]
 	                       ]);
@@ -203,7 +205,7 @@ class AnosController extends Controller
         //Si existen alumnos con a�os ya asignados en la tabla
         if ($table2->count()>0)
         {
-            Yii::$app->session->setFlash('error', utf8_encode('Ocurrio un error, existen a�os asociados a Alumnos.-'));
+            Yii::$app->session->setFlash('error', utf8_encode('Ocurrio un error, existen años asociados a Alumnos.-'));
                 echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("anos/index") .
                     "'>";
         }else{
@@ -214,12 +216,12 @@ class AnosController extends Controller
                 if ($table->deleteAll("idano=:idano", [":idano" => $id]))
                 {
                     $transaction->commit();
-                        Yii::$app->session->setFlash('success', utf8_encode('Se ha borrado correctamente el A�o.-'));
+                        Yii::$app->session->setFlash('success', utf8_encode('Se ha borrado correctamente el Año.-'));
                         echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("anos/index") .
                             "'>";
                 }else{
                     $transaction->rollBack();
-                        Yii::$app->session->setFlash('error', utf8_encode('Ocurrio un error, no se borro el A�o.-'));
+                        Yii::$app->session->setFlash('error', utf8_encode('Ocurrio un error, no se borro el Año.-'));
                         echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("anos/index") .
                             "'>";
                 }

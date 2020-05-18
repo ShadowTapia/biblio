@@ -5,8 +5,8 @@
  * @copyright 2019
  */
 
+use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
 
 $this->title='Ingresar Regiones';
 $this->params['breadcrumbs'][] = ['label' => 'Administrar', 'url' => ['create']];
@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ]);
 ?>
 <div class="form-group">
-    <?= $form->field($model,"codRegion")->input("text",['style'=>'width:120px'],['autofocus'=>true])->label(utf8_encode('Código Región*')) ?>
+    <?= $form->field($model,"codRegion")->input("text",['style'=>'width:120px','autofocus'=>true])->label('CÃ³digo RegiÃ³n*') ?>
 </div>
 <div class="form-group">
     <?= $form->field($model,"region")->input("text",['style'=>'width:360px; text-transform: uppercase;'])->label(utf8_encode('Nombre*')) ?>

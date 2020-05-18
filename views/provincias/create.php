@@ -21,7 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <div class="form-group">
-    <?= $form->field($model,"idProvincia")->input("text",['style'=>'width:120px'],['autofocus'=>true])->label(utf8_encode('C�digo Provincia*')) ?>
+    <?= $form->field($model,"idProvincia")->input("text",['style'=>'width:120px','autofocus'=>true])->label('Código Provincia*') ?>
 </div>
 <div class="form-group">
     <?= $form->field($model,"Provincia")->input("text",['style'=>'width:450px; text-transform: uppercase;'])->label('Provincia*') ?>
@@ -29,7 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="form-group">
     <?= $form->field($model,"codRegion")->dropDownList(
         ArrayHelper::map(Regiones::find()->orderBy('orden')->all(),'codRegion','region'),
-        ['style'=>'width:450px;','prompt'=>utf8_encode('Seleccione Regi�n')]
+        ['style'=>'width:450px;','prompt'=>'Seleccione Región']
     )->label('Regiones*') ?>
 </div>
 <?= Html::submitButton('Guardar',['class'=>'btn btn-primary']) ?>

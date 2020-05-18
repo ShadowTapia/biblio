@@ -28,7 +28,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'attribute' => 'region',
-                'label' => utf8_encode('Nombre Regi�n')
+                'label' => 'Nombre Región'
             ],
             [
                 'attribute' => 'orden',
@@ -41,7 +41,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'headerOptions'=>['width'=>'110'],
                 'template'=>'{update} {delete}',
                 'buttons'=> [
-                    'update' => function ($url,$model,$key){
+                        //posibles variables que se pueden usar $key
+                    'update' => function ($url,$model){
                         return Html::a("<span class='glyphicon glyphicon-pencil'></span>",[
                             'updateregion','id' => $model->codRegion],['class' => 'btn btn-circle btn-primary']);                        
                     },
@@ -49,7 +50,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         return Html::a('<span class="glyphicon glyphicon-trash"></span>',['remove','id' => $model->codRegion],
                         [   'class' => 'btn btn-circle btn-danger',
                             'data' => [
-                                'confirm' => utf8_encode('Estas seguro de borrar esta regi�n?'),
+                                'confirm' => 'Estas seguro de borrar esta región?',
                                 'method' => 'post',
                             ],
                         ]);

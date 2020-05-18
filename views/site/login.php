@@ -26,7 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
     ]); ?>
         
         <?= $form->field($model, 'userrun')->widget(\yii\widgets\MaskedInput::className(),['mask'=>'99.999.999-*',],['autofocus'=>true])->label('RUN') ?>
-        <?= $form->field($model, 'password')->passwordInput()->label(utf8_encode('Contrase�a')) ?>
+        <?= $form->field($model, 'password')->passwordInput()->label('Contraseña') ?>
 
         <?= $form->field($model, 'rememberMe')->checkbox([
             'template' => "<div class=\"col-lg-offset-1 col-lg-3\">{input} {label}</div>\n<div class=\"col-lg-8\">{error}</div>",

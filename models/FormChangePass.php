@@ -17,8 +17,8 @@ class FormChangePass extends model{
     {
         return [
             [['password','password_new','password_repeat'],'required','message'=>'Campo requerido'],
-            [['password','password_new','password_repeat'],'match','pattern'=>"/^.{8,16}$/",'message'=>utf8_encode('M�nimo 6 y m�ximo 16 caracteres')],
-            ['password_repeat','compare','compareAttribute'=>'password_new','message'=>utf8_encode('Las contrase�as no coinciden')]
+            [['password','password_new','password_repeat'],'match','pattern'=>"/^.{8,16}$/",'message'=>'Mínimo 6 y máximo 16 caracteres'],
+            ['password_repeat','compare','compareAttribute'=>'password_new','message'=>'Las contraseñas no coinciden'],
         ];
     }
 }

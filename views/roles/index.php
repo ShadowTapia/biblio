@@ -34,7 +34,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'attribute' => 'descripcion',
-                    'label' => utf8_encode('Descripci�n') 
+                    'label' => 'Descripción'
                 ],
                 [
                     'class' => 'yii\grid\ActionColumn',

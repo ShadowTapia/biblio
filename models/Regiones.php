@@ -42,7 +42,7 @@ class Regiones extends \yii\db\ActiveRecord
         return $this->hasMany(Provincias::className(), ['codRegion' => 'codRegion']);
     }  
         
-    public function getListRegiones()
+    public static function getListRegiones()
     {
         return self::find()->select(['region','codRegion'])->indexBy('codRegion')->orderBy('orden')->column();
     }

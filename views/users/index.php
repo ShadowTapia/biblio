@@ -72,14 +72,14 @@ $this->params['breadcrumbs'][] = $this->title;
                     'view' => function($url,$model){
                         return Html::a('<span class="glyphicon glyphicon-refresh"></span>',['uppass','id' => $model->idUser],
                         [   'class' => 'btn btn-circle btn-success',
-                            'title' => utf8_encode('Resetear contrase�a'),
+                            'title' => 'Resetear contraseña',
                             'data' => [
                                 'confirm' => utf8_encode('Desea resetear la contrase�a de ' . $model->UserName . ' ' . $model->UserLastName . '?'),
                                 'method' => 'post',
                             ],
                         ]);  
                     },
-                    'update' => function ($url,$model,$key){
+                    'update' => function ($url,$model){
                         return Html::a("<span class='glyphicon glyphicon-pencil'></span>",[
                             'updateuser','id' => $model->idUser],['class' => 'btn btn-circle btn-primary','title' => 'Actualizar']);                        
                     },

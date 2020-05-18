@@ -217,4 +217,22 @@ class SiteController extends Controller
         return $this->render('about');
     }
 
+    /**
+     * @return string
+     * Manejador de errores
+     */
+    public function actionError()
+    {
+        $exception = Yii::$app->errorHandler->exception;
+        if ($exception instanceof \yii\web\NotFoundHttpException)
+        {
+            //Al no existir controles mas acciones finaliza aqui
+            return $this->render('pnf');
+        }
+        else
+        {
+            return $this->render('error',compact('exception'));
+        }
+    }
+
 }

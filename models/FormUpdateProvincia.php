@@ -19,7 +19,7 @@ class FormUpdateProvincia extends model
         return [
             [['Provincia','codRegion'],'required','message'=>'Campo requerido'],
             [['Provincia'], 'string', 'max' => 45],
-            [['Provincia'],'match','pattern'=>"/^([a-zA-Z�-�\u00f1\u00d1\u00E0-\u00FC])\w+/",'message'=>utf8_encode('S�lo se aceptan letras')],
+            [['Provincia'],'match','pattern'=>"/^([a-zA-Zñ-Ñ\u00f1\u00d1\u00E0-\u00FC])\w+/",'message'=>'Sólo se aceptan letras'],
         ];
     }   
 }

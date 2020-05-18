@@ -19,7 +19,7 @@ class FormCreaCursos extends model
     {
         return [
             [['Nombre'],'required','message'=>'Campo requerido'],
-            [['Orden'], 'integer','message' => utf8_encode('S�lo se aceptan valores n�mericos')],
+            [['Orden'], 'integer','message' => 'Sólo se aceptan valores númericos'],
             [['Orden'],'compare','compareValue' => '255','operator' => '<', 'message' => 'No se aceptan valores mayores a 255'],
             [['Orden'],'compare','compareValue' => '1','operator' => '>','message' => 'No se aceptan valores menores a 1'],
             [['visible'],'safe'],

@@ -9,8 +9,11 @@ use app\models\Regiones;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Url;
+use yii\web\Controller;
+use yii\web\Response;
+use yii\widgets\ActiveForm;
 
-class RegionController extends \yii\web\Controller
+class RegionController extends Controller
 {
     /**
      * Se encarga de crear las regiones
@@ -78,7 +81,7 @@ class RegionController extends \yii\web\Controller
             }
         }
 
-        return $this->render('crearegiones', ["model" => $model]);
+        return $this->render('crearegiones', compact('model'));
     }
     
     /**
@@ -163,7 +166,7 @@ class RegionController extends \yii\web\Controller
     {
         $dataProvider = new ActiveDataProvider(['query' => Regiones::find(), ]);
         $dataProvider->sort->defaultOrder = ['orden' => SORT_ASC]; //Ordenamos el resultado de la consulta
-        return $this->render('create', ['dataProvider' => $dataProvider]);
+        return $this->render('create',compact('dataProvider'));
     }
     
     /**

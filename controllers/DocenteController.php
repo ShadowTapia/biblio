@@ -16,11 +16,12 @@ use kartik\mpdf\Pdf;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Url;
+use yii\web\Controller;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
 
 
-class DocenteController extends \yii\web\Controller
+class DocenteController extends Controller
 {
     public function actionIndexdocente()
     {
@@ -29,10 +30,14 @@ class DocenteController extends \yii\web\Controller
         return $this->render('indexdocente', ['dataProvider' => $dataProvider]);
     }
 
+    /**
+     * @return mixed
+     * Generador de reporte en formato pdf
+     */
     public function actionReporte()
     {
         $profes = array();
-        $profe = Docente::find()->orderBy('paterno','materno')->all();
+        $profe = Docente::find()->orderBy('paterno')->addOrderBy('materno')->all();
         if ($profe > 0) {
             foreach ($profe as $teachers) {
                 $profes[] = $teachers;
@@ -43,13 +48,13 @@ class DocenteController extends \yii\web\Controller
         $plantilla = getPlantilla($profes);
         $content = $plantilla;
         Yii::$app->response->format = \yii\web\Response::FORMAT_RAW;
-        $pdf = new Pdf(['mode' => Pdf::MODE_CORE, // leaner size using standard fonts
+        $pdf = new Pdf(['mode' => Pdf::MODE_UTF8, // leaner size using standard fonts
             'format' => Pdf::FORMAT_FOLIO, 'destination' => Pdf::DEST_BROWSER, 'content' =>
             $content, 'cssFile' => '@vendor/kartik-v/yii2-mpdf/src/assets/kv-docente.css',
             'options' => [ // any mpdf options you wish to set
-            ], 'methods' => ['SetTitle' => utf8_encode('Sistema Administraci�n Bibliotecaria - Listado de Docentes'),
-            'SetSubject' => 'Generado por Sistema Administraci�n Bibliotecaria - The Kingstown School',
-            'SetHeader' => [utf8_encode('The Kingtsown School - Sistema Administraci�n Bibliotecaria: ') .
+            ], 'methods' => ['SetTitle' => 'Sistema Administración Bibliotecaria - Listado de Docentes',
+            'SetSubject' => 'Generado por Sistema Administración Bibliotecaria - The Kingstown School',
+            'SetHeader' => ['The Kingstown School - Sistema Administración Bibliotecaria: ' .
             date("r")], 'SetFooter' => ['|Page {PAGENO}|'], 'SetAuthor' =>
             'Marcelo Tapia D.', 'SetCreator' => 'Marcelo Tapia D.', ]]);
         return $pdf->render();
@@ -305,7 +310,7 @@ class DocenteController extends \yii\web\Controller
 
         $comunaslists = Comunas::find()->where(['idProvincia' => $id])->all();
 
-        if ($comunaslists > 0) {
+        if ($countComunas > 0) {
             foreach ($comunaslists as $comu) {
                 echo "<option value='" . $comu->codComuna . "'>" . $comu->comuna . "</option>";
             }

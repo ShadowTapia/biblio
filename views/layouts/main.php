@@ -29,7 +29,7 @@ AppAsset::register($this);
 <div class="wrap">
     <?php
        NavBar::begin([
-        'brandLabel' => '<img src='. Yii::$app->request->baseUrl ."/images/logo.gif" .' style="margin-top: -10px;" class="img-responsive"></img>',
+        'brandLabel' => '<img src='. Yii::$app->request->baseUrl . "/images/logo.gif" .' style="margin-top: -10px;" class="img-responsive"></img>',
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
@@ -42,10 +42,15 @@ AppAsset::register($this);
             //Begin Menu Alumnos
             ['label' => 'Alumnos',
                 'items' => [
-                    ['label' => 'Ingresar', 'url' => ['#']],
+                    ['label' => 'Ingresar', 'url' => ['/alumnos/ingresaalu']],
+                    ['label' => 'Consultar',
+                        'items' => [
+                           ['label' => 'Por Curso','url' => ['/alumnos/aluxcurso']],
+                        ]],
                     ['label' => 'Modificar',
                         'items' => [
                             ['label' => 'Asignar curso', 'url' => ['/alumnos/asignar']],
+                            ['label' => 'Cambiar de Curso', 'url' => ['/alumnos/cambiocurso']],
                             ['label' => 'Datos', 'url' => ['#']],
                         ],
                     ],
@@ -55,7 +60,7 @@ AppAsset::register($this);
             //Begin Menu opciones
             ['label' => 'Opciones',
                 'items' => [
-                    ['label' => utf8_encode('A�os'),
+                    ['label' => 'Años',
                         'items' => [
                             ['label' => 'Seleccionar','url' => ['/anos/selectano'],'visible'=>Yii::$app->session['adminUser']=='admin'],
                             ['label' => 'Administrar','url' => ['/anos/index'],'visible'=>Yii::$app->session['adminUser']=='admin'],  
@@ -87,7 +92,7 @@ AppAsset::register($this);
             //Begin Menu Actualizar
             ['label' => 'Actualizar',
                         'items' => [
-                            ['label' => utf8_encode('Contrase�a'),'url'=> ['/users/changepass']],                
+                            ['label' => 'Contraseña','url'=> ['/users/changepass']],
                             ['label' => 'Correo','url'=>['/users/changedatos']],
             ],'visible'=>!Yii::$app->user->isGuest],
             //Fin menu Actualizar            

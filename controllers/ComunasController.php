@@ -8,14 +8,17 @@ use app\models\Provincias;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Url;
+use yii\web\Controller;
+use yii\web\Response;
+use yii\widgets\ActiveForm;
 
-class ComunasController extends \yii\web\Controller
+class ComunasController extends Controller
 {
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
         'query' => Comunas::find()->joinWith(['provincia pro'])->joinWith(['codRegion0 cod'])->orderBy('orden'),]);
-        return $this->render('index', ['dataProvider' => $dataProvider]);
+        return $this->render('index',compact('dataProvider'));
     }
     /**
      * Se encarga de borrar una comuna 
@@ -58,7 +61,7 @@ class ComunasController extends \yii\web\Controller
     {
         $model = new FormComunas;
         
-        //validaci�n mediante ajax
+        //validación mediante ajax
         if ($model->load(Yii::$app->request->post()) && Yii::$app->request->isAjax) {
             Yii::$app->response->format = Response::FORMAT_JSON;
             return ActiveForm::validate($model);

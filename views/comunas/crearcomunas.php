@@ -23,14 +23,14 @@ $this->params['breadcrumbs'][] = $this->title;
 ]);
 ?>
 <div class="form-group">
-    <?= $form->field($model,"codComuna")->input("text",['style'=>'width:120px'],['autofocus'=>true])->label(utf8_encode('C�digo Comuna*')) ?>
+    <?= $form->field($model,"codComuna")->input("text",['style'=>'width:120px','autofocus'=>true])->label('Código Comuna*') ?>
 </div>
 <div class="form-group">
     <?= $form->field($model,"comuna")->input("text",['style'=>'width:450px; text-transform: uppercase;'])->label('Comuna*') ?>
 </div>
 <div class="form-group">
     <?= $form->field($model,"codRegion")->dropDownList(Regiones::getListRegiones(),        
-        ['class' => 'form-control', 'style'=>'width:450px;','prompt'=>utf8_encode('Seleccione Regi�n'),'onchange' => 
+        ['class' => 'form-control', 'style'=>'width:450px;','prompt'=>'Seleccione Región','onchange' =>
         '$.post("lists?id= " +$(this).val(),function( data ) {
             $("select#idProvincia").html( data );
             });']

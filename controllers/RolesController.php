@@ -9,6 +9,8 @@ use Yii;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Url;
 use yii\web\Controller;
+use yii\web\Response;
+use yii\widgets\ActiveForm;
 
 class RolesController extends Controller
 {
@@ -16,7 +18,7 @@ class RolesController extends Controller
     {
         $dataProvider = new ActiveDataProvider(['query' => Roles::find()]);
         $dataProvider->sort->defaultOrder = ['idroles' => SORT_ASC];     
-        return $this->render('index',['dataProvider' => $dataProvider]); 
+        return $this->render('index',compact('dataProvider'));
     }
     
     /**

@@ -21,12 +21,12 @@ class FormProvincias extends model
     {
         return [
             [['idProvincia','Provincia','codRegion'],'required','message'=>'Campo requerido'],            
-            [['idProvincia','codRegion'], 'integer','message'=>utf8_encode('S�lo se aceptan valores n�mericos')],
+            [['idProvincia','codRegion'], 'integer','message'=>'Sólo se aceptan valores númericos'],
             [['idProvincia'],'compare','compareValue'=> 32767, 'operator' => '<','message'=>'No se aceptan valores mayores a 32767'],
             [['idProvincia'],'compare','compareValue'=>0,'operator' => '>','message' => 'No se aceptan valores menores de 0'],
             [['idProvincia'],'provincia_existe'],
             [['Provincia'], 'string', 'max' => 45],
-            [['Provincia'],'match','pattern'=>"/^([a-zA-Z�-�\u00f1\u00d1\u00E0-\u00FC])\w+/",'message'=>utf8_encode('S�lo se aceptan letras')],            
+            [['Provincia'],'match','pattern'=>"/^([a-zA-Zñ-Ñ\u00f1\u00d1\u00E0-\u00FC])\w+/",'message'=>'Sólo se aceptan letras'],
             [['codRegion'], 'exist', 'skipOnError' => true, 'targetClass' => Regiones::className(), 'targetAttribute' => ['codRegion' => 'codRegion']],
         ];
     }
@@ -37,7 +37,7 @@ class FormProvincias extends model
         $table = Provincias::find()->where("idProvincia=:idProvincia", [":idProvincia" => $this->idProvincia]);
         //Si existe el c�digo mostrar el error
         if($table->count()==1){
-            $this->addError($attribute,utf8_encode("El c�digo ya esta en uso.-"));
+            $this->addError($attribute,"El código ya esta en uso.-");
         }
     }
 }

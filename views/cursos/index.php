@@ -41,11 +41,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'class' => 'yii\grid\ActionColumn',
-                    'header' => utf8_encode('Acci�n'),
+                    'header' => 'Acción',
                     'headerOptions' => ['width'=> '110'],
                     'template'=> '{update}',
                     'buttons' => [
-                        'update' => function ($url,$model,$key){
+                        'update' => function ($url,$model){
                                return Html::a("<span class='glyphicon glyphicon-pencil'></span>",[
                                'updatecurso','id' => $model->idCurso],['class' => 'btn btn-circle btn-primary','title' => 'Actualizar']);   
                         },      

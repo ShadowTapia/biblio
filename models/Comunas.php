@@ -2,6 +2,8 @@
 
 namespace app\models;
 
+use yii\db\ActiveRecord;
+
 /**
  * This is the model class for table "comunas".
  *
@@ -12,7 +14,7 @@ namespace app\models;
  * @property Provincias $provincia
  * @property Regiones $codRegion0
  */
-class Comunas extends \yii\db\ActiveRecord
+class Comunas extends ActiveRecord
 {
     /**
      * {@inheritdoc}

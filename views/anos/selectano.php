@@ -8,8 +8,8 @@
 use yii\grid\GridView;
 use yii\helpers\Html;
 
-$this->title=utf8_encode('Seleccionar A�o');
-$this->params['breadcrumbs'][] = ['label' => utf8_encode('Administrar A�os'), 'url' => ['index']];
+$this->title='Seleccionar Año';
+$this->params['breadcrumbs'][] = ['label' => 'Administrar Años', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <h1><?= $this->title ?></h1>
@@ -40,7 +40,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'headerOptions' => ['width'=> '80'],
                     'template'=> '{update}',
                     'buttons' => [
-                        'update' => function ($url,$model,$key){
+                        'update' => function ($url,$model){
                             return Html::a("<span class='glyphicon glyphicon-ok'></span>",[
                                 'seleccionaano','id' => $model->idano],['class' => 'btn btn-circle btn-primary','title'=>'Seleccionar']);
                             },                        

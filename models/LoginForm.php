@@ -49,7 +49,7 @@ class LoginForm extends Model
             $user = $this->getUser();
 
             if (!$user || !$user->validatePassword($this->password)) {
-                $this->addError($attribute, Yii::$app->session->setFlash('error',utf8_encode('Run o contraseña incorrecto.'),$removeAfterAccess = true));
+                $this->addError($attribute, Yii::$app->session->setFlash('error','Run o contraseña incorrecto.',$removeAfterAccess = true));
             }
         }
     }

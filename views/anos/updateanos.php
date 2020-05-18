@@ -9,8 +9,8 @@ use kartik\switchinput\SwitchInput;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
-$this->title=utf8_encode('Actualizar A�os');
-$this->params['breadcrumbs'][] = ['label' => utf8_encode('Administrar A�os'), 'url' => ['index']];
+$this->title='Actualizar Años';
+$this->params['breadcrumbs'][] = ['label' => 'Administrar Años', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <h1><?= $this->title ?></h1>
@@ -22,7 +22,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <div class="form-group col-xs-2">
-    <?= $form->field($model,"nombreano")->input("text",['width:450px;'])->label(utf8_encode('A�o*')) ?>
+    <?= $form->field($model,"nombreano")->input("text",['width:450px;'])->label('Año*') ?>
 </div>
 
 <div class="form-group">

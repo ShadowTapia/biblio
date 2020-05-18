@@ -34,8 +34,8 @@ $this->params['breadcrumbs'][] = $this->title;
             ArrayHelper::map(Roles::find()->all(),'idroles','nombre'),
             ['prompt'=>'Seleccione Rol']
         )->label('Roles') ?></td>
-        <td style="padding: 15px;"><?= $form->field($model,"UserPass")->input("password",['style'=>'width:100%'])->label(utf8_encode('Contrase�a Usuario*')) ?></td>
-        <td style="padding: 15px;"><?= $form->field($model,"UserPass_repeat")->input("password",['style'=>'width:100%'])->label(utf8_encode('Repetir Contrase�a*')) ?></td>
+        <td style="padding: 15px;"><?= $form->field($model,"UserPass")->input("password",['style'=>'width:100%'])->label('Contraseña Usuario*') ?></td>
+        <td style="padding: 15px;"><?= $form->field($model,"UserPass_repeat")->input("password",['style'=>'width:100%'])->label('Repetir Contraseña*') ?></td>
     </tr>
 </table>
 
