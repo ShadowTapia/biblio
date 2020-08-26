@@ -39,18 +39,33 @@ AppAsset::register($this);
         'options' => ['class' => 'nav navbar-nav navbar-right'],
         'items' => [
             ['label' => 'Inicio', 'url' => ['/site/index']],
+            //Begin Menu Libros
+            ['label' => 'Libros',
+                'items' => [
+                        ['label' => 'Libro', 'url' => ['/libros/index']],
+                        ['label' => 'Ejemplares', 'url' => ['/ejemplar/index']],
+                        ['label' => 'Autor', 'url' => ['/autor/index']],
+                        ['label' => 'Categorías', 'url' => ['/categorias/index']],
+                        ['label' => 'Editorial','url'=> ['/editorial/index']],
+                        ['label' => 'Temas','url' => ['/temas/index']],
+                ],
+            ],
+            //End Menu Libros
             //Begin Menu Alumnos
             ['label' => 'Alumnos',
                 'items' => [
                     ['label' => 'Ingresar', 'url' => ['/alumnos/ingresaalu']],
                     ['label' => 'Consultar',
                         'items' => [
-                           ['label' => 'Por Curso','url' => ['/alumnos/aluxcurso']],
+                           ['label' => 'Por Curso','url' => ['/alumnos/cursoalumnos']],
+                           ['label' => 'L. con Apoderados','url'=>['/alumnos/listadoalumnosapos']],
                         ]],
                     ['label' => 'Modificar',
                         'items' => [
                             ['label' => 'Asignar curso', 'url' => ['/alumnos/asignar']],
-                            ['label' => 'Cambiar de Curso', 'url' => ['/alumnos/cambiocurso']],
+                            ['label' => 'Cambiar de Curso', 'url' => ['/alumnos/listacambiocurso']],
+                            ['label' => 'Asignar Apoderados', 'url' => ['/alumnos/relacionapos']],
+                            ['label' => 'Promoción','url' => ['/alumnos/listapromocion']],
                             ['label' => 'Datos', 'url' => ['#']],
                         ],
                     ],

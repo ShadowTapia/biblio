@@ -24,17 +24,33 @@ class FormSelectPivot extends model
     public function rules()
     {
        return [
+            ['idCurso','required','message'=>'Campo requerido'],
             [['idApo', 'idano', 'idCurso'], 'integer'],
             [['idalumno', 'idpivote'], 'string', 'max' => 15],
             [['motivo'], 'string', 'max' => 50],
-            [['idpivote'], 'unique'],
+            //[['idpivote'], 'unique'],
             //[['idalumno'], 'exist', 'skipOnError' => true, 'targetClass' => Alumnos::className(), 'targetAttribute' => ['idalumno' => 'idalumno']],
 //            [['idano'], 'exist', 'skipOnError' => true, 'targetClass' => Anos::className(), 'targetAttribute' => ['idano' => 'idano']],
 //            [['idApo'], 'exist', 'skipOnError' => true, 'targetClass' => Apoderados::className(), 'targetAttribute' => ['idApo' => 'idApo']],
 //            [['idCurso'], 'exist', 'skipOnError' => true, 'targetClass' => Cursos::className(), 'targetAttribute' => ['idCurso' => 'idCurso']],
        ];
     }
-    
+    /**
+     * {@inheritdoc}
+     */
+    public function attributeLabels()
+    {
+        return [
+            'idApo' => 'Id Apo',
+            'idalumno' => 'Idalumno',
+            'idano' => 'Idano',
+            'motivo' => 'Motivo',
+            'idCurso' => 'Curso',
+            'idpivote' => 'Idpivote',
+        ];
+    }
+
+
     
 }
 

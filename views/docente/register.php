@@ -5,10 +5,11 @@
  * @copyright 2019
  */
 
-use app\models\Comunas;
-use app\models\Provincias;
+
 use app\models\Regiones;
+use kartik\depdrop\DepDrop;
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use yii\widgets\MaskedInput;
 
@@ -41,7 +42,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
     <div class="row">
         <div class="col-xs-2">
-            <?= $form->field($model, "telefono")->input("text",['style'=>'width:100%'])->label('Telefono') ?>
+            <?= $form->field($model, "telefono")->input("text",['style'=>'width:100%'])->label('Teléfono') ?>
         </div>
         <div class="col-sm-6">
             <?= $form->field($model, "calle")->input("text",['style'=>'width:100%'])->label('Dirección') ?>
@@ -62,21 +63,30 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
         <div class="col-xs-4">
             <?= $form->field($model,"codRegion")->dropDownList(Regiones::getListRegiones(),        
-                ['class' => 'form-control', 'style'=>'width:100%;','prompt'=>'Seleccione Región','onchange' =>
-                    '$.post("listprovi?id= " +$(this).val(),function( data ) { 
-                            $("select#idProvincia").html( data );
-                    });'])->label('Regiones*') ?>
+                ['class' => 'form-control', 'style'=>'width:100%;','prompt'=>'Seleccione Región',
+                    'id'=>'codRegion'])->label('Regiones*') ?>
         </div>
         <div class="col-xs-3">
-            <?= $form->field($model,"idProvincia")->dropDownList(Provincias::dropdown(),
-                ['style' => 'width:100%;','prompt'=> 'Seleccione Provincia','id'=>'idProvincia','onchange' =>
-                    '$.post("listcomu?id= " +$(this).val(),function( data ) {
-                            $("select#codComuna").html( data );
-                            });'])->label('Provincia*') ?>
+            <?= $form->field($model,"idProvincia")->widget(DepDrop::className(),[
+                    'options'=>['id'=>'idProvincia','style' => 'width:100%;','prompt'=> 'Seleccione Provincia'],
+                    'pluginOptions'=>[
+                        'depends'=>['codRegion'],
+                        'placeholder'=>'Seleccione Provincia',
+                        'url'=>Url::to(['apoderados/lista_provincia']),
+                        'loadingText' => 'Cargando Provincias...',
+                    ]
+            ])->label('Provincia*') ?>
         </div>
         <div class="col-xs-3">
-            <?= $form->field($model,"codComuna")->dropDownList(Comunas::combobx(),
-                ['style' => 'width:80%;','prompt' => 'Seleccione Comuna','id' => 'codComuna'])->label('Comuna*') ?>
+            <?= $form->field($model,"codComuna")->widget(DepDrop::className(),[
+                    'options'=>['style' => 'width:80%;','prompt' => 'Seleccione Comuna','id' => 'codComuna'],
+                    'pluginOptions'=>[
+                            'depends'=>['idProvincia'],
+                            'placeholder'=>'Seleccione Comuna',
+                            'url'=>Url::to(['apoderados/listcomu']),
+                            'loadingText' => 'Cargando Comunas...',
+                    ]
+            ])->label('Comuna*') ?>
         </div>
     </div>
     <div class="row">

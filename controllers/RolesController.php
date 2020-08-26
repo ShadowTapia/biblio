@@ -30,7 +30,7 @@ class RolesController extends Controller
     {
         $model = new FormRoles;
         
-        //validaci�n mediante ajax
+        //validación mediante ajax
         if ($model->load(Yii::$app->request->post()) && Yii::$app->request->isAjax) {
             Yii::$app->response->format = Response::FORMAT_JSON;
             return ActiveForm::validate($model);
@@ -52,23 +52,12 @@ class RolesController extends Controller
                         //limpiamos los campos del formulario
                         $model->nombre = null;
                         $model->descripcion = null;
-                        \raoul2000\widget\pnotify\PNotify::widget([
-		                  'pluginOptions' => [
-			                 'title' => utf8_encode('Roles'),
-			                 'text' => utf8_encode('Se ha creado correctamente el <b>Rol</b>.-.') ,
-                             'type' => 'info',
-		                      ]
-	                       ]);
-                           echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("roles/index") .
-                            "'>";
+
+                        Yii::$app->session->setFlash('success', 'Se ha creado correctamente el <b>Rol</b>.-.');
+
                     }else{
-                         \raoul2000\widget\pnotify\PNotify::widget([
-		                  'pluginOptions' => [
-                            'title' => 'Error',
-                            'text' => utf8_encode('Ocurrio un error, al ingresar un <b>Rol</b>.-') ,
-                            'type' => 'error',
-		                      ]
-	                       ]);
+                        Yii::$app->session->setFlash('error', 'Ocurrio un error, al ingresar un <b>Rol</b>.-');
+
                     }
                 }
                  catch (\Exception $e) {
@@ -80,11 +69,16 @@ class RolesController extends Controller
                     $transaction->rollBack();
                     throw $e;
                 }
+                return $this->redirect(['index']);
             }else{
                 $model->getErrors();
             }
         }
-        return $this->render('crearroles',["model" => $model]);
+        else
+        {
+            return $this->renderAjax('crearroles',["model" => $model]);
+        }
+
     }
     /**
      * 

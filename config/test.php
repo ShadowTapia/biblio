@@ -20,6 +20,7 @@ return [
         ],
         'assetManager' => [
             'basePath' => __DIR__ . '/../web/assets',
+            'forceCopy' => true,
         ],
         'urlManager' => [
             'showScriptName' => true,

@@ -13,13 +13,13 @@ use app\models\docente\FormRegister;
 use app\models\docente\FormUpdateDocente;
 use app\models\Provincias;
 use kartik\mpdf\Pdf;
+use raoul2000\widget\pnotify\PNotify;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
-
 
 class DocenteController extends Controller
 {
@@ -111,14 +111,14 @@ class DocenteController extends Controller
                         $model->telefono = null;
                         $model->email = null;
 
-                        \raoul2000\widget\pnotify\PNotify::widget(['pluginOptions' => ['title' =>
+                        PNotify::widget(['pluginOptions' => ['title' =>
                             'Ingreso', 'text' => 'Se ha ingresado correctamente un nuevo <b>Docente</b>.',
                             'type' => 'info', ]]);
                         echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("docente/indexdocente") .
                             "'>";
                     } else {
                         $transaction->rollBack();
-                        \raoul2000\widget\pnotify\PNotify::widget(['pluginOptions' => ['title' =>
+                        PNotify::widget(['pluginOptions' => ['title' =>
                             'Error', 'text' => 'Se ha producido un error al querer ingresar este <b>Docente</b>.',
                             'type' => 'error', ]]);
                     }
@@ -149,7 +149,7 @@ class DocenteController extends Controller
 
         $table = new Docente;
 
-        //validaci�n mediante ajax
+        //validación mediante ajax
         if ($model->load(Yii::$app->request->post()) && Yii::$app->request->isAjax) {
             Yii::$app->response->format = Response::FORMAT_JSON;
             return ActiveForm::validate($model);
@@ -176,14 +176,14 @@ class DocenteController extends Controller
                         $table->email = $model->email;
                         if ($table->update()) {
                             $transaction->commit();
-                            \raoul2000\widget\pnotify\PNotify::widget(['pluginOptions' => ['title' =>
+                            PNotify::widget(['pluginOptions' => ['title' =>
                                 'Docente', 'text' => 'El docente se ha actualizado exitosamente.-', 'type' =>
                                 'success', ]]);
                             echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("docente/indexdocente") .
                                 "'>";
                         } else {
                             $transaction->rollBack();
-                            \raoul2000\widget\pnotify\PNotify::widget(['pluginOptions' => ['title' =>
+                            PNotify::widget(['pluginOptions' => ['title' =>
                                 'Docente', 'text' => 'No se ha actualizado el docente.-', 'type' => 'error', ]]);
                         }
                     }

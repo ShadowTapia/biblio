@@ -59,6 +59,20 @@ class Comunas extends ActiveRecord
     {
         return $this->codRegion0->region;
     }
+
+    /**
+     * @param $id
+     * @return $this
+     */
+    public static function getComunalist($idProvincia)
+    {
+        $subComunas = self::find()
+                        ->select(['codComuna as id','Comuna as name'])
+                        ->where(['idProvincia' => $idProvincia])
+                        ->asArray()
+                        ->all();
+        return $subComunas;
+    }
     
     /**
      * 

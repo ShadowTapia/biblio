@@ -37,10 +37,10 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
     <div class="row">
         <div class="col-sm-5">
-            <?= $form->field($model, "calle")->input("text",['style'=>'width:100%'])->label(utf8_encode('Direcciï¿½n')) ?>
+            <?= $form->field($model, "calle")->input("text",['style'=>'width:100%'])->label(utf8_encode('Dirección')) ?>
         </div>
         <div class="col-xs-2">
-            <?= $form->field($model, "numero")->input("text",['style'=>'width:70%'])->label(utf8_encode('Nï¿½mero')) ?>
+            <?= $form->field($model, "numero")->input("text",['style'=>'width:70%'])->label(utf8_encode('Número')) ?>
         </div>
         <div class="col-xs-1">
             <?= $form->field($model, "depto")->input("text",['style'=>'width:70%'])->label(utf8_encode('Depto.')) ?>        
@@ -55,7 +55,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="row">
         <div class="col-xs-4">
             <?= $form->field($model,"codRegion")->dropDownList(Regiones::getListRegiones(),        
-                ['class' => 'form-control', 'style'=>'width:100%;','prompt'=>utf8_encode('Seleccione Regiï¿½n'),'onchange' => 
+                ['class' => 'form-control', 'style'=>'width:100%;','prompt'=>utf8_encode('Seleccione Región'),'onchange' =>
                     '$.post("listprovi?id= " +$(this).val(),function( data ) { 
                             $("select#idProvincia").html( data );
                     });'])->label('Regiones*') ?>

@@ -17,7 +17,7 @@ class FormRoles extends model
     {
         return [
             [['nombre'],'required','message' => 'Campo requerido'],
-            [['nombre','descripcion'],'match','pattern' => "/^([a-zA-Zñ-Ñ\u00f1\u00d1\u00E0-\u00FC])\w+/", 'message' => 'Sólo se aceptan letras'],
+            [['nombre','descripcion'],'string'],
         ];
     }
 }

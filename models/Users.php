@@ -65,4 +65,5 @@ class Users extends \yii\db\ActiveRecord
     {
         return $this->roles->nombre;
     }
+
 }

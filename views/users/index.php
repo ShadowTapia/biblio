@@ -1,30 +1,40 @@
 <?php
 
-/**
- * @author Marcelo
- * @copyright 2019
- */
-
 use yii\grid\GridView;
 use yii\helpers\Html;
+use yii\widgets\Pjax;
 
-$this->title='Administrar Usuarios';
+/* @var $this yii\web\View */
+/* @var $searchModel app\models\SearchUsers */
+/* @var $dataProvider yii\data\ActiveDataProvider */
+
+$this->title = 'Administrar Usuarios';
 $this->params['breadcrumbs'][] = $this->title;
-
 ?>
+<div class="users-index">
 
-<h1><?= Html::encode($this->title) ?></h1>
+    <h1><?= Html::encode($this->title) ?></h1>
 
-<p>
+    <p>
         <?= Html::a('Nuevo Usuario', ['register'], ['class' => 'btn btn-success']) ?>
-</p>
+    </p>
 
-<div class="grid-view">
+    <?php Pjax::begin(); ?>
+    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'emptyCell' => '-', 
-        'summary' => "",
-        'tableOptions' => ['class' => 'table table-bordered table-hover'],
+        'filterModel' => $searchModel,
+        'rowOptions' => function($model){
+            if($model->activate == '1')
+            {
+                return ['class' => 'info'];
+            }
+            else
+            {
+                return ['class' => 'danger'];
+            }
+        },
         'columns' => [
             [
                 'class' => 'yii\grid\SerialColumn',
@@ -63,6 +73,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     return ($model->activate === '1')? 'Activo':'Inactivo';
                 }
             ],
+            //'UserRut',
+            //'UserMail',
+            //'authkey',
+            //'accessToken',
+            //'activate',
+            //'verification_code',
+
             [
                 'class' => 'yii\grid\ActionColumn',
                 'header' => 'Acciones',
@@ -71,33 +88,34 @@ $this->params['breadcrumbs'][] = $this->title;
                 'buttons' => [
                     'view' => function($url,$model){
                         return Html::a('<span class="glyphicon glyphicon-refresh"></span>',['uppass','id' => $model->idUser],
-                        [   'class' => 'btn btn-circle btn-success',
-                            'title' => 'Resetear contraseña',
-                            'data' => [
-                                'confirm' => utf8_encode('Desea resetear la contrase�a de ' . $model->UserName . ' ' . $model->UserLastName . '?'),
-                                'method' => 'post',
-                            ],
-                        ]);  
+                            [   'class' => 'btn btn-circle btn-success',
+                                'title' => 'Resetear contraseña',
+                                'data' => [
+                                    'confirm' => 'Desea resetear la contraseña de ' . $model->UserName . ' ' . $model->UserLastName . '?',
+                                    'method' => 'post',
+                                ],
+                            ]);
                     },
                     'update' => function ($url,$model){
                         return Html::a("<span class='glyphicon glyphicon-pencil'></span>",[
-                            'updateuser','id' => $model->idUser],['class' => 'btn btn-circle btn-primary','title' => 'Actualizar']);                        
+                            'updateuser','id' => $model->idUser],['class' => 'btn btn-circle btn-primary','title' => 'Actualizar']);
                     },
                     'delete' => function ($url,$model){
                         return Html::a('<span class="glyphicon glyphicon-trash"></span>',['delete','id' => $model->idUser],
-                        [   'class' => 'btn btn-circle btn-danger',
-                            'title' => 'Borrar Usuario',
-                            'data-toggle' => 'tooltip',                            
-                            'data' => [
-                                'confirm' => 'Estas seguro de borrar al Usuario ' . utf8_encode($model->UserName) . ' ' . utf8_encode($model->UserLastName) . '?',
-                                'method' => 'post',
-                            ],
-                        ]);
+                            [   'class' => 'btn btn-circle btn-danger',
+                                'title' => 'Borrar Usuario',
+                                'data-toggle' => 'tooltip',
+                                'data' => [
+                                    'confirm' => 'Estas seguro de borrar al Usuario ' . $model->UserName . ' ' . $model->UserLastName . '?',
+                                    'method' => 'post',
+                                ],
+                            ]);
                     },
                 ],
             ],
-        ]
-    ])
-        
-     ?>
+        ],
+    ]); ?>
+
+    <?php Pjax::end(); ?>
+
 </div>

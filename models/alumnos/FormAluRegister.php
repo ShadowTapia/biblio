@@ -35,13 +35,21 @@ class FormAluRegister extends model
     public function rules()
     {
         return [
-            [['rutalumno','sexo','nombrealu','paternoalu','maternoalu','fechanac'],'required','message'=>'Campo requerido'],
+            [['codRegion', 'idProvincia', 'codComuna'], 'integer'],
+            [['rutalumno','nombrealu','paternoalu','maternoalu','fechanac'],'required','message'=>'Campo requerido'],
             ['rutalumno','validarRut'],
-            [['digrut'],'string','max'=>1],
-            ['nombrealu','match','pattern'=>"/^.{3,50}$/",'message'=>'Mínimo 3 y máximo 50 caracteres'],
-            [['paternoalu','maternoalu'],'match','pattern'=>"/^.{3,20}$/",'message'=>'Mínimo 3 y máximo 20 caracteres'],
-            [['nombrealu','paternoalu','maternoalu'],'match','pattern' => "/^([a-zA-Zñ-Ñ\u00f1\u00d1\u00E0-\u00FC])\w+/",'message'=>'Sólo se aceptan letras'],
-            ['email','match','pattern'=>"/^.{5,150}$/",'message'=>'Mínimo 5 y máximo 150 caracteres'],
+            [['digrut','nacionalidad'],'string','max'=> 1],
+            ['nombrealu','string','length'=>[3,50],'message'=>'Mínimo 3 y máximo 50 caracteres'],
+            [['fechanac','fechaing'], 'date','format' => 'dd-MM-yyyy'],
+            [['fechanac','fechaing'],'safe'],
+            [['fechanac','fechaing'],'default','value'=>null],
+            [['paternoalu','maternoalu'],'string','length'=> [3,20],'message'=>'Mínimo 3 y máximo 20 caracteres'],
+            ['calle', 'string','max'=>80],
+            [['nro','depto'],'string','max'=>8],
+            ['block','string','max'=>5 ],
+            ['villa','string','max'=>25],
+            [['fono'], 'string', 'max' => 25],
+            ['email','filter','filter'=>'trim'],
             ['email','email','message'=>'Formato no válido'],
             ['email','email_existe'],
         ];
@@ -58,7 +66,7 @@ class FormAluRegister extends model
         //Si el email existe mostrar el error
         if($table->count()==1)
         {
-            $this->addError($attribute,"El email ingresado existe.-");
+            $this->addError($attribute,"El email ingresado ya existe.-");
         }
     }
 

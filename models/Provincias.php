@@ -55,12 +55,17 @@ class Provincias extends \yii\db\ActiveRecord
     {
         return $this->codRegion0->region;
     }
-    
-    public function getProvinciaList($codRegion)
+
+    /**
+     * @param $codRegion
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    public static function getProvinciaList($codRegion)
     {
         $subProvincias = self::find()
-                        ->select(['idProvincia','Provincia'])
-                        ->where(['codRegion' => $codRegion])                        
+                        ->select(['idProvincia as id','Provincia as name'])
+                        ->where(['codRegion' => $codRegion])
+                        ->asArray()
                         ->all();
         
         return $subProvincias;

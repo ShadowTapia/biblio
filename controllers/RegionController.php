@@ -181,7 +181,7 @@ class RegionController extends Controller
             $table2 = Provincias::find()->where("codRegion=:codRegion", [":codRegion" => $id]);
             //Si existen provincias asociadas lanzamos la advertencia
             if($table2->count()>0){
-                Yii::$app->session->setFlash('error', utf8_encode('Ocurrio un error, existen provincias asociadas a esta regi�n.-'));
+                Yii::$app->session->setFlash('error', 'Ocurrio un error, existen provincias asociadas a esta región.-');
                 echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("region/create") .
                     "'>";
             } else {
@@ -192,12 +192,12 @@ class RegionController extends Controller
                 try {
                     if ($table::deleteAll("codRegion=:codRegion", [":codRegion" => $id])) {
                         $transaction->commit();
-                        Yii::$app->session->setFlash('success', utf8_encode('Se ha borrado correctamente la Regi�n.-'));
+                        Yii::$app->session->setFlash('success', 'Se ha borrado correctamente la Región.-');
                         echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("region/create") .
                             "'>";
                     } else {
                         $transaction->rollBack();
-                        Yii::$app->session->setFlash('error', utf8_encode('Ocurrio un error, no se borro la Regi�n.-'));
+                        Yii::$app->session->setFlash('error', 'Ocurrio un error, no se borro la Región.-');
                         echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("region/create") .
                             "'>";
                     }

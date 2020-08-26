@@ -1,7 +1,11 @@
 <?php
 /* @var $this yii\web\View */
+
+use yii\bootstrap\Modal;
 use yii\grid\GridView;
 use yii\helpers\Html;
+use yii\helpers\Url;
+use yii\widgets\Pjax;
 
 $this->title='Administrar Roles';
 $this->params['breadcrumbs'][] = $this->title;
@@ -10,9 +14,19 @@ $this->params['breadcrumbs'][] = $this->title;
 <h1><?= Html::encode($this->title) ?></h1>
 
 <p>
-    <?= Html::a(Yii::t('app','Crear Roles',['modelClass' => 'roles',]),['crearroles'],['class'=>'btn btn-success']) ?>
+    <?= Html::button('Crear Roles',['value' => Url::to('crearroles'), 'class'=>'btn btn-success', 'id' => 'modalButton']) ?>
 </p>
+<?php
+    Modal::begin([
+            'header' => '<h4>Roles</h4>',
+            'id' => 'modal',
+            'size' => 'modal-lg',
+    ]);
+    echo "<div id='modalContent'></div>";
 
+    Modal::end();
+?>
+<?php Pjax::begin(['id' => 'pjax-container']); ?>
 <div class="grid-view">
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -57,5 +71,6 @@ $this->params['breadcrumbs'][] = $this->title;
         ]
     ]) ?>
 </div>
+<?php Pjax::end(); ?>
 
 

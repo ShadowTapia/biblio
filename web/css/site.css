@@ -116,3 +116,7 @@ a.desc:after {
     outline: none;
 }
 
+.label-class{
+    font-size: large;
+}
+

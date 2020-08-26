@@ -30,7 +30,7 @@ namespace app\models\alumnos;
  * @property Comunas $codComuna0
  * @property Provincias $idProvincia0
  * @property Regiones $codRegion0
- * @property Apoderados[] $apoderados
+ * @property Apoderados $apoderados
  * @property Pivot[] $pivots
  */
 
@@ -137,12 +137,29 @@ class Alumnos extends \yii\db\ActiveRecord
         return $this->hasMany(Apoderados::className(), ['rutalumno' => 'rutalumno']);
     }
 
+
     /**
      * @return \yii\db\ActiveQuery
      */
     public function getPivots()
     {
         return $this->hasMany(Pivot::className(), ['idalumno' => 'idalumno']);
+    }
+
+    /**
+     * @param $idCurso
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    public static function getAlumnosporcurso($idCurso)
+    {
+        $comboAlumnos = self::find()
+                        ->select(['alumnos.rutalumno as id','alumnos.nombrealu as name'])
+                        ->joinWith(['pivots pi'])
+                        ->where(['pi.idCurso'=>$idCurso])
+                        ->andWhere(['pi.idano'=>\Yii::$app->session->get('anoActivo')])
+                        ->asArray()
+                        ->all();
+        return $comboAlumnos;
     }
 
     /**
