@@ -6,9 +6,13 @@
  */
 
 namespace app\models;
-use yii\base\model;
+use yii\base\Model;
 
-class FormRoles extends model
+/**
+ * Class FormRoles
+ * @package app\models
+ */
+class FormRoles extends Model
 {
     public $nombre;
     public $descripcion;

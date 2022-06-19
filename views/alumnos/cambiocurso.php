@@ -11,7 +11,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 
-$this->title = 'Cambio de curso';
+$this->title = 'Cambio de curso para alumno(a) ' . $name;
 $this->params['breadcrumbs'][] = ['label'=>'Listado de alumnos para cambio de curso.-','url'=>['alumnos/listacambiocurso']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>

@@ -13,6 +13,7 @@ use yii\filters\VerbFilter;
 use yii\web\UploadedFile;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
+use yii\filters\AccessControl;
 
 
 /**
@@ -26,8 +27,17 @@ class LibrosController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@']
+                    ]
+                ]
+            ],
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
                 ],
@@ -50,6 +60,17 @@ class LibrosController extends Controller
         ]);
     }
 
+    public function actionConsulta()
+    {
+        $searchModel = new LibrosSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('consulta',[
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
     /**
      * Displays a single Libros model.
      * @param string $id
@@ -64,9 +85,9 @@ class LibrosController extends Controller
     }
 
     /**
-     * Creates a new Libros model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
+     * @return array|string
+     * @throws \Exception
+     * @throws \Throwable
      */
     public function actionCreate()
     {
@@ -108,12 +129,13 @@ class LibrosController extends Controller
                     if($table->insert())
                     {
                         $transaction->commit();
-                        return $this->redirect(['libros/index']);
+                        \Yii::$app->session->setFlash('success','El Libro se ha ingresado exitosamente.-');
 
                     }else{
                         $transaction->rollBack();
-                        return $this->redirect(['libros/index']);
+                        \Yii::$app->session->setFlash('error','Error No se ha ingresado el Libro.-');
                     }
+                    return $this->redirect(['libros/index']);
                 }
                 catch (\Exception $e)
                 {
@@ -135,11 +157,10 @@ class LibrosController extends Controller
     }
 
     /**
-     * Updates an existing Libros model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param string $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return array|string
+     * @throws \Exception
+     * @throws \Throwable
      */
     public function actionUpdate($id)
     {
@@ -177,13 +198,12 @@ class LibrosController extends Controller
                         if($table->update())
                         {
                             $transaction->commit();
-                            Yii::$app->session->setFlash('success','El Libro se ha actualizado exitosamente.-');
-                            return $this->redirect(['libros/index']);
+                            \Yii::$app->session->setFlash('success','El Libro se ha actualizado exitosamente.-');
                         }else{
                             $transaction->rollBack();
-                            Yii::$app->session->setFlash('error','No se ha actualizado el Libro.-');
-                            return $this->redirect(['libros/index']);
+                            \Yii::$app->session->setFlash('error','No se ha actualizado el Libro.-');
                         }
+                        return $this->redirect(['libros/index']);
                     }
                 }
                 catch (\Exception $e) {
@@ -222,20 +242,18 @@ class LibrosController extends Controller
     }
 
     /**
-     * Deletes an existing Libros model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param string $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return Response
+     * @throws \Exception
+     * @throws \Throwable
      */
     public function actionDelete($id)
     {
         //Se debe verificar la existencia de ejemplares asociados
-        $tableEjemplar = new Ejemplar();
         $tableEjemplar = Ejemplar::find()->where("idLibros=:idLibros",[":idLibros" => $id]);
         if ($tableEjemplar->count()>0)
         {
-            Yii::$app->session->setFlash('error', 'Ocurrió un error, existen ejemplares asociadas a este Libro.-');
+            \Yii::$app->session->setFlash('error', 'Ocurrió un error, existen ejemplares asociadas a este Libro.-');
             return $this->redirect(['index']);
         }else{
             $table = new Libros();
@@ -245,10 +263,10 @@ class LibrosController extends Controller
                 if ($table->deleteAll("idLibros=:idLibros",[":idLibros" => $id]))
                 {
                     $transaction->commit();
-                    Yii::$app->session->setFlash('success', 'Se ha borrado correctamente el Libro '. $table->titulo);
+                    \Yii::$app->session->setFlash('success', 'Se ha borrado correctamente el Libro '. $table->titulo);
                 }else{
                     $transaction->rollBack();
-                    Yii::$app->session->setFlash('error', 'Ocurrió un error, no se borro el Libro.-');
+                    \Yii::$app->session->setFlash('error', 'Ocurrió un error, no se borro el Libro.-');
                 }
             }
             catch (\Exception $e) {

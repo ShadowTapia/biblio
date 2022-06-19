@@ -13,16 +13,43 @@ use app\models\docente\FormRegister;
 use app\models\docente\FormUpdateDocente;
 use app\models\Provincias;
 use kartik\mpdf\Pdf;
-use raoul2000\widget\pnotify\PNotify;
 use Yii;
 use yii\data\ActiveDataProvider;
-use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
-
+use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
+/**
+ * Class DocenteController
+ * @package app\controllers
+ */
 class DocenteController extends Controller
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@']
+                    ]
+                ]
+            ],
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'delete' => ['POST'],
+                ],
+            ],
+        ];
+    }
+
     public function actionIndexdocente()
     {
         $dataProvider = new ActiveDataProvider(['query' => Docente::find()]);
@@ -43,11 +70,11 @@ class DocenteController extends Controller
                 $profes[] = $teachers;
             }
         }
-
-        require_once Yii::$app->basePath . '\views\reporte\listadoprofe.php';
+        require_once  ('/home/kingstownschoolc/biblio.kingstownschool.cl/biblio/views/reporte/listadoprofe.php');
+        //require_once Yii::$app->basePath . '\views\reporte\listadoprofe.php';
         $plantilla = getPlantilla($profes);
         $content = $plantilla;
-        Yii::$app->response->format = \yii\web\Response::FORMAT_RAW;
+        Yii::$app->response->format = Response::FORMAT_RAW;
         $pdf = new Pdf(['mode' => Pdf::MODE_UTF8, // leaner size using standard fonts
             'format' => Pdf::FORMAT_FOLIO, 'destination' => Pdf::DEST_BROWSER, 'content' =>
             $content, 'cssFile' => '@vendor/kartik-v/yii2-mpdf/src/assets/kv-docente.css',
@@ -68,7 +95,7 @@ class DocenteController extends Controller
     public function actionRegister()
     {
         $model = new FormRegister;
-        //Validaci�n mediante ajax
+        //Validación mediante ajax
         if ($model->load(Yii::$app->request->post()) && Yii::$app->request->isAjax) {
             Yii::$app->response->format = Response::FORMAT_JSON;
             return ActiveForm::validate($model);
@@ -110,18 +137,12 @@ class DocenteController extends Controller
                         $model->villa = null;
                         $model->telefono = null;
                         $model->email = null;
-
-                        PNotify::widget(['pluginOptions' => ['title' =>
-                            'Ingreso', 'text' => 'Se ha ingresado correctamente un nuevo <b>Docente</b>.',
-                            'type' => 'info', ]]);
-                        echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("docente/indexdocente") .
-                            "'>";
+                        \Yii::$app->session->setFlash('success','Se ha ingresado correctamente un nuevo Docente.');
                     } else {
                         $transaction->rollBack();
-                        PNotify::widget(['pluginOptions' => ['title' =>
-                            'Error', 'text' => 'Se ha producido un error al querer ingresar este <b>Docente</b>.',
-                            'type' => 'error', ]]);
+                        \Yii::$app->session->setFlash('error','Se ha producido un error al querer ingresar este Docente.');
                     }
+                    return $this->redirect(['docente/indexdocente']);
                 }
                 catch (\Exception $e) {
                     $transaction->rollBack();
@@ -139,9 +160,10 @@ class DocenteController extends Controller
     }
 
     /**
-     * 
-     * Se encarga de actualizar un docente
-     * 
+     * @param $id
+     * @return array|string
+     * @throws \Exception
+     * @throws \Throwable
      */
     public function actionUpdateprofe($id)
     {
@@ -176,16 +198,12 @@ class DocenteController extends Controller
                         $table->email = $model->email;
                         if ($table->update()) {
                             $transaction->commit();
-                            PNotify::widget(['pluginOptions' => ['title' =>
-                                'Docente', 'text' => 'El docente se ha actualizado exitosamente.-', 'type' =>
-                                'success', ]]);
-                            echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("docente/indexdocente") .
-                                "'>";
+                            \Yii::$app->session->setFlash('success','El docente se ha actualizado exitosamente.-');
                         } else {
                             $transaction->rollBack();
-                            PNotify::widget(['pluginOptions' => ['title' =>
-                                'Docente', 'text' => 'No se ha actualizado el docente.-', 'type' => 'error', ]]);
+                            \Yii::$app->session->setFlash('error','No se ha actualizado el docente.-');
                         }
+                        return $this->redirect(['docente/indexdocente']);
                     }
                 }
                 catch (\Exception $e) {
@@ -221,8 +239,8 @@ class DocenteController extends Controller
     }
 
     /**
-     * 
-     * Se encarga de devolver el Run sin puntos ejemplo:12.345.678-0 a 12345678
+     * @param $run
+     * @return mixed
      */
     private function quitarStringless($run)
     {
@@ -232,9 +250,8 @@ class DocenteController extends Controller
     }
 
     /**
-     * 
-     * Se encarga de devolver el d�gito verificador del Run
-     *  
+     * @param $run
+     * @return string
      */
     private function devolverDigito($run)
     {
@@ -245,26 +262,23 @@ class DocenteController extends Controller
     }
 
     /**
-     * 
-     * Se encarga de borrar un docente
-     * 
+     * @param $id
+     * @return Response
+     * @throws \Exception
+     * @throws \Throwable
      */
     public function actionDelete($id)
     {
         if ($id != null) {
             $table = new Docente;
-            $transaction = $table->getDb()->beginTransaction();
+            $transaction = $table::getDb()->beginTransaction();
             try {
                 if ($table::deleteAll("rutdocente=:rutdocente", [":rutdocente" => $id])) {
                     $transaction->commit();
-                    Yii::$app->session->setFlash('success', utf8_encode('Se ha borrado correctamente el Docente.-'));
-                    echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("docente/indexdocente") .
-                        "'>";
+                    \Yii::$app->session->setFlash('success', 'Se ha borrado correctamente el Docente.-');
                 } else {
                     $transaction->rollBack();
-                    Yii::$app->session->setFlash('error', utf8_encode('Ocurrio un error, no se borro el Docente.-'));
-                    echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("docente/indexdocente") .
-                        "'>";
+                    \Yii::$app->session->setFlash('error', 'Ocurrió un error, no se borro el Docente.-');
                 }
             }
             catch (\Exception $e) {
@@ -276,12 +290,11 @@ class DocenteController extends Controller
                 throw $e;
             }
         }
+        return $this->redirect(['docente/indexdocente']);
     }
 
     /**
-     * 
-     * Listado de provincias a partir de del id de region
-     * 
+     * @param $id
      */
     public function actionListprovi($id)
     {
@@ -301,8 +314,7 @@ class DocenteController extends Controller
     }
 
     /**
-     * 
-     * Listado de comunas por id de Provincia
+     * @param $id
      */
     public function actionListcomu($id)
     {

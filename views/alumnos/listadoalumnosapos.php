@@ -35,7 +35,7 @@ $this->registerJs(
 <div class="alumnos-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
-
+    <h6>*No incluye alumnos retirados</h6>
     <!-- Genera el formulario de consulta -->
     <?= $this->render('_form',['model' => $model,]) ?>
 
@@ -144,6 +144,8 @@ $this->registerJs(
                     'footer' => false
             ]
         ]); ?>
+
+        <?php Pjax::end(); ?>
     </div>
 
 </div>

@@ -4,7 +4,6 @@ namespace app\models\libros;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\libros\Libros;
 use app\models\autor\Autor;
 
 /**

@@ -7,6 +7,7 @@ $(function(){
        $('#modal').modal('show').find('#modalContent').load($(this).attr('value'));
    });
 });
+
 function getParameterByName(name, url) {
     if (!url) url = window.location.href;
     name = name.replace(/[\[\]]/g, '\\$&');

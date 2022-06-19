@@ -8,11 +8,29 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
-$this->title= utf8_encode('Modificar Contraseña');
+$this->title= 'Modificar ContraseÃ±a';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-
-<h1><?= utf8_encode('Modificar contraseña')?></h1>
+<?= \lavrentiev\widgets\toastr\NotificationFlash::widget([
+    'options' => [
+        "closeButton" => true,
+        "debug" => false,
+        "newestOnTop" => false,
+        "progressBar" => false,
+        "positionClass" => \lavrentiev\widgets\toastr\NotificationFlash::POSITION_TOP_RIGHT,
+        "preventDuplicates" => false,
+        "onclick" => null,
+        "showDuration" => "300",
+        "hideDuration" => "1000",
+        "timeOut" => "5000",
+        "extendedTimeOut" => "1000",
+        "showEasing" => "swing",
+        "hideEasing" => "linear",
+        "showMethod" => "fadeIn",
+        "hideMethod" => "fadeOut"
+    ]
+]) ?>
+<h1><?= $this->title ?></h1>
 
 <?php $form = ActiveForm::begin([
     'method' => 'post',
@@ -20,15 +38,15 @@ $this->params['breadcrumbs'][] = $this->title;
 ]);
 ?>
 <div class="form-group">
-    <?= $form->field($model,"password")->input("password",['style'=>'width:40%'])->label(utf8_encode('Antigua contraseña')) ?>
+    <?= $form->field($model,"password")->input("password",['style'=>'width:40%'])->label('Antigua contraseÃ±a') ?>
 </div>
 <div class="form-group">
-    <?= $form->field($model,"password_new")->input("password",['style'=>'width:40%'])->label(utf8_encode('Nueva contraseña')) ?>
+    <?= $form->field($model,"password_new")->input("password",['style'=>'width:40%'])->label('Nueva contraseÃ±a') ?>
 </div>
 <div class="form-group">
-    <?= $form->field($model,"password_repeat")->input("password",['style'=>'width:40%'])->label(utf8_encode('Repetir contraseña')) ?>
+    <?= $form->field($model,"password_repeat")->input("password",['style'=>'width:40%'])->label('Repetir contraseÃ±a') ?>
 </div>
 
-<?= Html::submitButton(utf8_encode('Cambiar contraseña'),['class'=>'btn btn-primary']) ?>
+<?= Html::submitButton('Cambiar contraseÃ±a',['class'=>'btn btn-primary']) ?>
 
 <?php $form->end() ?>

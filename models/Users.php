@@ -2,6 +2,10 @@
 
 namespace app\models;
 
+use yii\db\ActiveRecord;
+use app\models\alumnos\Alumnos;
+use app\models\prestamos\Prestamos;
+
 /**
  * This is the model class for table "users".
  *
@@ -10,16 +14,20 @@ namespace app\models;
  * @property string|null $UserLastName
  * @property string|null $UserPass
  * @property int|null $Idroles
- * @property int $UserRut
+ * @property int|null $UserRut
  * @property string|null $UserMail
  * @property string|null $authkey
  * @property string|null $accessToken
  * @property string|null $activate
  * @property string|null $verification_code
  *
- * @property Roles $roles
+ * @property Alumnos[] $alumnos
+ * @property Historico[] $historicos
+ * @property Prestamos[] $prestamos
+ * @property Reserva[] $reservas
+ * @property Roles $idroles
  */
-class Users extends \yii\db\ActiveRecord
+class Users extends ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -28,7 +36,26 @@ class Users extends \yii\db\ActiveRecord
     {
         return 'users';
     }
-    
+
+    /**
+     * {@inheritdoc}
+     */
+    public function rules()
+    {
+        return [
+            [['Idroles', 'UserRut'], 'integer'],
+            [['activate'], 'string'],
+            [['idUser'], 'string', 'max' => 15],
+            [['UserName', 'UserLastName'], 'string', 'max' => 45],
+            [['UserPass'], 'string', 'max' => 700],
+            [['UserMail'], 'string', 'max' => 150],
+            [['authkey', 'accessToken', 'verification_code'], 'string', 'max' => 255],
+            [['UserRut'], 'unique'],
+            [['idUser'], 'unique'],
+            [['Idroles'], 'exist', 'skipOnError' => true, 'targetClass' => Roles::class, 'targetAttribute' => ['Idroles' => 'idroles']],
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -50,20 +77,63 @@ class Users extends \yii\db\ActiveRecord
     }
 
     /**
+     * Gets query for [[Alumnos]].
+     *
      * @return \yii\db\ActiveQuery
      */
-    public function getRoles()
+    public function getAlumnos()
     {
-        return $this->hasOne(Roles::className(), ['idroles' => 'Idroles']);
-    }
-    
-    /**
-     * Obtiene el nombre de los roles asignados 
-     * 
-     */
-    public function getNombreRol()
-    {
-        return $this->roles->nombre;
+        return $this->hasMany(Alumnos::class, ['rutalumno' => 'UserRut']);
     }
 
+    /**
+     * Gets query for [[Historicos]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getHistoricos()
+    {
+        return $this->hasMany(Historico::class, ['idUser' => 'idUser']);
+    }
+
+    /**
+     * Gets query for [[Prestamos]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPrestamos()
+    {
+        return $this->hasMany(Prestamos::class, ['idUser' => 'idUser']);
+    }
+
+    /**
+     * Gets query for [[Reservas]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getReservas()
+    {
+        return $this->hasMany(Reserva::class, ['idUser' => 'idUser']);
+    }
+
+    /**
+     * Gets query for [[Idroles]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getIdroles()
+    {
+        return $this->hasOne(Roles::class, ['idroles' => 'Idroles']);
+    }
+
+    /**
+     * @return array
+     */
+    public static function getListafuncionarios()
+    {
+        return self::find()->select(['concat(UserLastName,SPACE(1),UserName) as name','UserRut as UserRut'])
+                ->where(['Idroles'=> '12'])
+                ->orWhere(['Idroles'=> '11'])
+                ->orderBy('UserLastName')->addOrderBy('UserName')->column();
+    }
 }

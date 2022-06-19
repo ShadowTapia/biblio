@@ -8,13 +8,42 @@ use app\models\Provincias;
 use app\models\Regiones;
 use Yii;
 use yii\data\ActiveDataProvider;
-use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
+use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 
+/**
+ * Class RegionController
+ * @package app\controllers
+ */
 class RegionController extends Controller
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@']
+                    ]
+                ]
+            ],
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'delete' => ['POST'],
+                ],
+            ],
+        ];
+    }
+
     /**
      * Se encarga de crear las regiones
      * 
@@ -45,26 +74,13 @@ class RegionController extends Controller
                         $model->codRegion = null;
                         $model->region = null;
                         $model->orden = null;
-                        \raoul2000\widget\pnotify\PNotify::widget([
-		                  'pluginOptions' => [
-			                 'title' => utf8_encode('Regi�n'),
-			                 'text' => utf8_encode('Se ha creado correctamente la <b>Regi�n</b>.-.') ,
-                             'type' => 'info',
-		                      ]
-	                       ]);
-                        //Yii::$app->session->setFlash('success', utf8_encode('Se ha creado una nueva Regi�n-'));
+
+                        \Yii::$app->session->setFlash('success', 'Se ha creado una nueva Región-');
                         //Redireccionamos a la p�gina origen
-                        echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("region/create") .
-                            "'>";
+                        return $this->redirect(['create']);
+
                     } else {
-                        \raoul2000\widget\pnotify\PNotify::widget([
-		                  'pluginOptions' => [
-			                 'title' => 'Error',
-			                 'text' => utf8_encode('Ocurrio un error, al ingresar una <b>Regi�n</b>.-') ,
-                             'type' => 'error',
-		                      ]
-	                       ]);
-                        //Yii::$app->session->setFlash('error', utf8_encode('Ocurrio un error, al ingresar una Regi�n.-'));
+                        \Yii::$app->session->setFlash('error', 'Ocurrio un error, al ingresar la Región.-');
                     }
                 }
                 catch (\Exception $e) {
@@ -81,15 +97,16 @@ class RegionController extends Controller
             }
         }
 
-        return $this->render('crearegiones', compact('model'));
+        return $this->renderAjax('crearegiones', compact('model'));
     }
-    
+
     /**
-     * 
-     * Se encarga de actualizar la regi�n seleccionada
-     * 
-     **/ 
-    public function actionUpdateregion($id)
+     * @param $idregion
+     * @return array|string
+     * @throws \Exception
+     * @throws \Throwable
+     */
+    public function actionUpdateregion($idregion)
     {
         $model = new FormUpdateRegiones;
         
@@ -106,35 +123,21 @@ class RegionController extends Controller
             if ($model->validate()){
                 $transaction = $table::getDb()->beginTransaction();
                 try{
-                    $table = Regiones::findOne(["codRegion" => $id]);
+                    $table = Regiones::findOne(["codRegion" => $idregion]);
                     if ($table){
                         $table->region = mb_strtoupper($model->region);
                         $table->orden = $model->orden;
                         if ($table->update())
                         {
                                $transaction->commit();
-                               \raoul2000\widget\pnotify\PNotify::widget([
-		                          'pluginOptions' => [
-                                  'title' => utf8_encode('Regi�n') ,
-			                      'text' => utf8_encode('Se ha actualizado correctamente la <b>Regi�n</b>.'),
-                                  'type' => 'info',
-		                          ]]);
-  
-                               //Yii::$app->session->setFlash('success', utf8_encode('La Regi�n fue cambiada exitosamente.-'));
-                            echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("region/create") .
-                                "'>"; 
+                               \Yii::$app->session->setFlash('success', 'Se ha actualizado correctamente la <b>Región</b>.');
+
                         } else {
-                                $transaction->rollBack();
-                               \raoul2000\widget\pnotify\PNotify::widget([
-		                             'pluginOptions' => [
-		                             'title' => utf8_encode('Regi�n'),
-			                         'text' => utf8_encode('La Regi�n no fue actualizada.') ,
-                                     'type' => 'error',
-		                          ]]);  
-                                //Yii::$app->session->setFlash('error', utf8_encode('La Regi�n no fue cambiada.-'));
-                            echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("region/create") .
-                                "'>";
+                               $transaction->rollBack();
+                               \Yii::$app->session->setFlash('error', 'La Región no fue cambiada.-');
+
                         }
+                        return $this->redirect('create');
                     }
                 }
                 catch (\Exception $e)
@@ -151,7 +154,7 @@ class RegionController extends Controller
                 $model->getErrors();  
             }
         } else {
-            $table = Regiones::findOne(["codRegion" => $id]);
+            $table = Regiones::findOne(["codRegion" => $idregion]);
             if ($table)
             {
                 $model->region = $table->region;
@@ -159,21 +162,26 @@ class RegionController extends Controller
             }   
         } 
         
-        return $this->render('updateregion',["model" => $model]);
+        return $this->render('updateregion',compact('model'));
     }
 
+    /**
+     * @return string
+     * Se encarga de poblar e mostrar el index de Regiones
+     */
     public function actionCreate()
     {
         $dataProvider = new ActiveDataProvider(['query' => Regiones::find(), ]);
         $dataProvider->sort->defaultOrder = ['orden' => SORT_ASC]; //Ordenamos el resultado de la consulta
         return $this->render('create',compact('dataProvider'));
     }
-    
+
     /**
-     * 
-     * Se encarga de eliminar una regi�n
-     * 
-     **/ 
+     * @param $id
+     * @return Response
+     * @throws \Exception
+     * @throws \Throwable
+     */
     public function actionRemove($id)
     {
         if ((int)$id) {
@@ -181,9 +189,10 @@ class RegionController extends Controller
             $table2 = Provincias::find()->where("codRegion=:codRegion", [":codRegion" => $id]);
             //Si existen provincias asociadas lanzamos la advertencia
             if($table2->count()>0){
-                Yii::$app->session->setFlash('error', 'Ocurrio un error, existen provincias asociadas a esta región.-');
-                echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("region/create") .
-                    "'>";
+                \Yii::$app->session->setFlash('error', 'Ocurrio un error, existen provincias asociadas a esta región.-');
+                return $this->redirect(['create']);
+                //echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("region/create") .
+                //    "'>";
             } else {
 
                 $table = new Regiones;
@@ -192,14 +201,14 @@ class RegionController extends Controller
                 try {
                     if ($table::deleteAll("codRegion=:codRegion", [":codRegion" => $id])) {
                         $transaction->commit();
-                        Yii::$app->session->setFlash('success', 'Se ha borrado correctamente la Región.-');
-                        echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("region/create") .
-                            "'>";
+                        \Yii::$app->session->setFlash('success', 'Se ha borrado correctamente la Región.-');
+                        return $this->redirect(['create']);
+                        //echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("region/create") .
+                        //    "'>";
                     } else {
                         $transaction->rollBack();
-                        Yii::$app->session->setFlash('error', 'Ocurrio un error, no se borro la Región.-');
-                        echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("region/create") .
-                            "'>";
+                        \Yii::$app->session->setFlash('error', 'Ocurrio un error, no se borro la Región.-');
+                        return $this->redirect(['create']);
                     }
                 }
                 catch (\Exception $e) {
@@ -214,8 +223,7 @@ class RegionController extends Controller
 
             }
          }else{
-            echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("region/create") .
-                    "'>";
+            return $this->redirect(['create']);
          }       
     }
 }

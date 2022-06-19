@@ -11,6 +11,25 @@ use yii\widgets\Pjax;
 $this->title = 'Administrar Usuarios';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+<?= \lavrentiev\widgets\toastr\NotificationFlash::widget([
+    'options' => [
+        "closeButton" => true,
+        "debug" => false,
+        "newestOnTop" => false,
+        "progressBar" => false,
+        "positionClass" => \lavrentiev\widgets\toastr\NotificationFlash::POSITION_TOP_RIGHT,
+        "preventDuplicates" => false,
+        "onclick" => null,
+        "showDuration" => "300",
+        "hideDuration" => "1000",
+        "timeOut" => "5000",
+        "extendedTimeOut" => "1000",
+        "showEasing" => "swing",
+        "hideEasing" => "linear",
+        "showMethod" => "fadeIn",
+        "hideMethod" => "fadeOut"
+    ]
+]) ?>
 <div class="users-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
@@ -73,12 +92,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     return ($model->activate === '1')? 'Activo':'Inactivo';
                 }
             ],
-            //'UserRut',
-            //'UserMail',
-            //'authkey',
-            //'accessToken',
-            //'activate',
-            //'verification_code',
+            
 
             [
                 'class' => 'yii\grid\ActionColumn',

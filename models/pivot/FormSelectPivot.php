@@ -7,10 +7,13 @@
 
 namespace app\models\pivot;
 
-use yii\base\model;
+use yii\base\Model;
 
-
-class FormSelectPivot extends model
+/**
+ * Class FormSelectPivot
+ * @package app\models\pivot
+ */
+class FormSelectPivot extends Model
 {
     
     public $idApo;
@@ -18,6 +21,8 @@ class FormSelectPivot extends model
     public $idCurso;
     public $motivo;
     public $idpivote;
+    public $activo;
+	public $retirado;
     public $idalumno;
     
         
@@ -27,7 +32,9 @@ class FormSelectPivot extends model
             ['idCurso','required','message'=>'Campo requerido'],
             [['idApo', 'idano', 'idCurso'], 'integer'],
             [['idalumno', 'idpivote'], 'string', 'max' => 15],
+            [['activo'],'string','max' => 1],
             [['motivo'], 'string', 'max' => 50],
+            ['retirado','safe'],
             //[['idpivote'], 'unique'],
             //[['idalumno'], 'exist', 'skipOnError' => true, 'targetClass' => Alumnos::className(), 'targetAttribute' => ['idalumno' => 'idalumno']],
 //            [['idano'], 'exist', 'skipOnError' => true, 'targetClass' => Anos::className(), 'targetAttribute' => ['idano' => 'idano']],
@@ -46,11 +53,11 @@ class FormSelectPivot extends model
             'idano' => 'Idano',
             'motivo' => 'Motivo',
             'idCurso' => 'Curso',
+            'activo' => 'Activo',
+			'retirado' => 'Retirado',
             'idpivote' => 'Idpivote',
         ];
     }
 
-
-    
 }
 

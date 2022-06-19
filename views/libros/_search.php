@@ -2,31 +2,51 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\libros\LibrosSearch */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="libros-search">
+<?php
+    $this->registerJs(
+            '$("document").ready(function(){
+                $("#campo_busqueda").on("Pjax:end", function() {
+                    $.pjax.reload({container:"#libros"});
+                 });
+             });'
+    );
+?>
 
+<div class="libros-search">
+    <?php Pjax::begin(['id' => 'campo_busqueda', 'timeout'=>false]) ?>
     <?php $form = ActiveForm::begin([
-        'action' => ['index'],
-        'method' => 'get',
         'options' => [
-            'data-pjax' => 1
+            'data-pjax' => true
         ],
     ]); ?>
 
-    <?= $form->field($model, 'idLibros') ?>
+    <div class="row">
+        <div class="col-sm-5">
+            <?= $form->field($model, 'titulo')->textInput(['maxlength' => true, 'autofocus'=>true, 'placeholder' => 'Ingrese título del ejemplar a buscar'])->label('') ?>
+        </div>
+        <div class="col-xs-3" style= "margin-top: 1.5%">
+            <?= Html::submitButton('<span class="glyphicon glyphicon-search"></span> Buscar', ['class' => 'btn btn-success', 'id' => 'buscaButton']) ?>
+        </div>
+    </div>
+    <?php ActiveForm::end(); ?>
+    <?php Pjax::end(); ?>
 
-    <?= $form->field($model, 'isbn') ?>
+    <?php // echo $form->field($model, 'idLibros') ?>
 
-    <?= $form->field($model, 'titulo') ?>
+    <?php // echo $form->field($model, 'isbn') ?>
 
-    <?= $form->field($model, 'subtitulo') ?>
 
-    <?= $form->field($model, 'descripcion') ?>
+
+    <?php //$form->field($model, 'subtitulo') ?>
+
+    <?php //$form->field($model, 'descripcion') ?>
 
     <?php // echo $form->field($model, 'numpag') ?>
 
@@ -46,11 +66,8 @@ use yii\widgets\ActiveForm;
 
     <?php // echo $form->field($model, 'imagen') ?>
 
-    <div class="form-group">
-        <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
-        <?= Html::resetButton('Reset', ['class' => 'btn btn-outline-secondary']) ?>
-    </div>
 
-    <?php ActiveForm::end(); ?>
+
+
 
 </div>

@@ -2,8 +2,10 @@
 
 namespace app\models\ejemplar;
 
-use Yii;
+use yii\db\ActiveRecord;
 use app\models\libros\Libros;
+use app\models\prestamos\Prestamos;
+use app\models\historico\Historico;
 
 /**
  * This is the model class for table "ejemplar".
@@ -17,11 +19,11 @@ use app\models\libros\Libros;
  * @property string|null $fechaout
  * @property int|null $disponible
  *
- * @property Libros $idLibros0
+ * @property Libros[] $idLibros0
  * @property Historico[] $historicos
- * @property Prestamos[] $prestamos
+ * @property Prestamos $prestamos
  */
-class Ejemplar extends \yii\db\ActiveRecord
+class Ejemplar extends ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -70,7 +72,7 @@ class Ejemplar extends \yii\db\ActiveRecord
      */
     public function getIdLibros0()
     {
-        return $this->hasOne(Libros::className(), ['idLibros' => 'idLibros']);
+        return $this->hasOne(Libros::class, ['idLibros' => 'idLibros']);
     }
 
     /**
@@ -80,7 +82,7 @@ class Ejemplar extends \yii\db\ActiveRecord
      */
     public function getHistoricos()
     {
-        return $this->hasMany(Historico::className(), ['idejemplar' => 'idejemplar']);
+        return $this->hasMany(Historico::class, ['idejemplar' => 'idejemplar']);
     }
 
     /**
@@ -90,6 +92,29 @@ class Ejemplar extends \yii\db\ActiveRecord
      */
     public function getPrestamos()
     {
-        return $this->hasMany(Prestamos::className(), ['idejemplar' => 'idejemplar']);
+        return $this->hasMany(Prestamos::class, ['idejemplar' => 'idejemplar']);
+    }
+
+    /**
+     * Este metodo devuelve la lista de ejemplares asociados a un id de libro
+     *
+     * @param $idLibro
+     * @return null
+     */
+    public static function getEjemplareslist($idLibro)
+    {
+        static $dropdown;
+        if($dropdown===null)
+        {
+            $models = static::find()
+                        ->select(['idejemplar as idejemplar','norden as norden'])
+                        ->where(['idLibros' => $idLibro])
+                        ->all();
+            foreach ($models as $model)
+            {
+                $dropdown[$model->idejemplar]=$model->norden;
+            }
+        }
+        return $dropdown;
     }
 }

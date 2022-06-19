@@ -8,9 +8,13 @@
 
 namespace app\models\temas;
 
-use yii\base\model;
+use yii\base\Model;
 
-class FormUpdateTemas extends model
+/**
+ * Class FormUpdateTemas
+ * @package app\models\temas
+ */
+class FormUpdateTemas extends Model
 {
     public $idtemas;
     public $nombre;

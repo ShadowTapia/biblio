@@ -4,7 +4,6 @@ namespace app\models\editorial;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\editorial\Editorial;
 
 /**
  * EditorialSearch represents the model behind the search form of `app\models\editorial\Editorial`.

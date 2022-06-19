@@ -5,11 +5,12 @@ namespace app\controllers;
 use app\models\alumnos\Alumnos;
 use app\models\alumnos\AlumnosSearch;
 use app\models\alumnos\FormAluRegister;
+use app\models\alumnos\FormAluUpdate;
 use app\models\cursos\Cursos;
 use app\models\pivot\FormSelectPivot;
+use app\models\pivot\FormUpdatePivot;
 use app\models\pivot\Pivot;
 use kartik\mpdf\Pdf;
-use raoul2000\widget\pnotify\PNotify;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Url;
@@ -17,25 +18,75 @@ use yii\web\Controller;
 use yii\web\HttpException;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
-
-
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
+/**
+ * Class AlumnosController
+ * @package app\controllers
+ */
 class AlumnosController extends Controller
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@']
+                    ]
+                ]
+            ],
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'delete' => ['POST'],
+                ],
+            ],
+        ];
+    }
+
     public function actionIndex()
     {
         return $this->render('index');
     }
 
+    public function actionFulllistaalumnos()
+    {
+        $model = new FormSelectPivot();
+        if($model->load(Yii::$app->request->post()))
+        {
+            Yii::$app->session->set('icurso',$model->idCurso);
+        }
+        $searchModel = new AlumnosSearch();
+        $dataProvider = $searchModel->searchListApoderados(Yii::$app->session->get('icurso'));
+        $name = Cursos::find()->where(['idCurso' => Yii::$app->session->get('icurso')])->one();
+        if($name)
+        {
+            $nomcurso = $name->Nombre;
+            $count = $dataProvider->getTotalCount();
+        }else{
+            $nomcurso = '';
+            $count = 0;
+        }
+
+        return $this->render('fulllistaalumnos',compact('searchModel','dataProvider','model','nomcurso','count'));
+    }
+
+    /**
+     * @return string
+     */
     public function actionListadoalumnosapos()
     {
-        $nomcurso = '';
         $model = new FormSelectPivot();
 
         if($model->load(Yii::$app->request->post()))
         {
-            $name = Cursos::find()->where(['idCurso' => $model->idCurso])->one();
-            Yii::$app->session['icurso'] = $model->idCurso;
-            $nomcurso = $name->Nombre;
+            Yii::$app->session->set('icurso',$model->idCurso);
         }
 
         $searchModel = new AlumnosSearch();
@@ -65,16 +116,13 @@ class AlumnosController extends Controller
      */
     public function actionRelacionapos()
     {
-        $nomcurso = '';
         $model = new FormSelectPivot();
 
         if($model->load(Yii::$app->request->post()))
         {
             if($model->validate())
             {
-                $name = Cursos::find()->where(['idCurso' => $model->idCurso])->one();
-                Yii::$app->session['icurso'] = $model->idCurso;
-                $nomcurso = $name->Nombre;
+                Yii::$app->session->set('icurso',$model->idCurso);
             }
         }
 
@@ -118,7 +166,7 @@ class AlumnosController extends Controller
             if($model->validate())
             {
                 $name = Cursos::find()->where(['idCurso' => $model->idCurso])->one();
-                Yii::$app->session['icurso'] = $model->idCurso;
+                Yii::$app->session->set('icurso',$model->idCurso);
 
                 echo "<meta http-equiv='refresh' content='2; " . Url::toRoute(['alumnos/elegirpupils', 'nomcurso' => $name->Nombre]) ."'>";
             }else{
@@ -127,6 +175,106 @@ class AlumnosController extends Controller
         }
         return $this->render('asignar',["model" => $model]);
 
+    }
+
+    /**
+     * Consulta la lista de alumnos para actualizar
+     * @return string
+     */
+    public function actionUpgeneral()
+    {
+        $searchModel = new AlumnosSearch();
+        $dataProvider = $searchModel->searchGeneral(Yii::$app->request->queryParams);
+        return $this->render('upgeneral',[
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * @return string
+     *
+     * Consulta de alumnos retirados, Ojo aquí la consulta se hace al reves preguntando primero por la tabla PIvot
+     */
+    public function actionConretirados()
+    {
+        $searchModel = new AlumnosSearch();
+        $dataProvider = $searchModel->searchRetirados(Yii::$app->request->queryParams);
+        $dataProvider->query->andWhere(['pivot.retirado' => '1'])
+                            ->andWhere(['pivot.idano' => \Yii::$app->session->get('anoActivo')])
+                            ->addOrderBy('alumnos.fecharet');
+        return $this->render('conretirados',compact('dataProvider'));
+    }
+
+    /**
+     * Se encarga de consultar los datos de los alumnos a través de un Grid
+     * @return string
+     */
+    public function  actionCongeneral()
+    {
+        $searchModel = new AlumnosSearch();
+        $dataProvider = $searchModel->searchGeneral(Yii::$app->request->queryParams);
+
+        return $this->render('congeneral', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * @return string
+     */
+    public function actionDelalumno()
+    {
+        $model = new FormSelectPivot();
+        if($model->load(Yii::$app->request->post()))
+        {
+            Yii::$app->session->set('icurso',$model->idCurso);
+        }
+        $searchModel = new AlumnosSearch();
+        $dataProvider = $searchModel->search(Yii::$app->session->get('icurso'));
+        $name = Cursos::find()->where(['idCurso'=>Yii::$app->session->get('icurso')])->one();
+        if($name)
+        {
+            $nomcurso = $name->Nombre;
+            $count = $dataProvider->getTotalCount();
+        }
+        else{
+            $nomcurso ='';
+            $count = 0;
+        }
+        return $this->render('delalumno',compact('searchModel','dataProvider','model','nomcurso','count'));
+    }
+
+    /**
+     * @return string
+     *
+     * Realiza la modificación del alumno, desde un curso en especifico
+     */
+    public function actionUpconcurso()
+    {
+        $model = new FormSelectPivot();
+
+        if ($model->load(Yii::$app->request->post()))
+        {
+            Yii::$app->session->set('icurso',$model->idCurso);
+        }
+        $searchModel = new AlumnosSearch();
+        $dataProvider = $searchModel->search(Yii::$app->session->get('icurso'));
+        $name = Cursos::find()->where(['idCurso' => Yii::$app->session->get('icurso')])->one();
+        if($name){
+            $nomcurso = $name->Nombre;
+            $count = $dataProvider->getTotalCount();
+        }else{
+            $nomcurso = '';
+            $count = 0;
+        }
+        return $this->render('upconcurso',[
+            'searchModel'=>$searchModel,
+            'dataProvider' => $dataProvider,
+            'model' => $model,
+            'nomcurso' => $nomcurso,
+            'count' => $count]);
     }
 
     /**
@@ -147,13 +295,13 @@ class AlumnosController extends Controller
             if($model->validate())
             {
                 $name = Cursos::find()->where(['idCurso' => $model->idCurso])->one();
-                Yii::$app->session['icurso'] = $model->idCurso;
+                Yii::$app->session->set('icurso',$model->idCurso);
                 echo "<meta http-equiv='refresh' content='2; " . Url::toRoute(['alumnos/cursoalumnos', 'nomcurso' => $name->Nombre]) ."'>";
             }else{
                 $model->getErrors();
             }
         }
-        return $this->render('aluxcurso',["model" => $model]);
+        return $this->render('aluxcurso',['model' => $model]);
 
     }
 
@@ -200,8 +348,9 @@ class AlumnosController extends Controller
             throw new HttpException(400,'No existe una consulta');
         }
         $curso = Cursos::find()->where(['idcurso' => Yii::$app->session->get('icurso')])->one();
-        Yii::$app->session->setFlash('success', 'Se asociaron alumnos a este Curso ' . $curso->Nombre);
-        echo "<meta http-equiv='refresh' content='2; " . Url::toRoute("alumnos/asignar") . "'>";
+        \Yii::$app->session->setFlash('success', 'Se asociaron alumnos a este Curso ' . $curso->Nombre);
+        return $this->redirect(['alumnos/asignar']);
+        //echo "<meta http-equiv='refresh' content='2; " . Url::toRoute("alumnos/asignar") . "'>";
 
     }
 
@@ -218,6 +367,38 @@ class AlumnosController extends Controller
     }
 
     /**
+     * @return mixed
+     * Genera reporte con la lista de alumnos retirados
+     */
+    public function actionReportretirado()
+    {
+        $dataProvider = new ActiveDataProvider([
+            'query' => Pivot::find()->joinWith('idalumno0')
+                    ->where(['pivot.retirado' => '1'])->andWhere(['pivot.idano' => \Yii::$app->session->get('anoActivo')])
+                    ->orderBy('alumnos.fecharet')]);
+        $totalitems = $dataProvider->getTotalCount();
+        $content = $this->renderPartial('/reporte/listaretirados', compact('dataProvider'));
+        if ($totalitems > 0)
+        {
+            Yii::$app->response->format = Response::FORMAT_RAW;
+            $pdf = new Pdf(['mode' => Pdf::MODE_UTF8, // leaner size using standard fonts
+                'format' => Pdf::FORMAT_FOLIO, 'destination' => Pdf::DEST_BROWSER, 'content' =>
+                    $content, 'cssFile' => '@vendor/kartik-v/yii2-mpdf/src/assets/kv-alumno.css',
+                'options' => [ // any mpdf options you wish to set
+                ], 'methods' => ['SetTitle' => 'Sistema Administración Bibliotecaria - Listado Retirados',
+                    'SetSubject' => 'Generado por Sistema Administración Bibliotecaria - The Kingstown School',
+                    'SetHeader' => ['The Kingstown School - Sistema Administración Bibliotecaria: ' .
+                        date("r")], 'SetFooter' => ['|Page {PAGENO}|'], 'SetAuthor' =>
+                        'Marcelo Tapia D.', 'SetCreator' => 'Marcelo Tapia D.', ]]);
+            return $pdf->render();
+        }
+
+        Yii::$app->session->setFlash('error', 'No existen alumnos retirados este año.-');
+        return $this->redirect(['alumnos/conretirados']);
+        //echo "<meta http-equiv='refresh' content='2; " . Url::toRoute("alumnos/conretirados") . "'>";
+    }
+
+    /**
      * @property string $nameAno
      * @return mixed
      * Crea reporte x curso de alumnos
@@ -225,7 +406,11 @@ class AlumnosController extends Controller
     public function actionReporte()
     {
         $alumnos = array();
-        $alumno = Alumnos::find()->joinWith(['pivots pi'])->where(['idCurso' => Yii::$app->session->get('icurso')])->andWhere(['idano' => Yii::$app->session->get('anoActivo')])->orderBy('paternoalu')->addOrderBy('maternoalu')->all();
+        $alumno = Alumnos::find()->joinWith(['pivots pi'])
+                    ->where(['idCurso' => Yii::$app->session->get('icurso')])
+                    ->andWhere(['pi.retirado' => '0'])
+                    ->andWhere(['idano' => Yii::$app->session->get('anoActivo')])
+                    ->orderBy('paternoalu')->addOrderBy('maternoalu')->all();
         if($alumno > 0)
         {
             foreach ($alumno as $pupils)
@@ -234,10 +419,11 @@ class AlumnosController extends Controller
             }
             $curso = Cursos::find()->where(['idcurso' => Yii::$app->session->get('icurso')])->one();
             $cursoname = $curso->Nombre . ' ' . Yii::$app->session->get('nameAno');
-            require_once Yii::$app->basePath . '\views\reporte\listadocurso.php';
+            require_once  ('/home/kingstownschoolc/biblio.kingstownschool.cl/biblio/views/reporte/listadocurso.php');
+            //require_once Yii::$app->basePath . '\views\reporte\listadocurso.php';
             $plantilla = getPlantilla($alumnos,$cursoname);
             $content = $plantilla;
-            Yii::$app->response->format = \yii\web\Response::FORMAT_RAW;
+            Yii::$app->response->format = Response::FORMAT_RAW;
             $pdf = new Pdf(['mode' => Pdf::MODE_UTF8, // leaner size using standard fonts
                 'format' => Pdf::FORMAT_FOLIO, 'destination' => Pdf::DEST_BROWSER, 'content' =>
                     $content, 'cssFile' => '@vendor/kartik-v/yii2-mpdf/src/assets/kv-alumno.css',
@@ -250,7 +436,183 @@ class AlumnosController extends Controller
             return $pdf->render();
         }
         Yii::$app->session->setFlash('error', 'No existen alumnos asociados a este Curso.-');
-        echo "<meta http-equiv='refresh' content='2; " . Url::toRoute("alumnos/cursoalumnos") . "'>";
+        return $this->redirect(['alumnos/cursoalumnos']);
+        //echo "<meta http-equiv='refresh' content='2; " . Url::toRoute("alumnos/cursoalumnos") . "'>";
+
+    }
+
+    /**
+     * @param $id
+     * @param $fuente
+     * @return array|string
+     * @throws \Exception
+     * @throws \Throwable
+     *
+     * Se encarga de actualizar el alumno
+     */
+    public function actionUpdate($id,$fuente)
+    {
+        $model = new FormAluUpdate();
+        $modelPivot = new FormUpdatePivot();
+
+        $tableAlumnos = new Alumnos();
+        $tablePivot = new Pivot();
+
+
+        if ($model->load(Yii::$app->request->post()) && Yii::$app->request->isAjax)
+        {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return ActiveForm::validate($model);
+        }
+
+        if ($model->load(Yii::$app->request->post()) && $modelPivot->load(Yii::$app->request->post()))
+        {
+            if ($model->validate() && $modelPivot->validate())
+            {
+                $aluUpdate = '';
+                $transaction = $tableAlumnos->getDb()->beginTransaction();
+                try
+                {
+                    $tableAlumnos = Alumnos::findOne(['idalumno' => $id]);
+                    if ($tableAlumnos)
+                    {
+                        $tableAlumnos->rutalumno = $this->quitarStringless($model->rutalumno);
+                        $tableAlumnos->digrut = $this->devolverDigito($model->rutalumno);
+                        $tableAlumnos->nombrealu = mb_strtoupper($model->nombrealu);
+                        $tableAlumnos->paternoalu = mb_strtoupper($model->paternoalu);
+                        $tableAlumnos->maternoalu = mb_strtoupper($model->maternoalu);
+                        $tableAlumnos->fechanac = Yii::$app->formatter->asDate($model->fechanac,"yyyy-MM-dd");
+                        $tableAlumnos->calle = $model->calle;
+                        $tableAlumnos->nro = $model->nro;
+                        $tableAlumnos->depto = $model->depto;
+                        $tableAlumnos->block = $model->block;
+                        $tableAlumnos->villa = $model->villa;
+                        $tableAlumnos->codRegion = $model->codRegion;
+                        $tableAlumnos->idProvincia = $model->idProvincia;
+                        $tableAlumnos->codComuna = $model->codComuna;
+//                        if($model->sexo=="F")
+//                        {
+//                            $tableAlumnos->sexo = "F";
+//                        }
+//                        if($model->sexo=="M")
+//                        {
+//                            $tableAlumnos->sexo = "M";
+//                        }
+                        $tableAlumnos->sexo = $model->sexo;
+                        $tableAlumnos->email = $model->email;
+                        $tableAlumnos->fono = $model->fono;
+                        $tableAlumnos->nacionalidad = $model->nacionalidad;
+                        $tableAlumnos->fechaing = Yii::$app->formatter->asDate($model->fechaing,"yyyy-MM-dd");
+                        $tableAlumnos->sangre = $model->sangre;
+                        $tableAlumnos->enfermedades = $model->enfermedades;
+                        $tableAlumnos->alergias = $model->alergias;
+                        $tableAlumnos->medicamentos = $model->medicamentos;
+                        $tableAlumnos->fecharet = Yii::$app->formatter->asDate($model->fecharet,"yyyy-MM-dd");
+                        if ($tableAlumnos->update())
+                        {
+                            $transaction->commit();
+                            $aluUpdate = true;
+
+                        }else{
+                            $transaction->rollBack();
+                            $aluUpdate = false;
+                            \Yii::$app->session->setFlash('error', 'A ocurrido un error al intentar actualizar el Alumno.-');
+                            if($fuente==1)
+                            {
+                                return $this->redirect(['alumnos/upgeneral']);
+                            }else if($fuente==2)
+                            {
+                                return $this->redirect(['alumnos/upconcurso']);
+                            }
+
+                        }
+                    }
+                }
+                catch (\Exception $e) {
+                    $transaction->rollBack();
+                    throw $e;
+                }
+                catch (\Throwable $e) {
+                    $transaction->rollBack();
+                    throw $e;
+                }
+                //Aqui definimos la actualización de la tabla pivot
+                if($aluUpdate==true)
+                {
+                    $transaction = $tablePivot->getDb()->beginTransaction();
+                    try
+                    {
+                        $tablePivot = Pivot::findOne(['idalumno'=>$id,'idano'=>Yii::$app->session->get('anoActivo')]);
+                        if ($tablePivot)
+                        {
+                            $tablePivot->retirado = $modelPivot->retirado;
+                            if ($tablePivot->update())
+                            {
+                                $transaction->commit();
+                            }
+                            else
+                            {
+                                $transaction->rollBack();
+                            }
+                            \Yii::$app->session->setFlash('success', 'Se ha actualizado correctamente el Alumno.-');
+                            if($fuente==1)
+                            {
+                                return $this->redirect(['alumnos/upgeneral']);
+                            }else if($fuente==2) //Redirige según el formulario que hizo la llamada
+                            {
+                                return $this->redirect(['alumnos/upconcurso']);
+                            }
+                        }
+                    }
+                    catch (\Exception $e) {
+                        $transaction->rollBack();
+                        throw $e;
+                    }
+                    catch (\Throwable $e) {
+                        $transaction->rollBack();
+                        throw $e;
+                    }
+                }
+            }else{
+                $model->getErrors();
+                $modelPivot->getErrors();
+            }
+
+        }else{
+            $tableAlumnos = Alumnos::findOne(['idalumno' => $id]);
+            if ($tableAlumnos)
+            {
+                $model->rutalumno = $tableAlumnos->rutalumno . '-' . $tableAlumnos->digrut;
+                $model->nombrealu = $tableAlumnos->nombrealu;
+                $model->paternoalu = $tableAlumnos->paternoalu;
+                $model->maternoalu = $tableAlumnos->maternoalu;
+                $model->fechanac = $tableAlumnos->fechanac;
+                $model->calle = $tableAlumnos->calle;
+                $model->nro = $tableAlumnos->nro;
+                $model->depto = $tableAlumnos->depto;
+                $model->block = $tableAlumnos->block;
+                $model->villa = $tableAlumnos->villa;
+                $model->codRegion = $tableAlumnos->codRegion;
+                $model->idProvincia = $tableAlumnos->idProvincia;
+                $model->codComuna = $tableAlumnos->codComuna;
+                $model->sexo = $tableAlumnos->sexo;
+                $model->email = $tableAlumnos->email;
+                $model->fono = $tableAlumnos->fono;
+                $model->nacionalidad = $tableAlumnos->nacionalidad;
+                $model->fechaing = $tableAlumnos->fechaing;
+                $model->fecharet = $tableAlumnos->fecharet;
+                $model->sangre = $tableAlumnos->sangre;
+                $model->enfermedades = $tableAlumnos->enfermedades;
+                $model->alergias = $tableAlumnos->alergias;
+                $model->medicamentos = $tableAlumnos->medicamentos;
+            }
+            $tablePivot = Pivot::findOne(['idalumno' => $id,'idano'=>Yii::$app->session->get('anoActivo')]);
+            if ($tablePivot)
+            {
+                $modelPivot->retirado = $tablePivot->retirado;
+            }
+        }
+        return $this->render('update', compact('model','modelPivot'));
 
     }
 
@@ -316,9 +678,7 @@ class AlumnosController extends Controller
                     {
                         $transaction->rollBack();
                         $aluinsert = false;
-                        PNotify::widget(['pluginOptions' => ['title' =>
-                            'Error', 'text' => 'Se ha producido un error al querer ingresar este <b>Alumno(a)1</b>.',
-                            'type' => 'error', ]]);
+                        \Yii::$app->session->setFlash('error','Se ha producido un error al querer ingresar este Alumno(a).');
                     }
                 }
                 catch (\Exception $e) {
@@ -355,16 +715,12 @@ class AlumnosController extends Controller
                                 $model->email = null;
                                 $model->fono = null;
                                 $model->fechaing = null;
-                                PNotify::widget(['pluginOptions' => ['title' =>
-                                    'Alumno', 'text' => 'El Alumno(a) se ha ingresado exitosamente.-', 'type' =>
-                                    'success', ]]);
+                                \Yii::$app->session->setFlash('success','El Alumno(a) se ha ingresado exitosamente.-');
                             }
                             else
                             {
                                 $transaction->rollBack();
-                                PNotify::widget(['pluginOptions' => ['title' =>
-                                   'Error', 'text' => 'Se ha producido un error al querer ingresar este <b>Alumno(a)</b>.',
-                                    'type' => 'error', ]]);
+                                \Yii::$app->session->setFlash('error','Se ha producido un error al querer ingresar este Alumno(a).-');
                             }
                         }
                     }
@@ -411,18 +767,19 @@ class AlumnosController extends Controller
         return $verificador;
     }
 
+    /**
+     * @return string
+     *
+     * Se encarga de realizar la promoción de un curso
+     */
     public function actionListapromocion()
     {
-        $nomcurso = '';
         $model = new FormSelectPivot();
 
         if($model->load(Yii::$app->request->post()))
         {
-            $name = Cursos::find()->where(['idCurso' => $model->idCurso])->one();
-            Yii::$app->session['icurso'] = $model->idCurso;
-            $nomcurso = $name->Nombre;
+            Yii::$app->session->set('icurso',$model->idCurso);
         }
-
         $searchModel = new AlumnosSearch();
         $dataProvider = $searchModel->searchListApoderados(Yii::$app->session->get('icurso'));
         $name = Cursos::find()->where(['idCurso' => Yii::$app->session->get('icurso')])->one();
@@ -435,13 +792,7 @@ class AlumnosController extends Controller
             $count = 0;
         }
 
-        return $this->render('listapromocion',[
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-            'model' => $model,
-            'nomcurso' => $nomcurso,
-            'count' => $count
-        ]);
+        return $this->render('listapromocion', compact('searchModel','dataProvider','model','nomcurso','count'));
     }
 
     /**
@@ -449,14 +800,11 @@ class AlumnosController extends Controller
      */
     public function actionListacambiocurso()
     {
-        $nomcurso = '';
         $model = new FormSelectPivot();
 
         if($model->load(Yii::$app->request->post()))
         {
-            $name = Cursos::find()->where(['idCurso' => $model->idCurso])->one();
-            Yii::$app->session['icurso'] = $model->idCurso;
-            $nomcurso = $name->Nombre;
+            Yii::$app->session->set('icurso',$model->idCurso);
         }
 
         $searchModel = new AlumnosSearch();
@@ -481,11 +829,13 @@ class AlumnosController extends Controller
     }
 
     /**
-     * @return array|string
+     * @param $id
+     * @param $name
+     * @return array|string|Response
      * @throws \Exception
      * @throws \Throwable
      */
-    public function actionCambiocurso($id)
+    public function actionCambiocurso($id,$name)
     {
         $model = new FormSelectPivot;
 
@@ -511,13 +861,13 @@ class AlumnosController extends Controller
                         if($table->update())
                         {
                             $transaction->commit();
-                            Yii::$app->session->setFlash('success', 'Ha cambiado correctamente de curso el <b>Alumno</b>.-.');
+                            \Yii::$app->session->setFlash('success', 'Ha cambiado correctamente de curso el Alumno.-');
 
                         }
                         else
                         {
                             $transaction->rollBack();
-                            Yii::$app->session->setFlash('error', 'Ocurrio un error, al cambiar de curso para el <b>Alumno</b>.-');
+                            \Yii::$app->session->setFlash('error', 'Ocurrio un error, al cambiar de curso para el Alumno.-');
                         }
                     }
                 }
@@ -537,8 +887,38 @@ class AlumnosController extends Controller
             }
 
         }
-        return $this->render('cambiocurso',compact('model'));
 
+        return $this->render('cambiocurso',compact('model','name'));
+
+    }
+
+    public function actionDelete($id)
+    {
+        if($id != null)
+        {
+            $table = new Alumnos();
+            $transaction = $table->getDb()->beginTransaction();
+            try
+            {
+                if($table::deleteAll("idalumno=:idalumno",["idalumno"=>$id]))
+                {
+                    $transaction->commit();
+                    \Yii::$app->session->setFlash('success', 'Se ha borrado correctamente este Alumno.-');
+                }else{
+                    $transaction->rollBack();
+                    \Yii::$app->session->setFlash('error', 'Ocurrio un error, no se borro el Alumno.-');
+                }
+            }
+            catch (\Exception $e) {
+                $transaction->rollBack();
+                throw $e;
+            }
+            catch (\Throwable $e) {
+                $transaction->rollBack();
+                throw $e;
+            }
+        }
+        return $this->redirect(['alumnos/delalumno']);
     }
 
     /**
@@ -546,14 +926,14 @@ class AlumnosController extends Controller
      */
     public function actionCursoalumnos()
     {
-        $nomcurso = '';
         $model= new FormSelectPivot();
 
         if($model->load(Yii::$app->request->post()))
         {
-            $name = Cursos::find()->where(['idCurso'=>$model->idCurso])->one();
-            Yii::$app->session['icurso']=$model->idCurso;
-            $nomcurso = $name->Nombre;
+            if ($model->validate())
+            {
+                Yii::$app->session->set('icurso',$model->idCurso);
+            }
         }
 
         $searchModel=new AlumnosSearch();

@@ -8,10 +8,41 @@ use app\models\FormUpdateProvincia;
 use app\models\Provincias;
 use Yii;
 use yii\data\ActiveDataProvider;
-use yii\helpers\Url;
-
-class ProvinciasController extends \yii\web\Controller
+use yii\web\Controller;
+use yii\web\Response;
+use yii\widgets\ActiveForm;
+use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
+/**
+ * Class ProvinciasController
+ * @package app\controllers
+ */
+class ProvinciasController extends Controller
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@']
+                    ]
+                ]
+            ],
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'delete' => ['POST'],
+                ],
+            ],
+        ];
+    }
+
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([ //find() retorna un objeto de tipo query
@@ -21,6 +52,11 @@ class ProvinciasController extends \yii\web\Controller
         return $this->render('index', ['dataProvider' => $dataProvider]);
     }
 
+    /**
+     * @return array|string|Response
+     * @throws \Exception
+     * @throws \Throwable
+     */
     public function actionCreate()
     {
         $model = new FormProvincias;
@@ -46,31 +82,20 @@ class ProvinciasController extends \yii\web\Controller
                         //limpiamos los controles del formulario
                         $model->idProvincia = null;
                         $model->Provincia = null;
-                        \raoul2000\widget\pnotify\PNotify::widget([
-		                  'pluginOptions' => [
-			                 'title' => 'Provincia',
-			                 'text' => 'Se ha creado correctamente la <b>Provincia</b>.-.',
-                             'type' => 'info',
-		                      ]
-	                       ]);
 
-                        //Yii::$app->session->setFlash('success', utf8_encode('Se ha agregado una nueva Provincia.-'));
-                        //Redireccionamos a la p�gina origen
-                        echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("provincias/index") .
-                            "'>";
+                       \Yii::$app->session->setFlash('success', 'Se ha creado correctamente la Provincia.-');
+
                     } else {
-                        \raoul2000\widget\pnotify\PNotify::widget([
-		                  'pluginOptions' => [
-			                 'title' => 'Error',
-			                 'text' => 'Ocurrio un error, al ingresar la <b>Provincia</b>.-.',
-                             'type' => 'error',
-		                      ]
-	                       ]);
+                        \Yii::$app->session->setFlash('error', utf8_encode('Ocurrió un error, al ingresar la Provincia.-'));
 
-                        //Yii::$app->session->setFlash('error', utf8_encode('Ocurrio un error, al ingresar la Provincia.-'));
                     }
+                    return $this->redirect('index');
                 }
                 catch (\Exception $e) {
+                    $transaction->rollBack();
+                    throw $e;
+                }
+                catch (\Throwable $e) {
                     $transaction->rollBack();
                     throw $e;
                 }
@@ -78,14 +103,14 @@ class ProvinciasController extends \yii\web\Controller
                 $model->getErrors();
             }
         }
-        return $this->render('create', ["model" => $model]);
+        return $this->renderAjax('create', ["model" => $model]);
     }
 
     /**
-     * 
-     * Se encarga de eliminar una provincia
-     * 
-     **/ 
+     * @param $id
+     * @return Response
+     * @throws \Exception
+     */
     public function actionDelete($id)
     {
         if ((int)$id) {
@@ -94,25 +119,21 @@ class ProvinciasController extends \yii\web\Controller
                 $id]);
             //Si existen comunas asociadas a la provincia, lanzamos la advertencia
             if ($table2->count() > 0) {
-                Yii::$app->session->setFlash('error', utf8_encode('Ocurrio un error, existen Comunas asociadas a la Provincia.-'));
-                echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("provincias/index") .
-                    "'>";
+                \Yii::$app->session->setFlash('error', 'Ocurrio un error, existen Comunas asociadas a la Provincia.-');
+                return $this->redirect('index');
             } else {
                 $table = new Provincias;
                 $transaction = $table::getDb()->beginTransaction();
                 try {
                     if ($table::deleteAll("idProvincia=:idProvincia", [":idProvincia" => $id])) {
                         $transaction->commit();
-                        Yii::$app->session->setFlash('success', utf8_encode('Se ha borrado correctamente la Provincia.-'));
-                        echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("provincias/index") .
-                            "'>";
+                        \Yii::$app->session->setFlash('success', 'Se ha borrado correctamente la Provincia.-');
+
                     } else {
                         $transaction->rollBack();
-                        Yii::$app->session->setFlash('error', utf8_encode('Ocurrio un error, no se borro la Provincia.-'));
-                        echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("provincias/index") .
-                            "'>";
-
+                        \Yii::$app->session->setFlash('error', 'Ocurrio un error, no se borro la Provincia.-');
                     }
+                    return $this->redirect('index');
                 }
                 catch (\Exception $e) {
                     $transaction->rollBack();
@@ -120,16 +141,16 @@ class ProvinciasController extends \yii\web\Controller
                 }
             }
         } else {
-            echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("provincias/index") .
-                "'>";
+            return $this->redirect('index');
         }
     }
 
     /**
-     * 
-     * Actualiza una provincia
-     * 
-     **/ 
+     * @param $id
+     * @return array|string
+     * @throws \Exception
+     * @throws \Throwable
+     */
     public function actionUpdate($id)
     {
         $model = new FormUpdateProvincia;
@@ -151,28 +172,14 @@ class ProvinciasController extends \yii\web\Controller
                         $table->Provincia = mb_strtoupper($model->Provincia);
                         if ($table->update()) {
                             $transaction->commit();
-                            \raoul2000\widget\pnotify\PNotify::widget([
-                                'pluginOptions' => [
-                                'title' => 'Provincias',
-                                'text' => 'La Provincia fue actualizada correctamente.',
-                                'type' => 'info',
-		                      ]]);
-  
-                            //Yii::$app->session->setFlash('success', utf8_encode('La Provincia fue cambiada exitosamente.-'));
-                            echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("provincias/index") .
-                                "'>";
+                            \Yii::$app->session->setFlash('success', 'La Provincia fue actualizada correctamente.-');
+
                         } else {
                             $transaction->rollBack();
-                            \raoul2000\widget\pnotify\PNotify::widget([
-                                'pluginOptions' => [
-                                'title' => 'Error',
-                                'text' => 'La Provincia no pudo ser actualizada.',
-                                'type' => 'error',
-		                      ]]);
-                            //Yii::$app->session->setFlash('error', utf8_encode('La Provincia no fue cambiada.-'));
-                            echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("provincias/index") .
-                                "'>";
+                            \Yii::$app->session->setFlash('error', 'La Provincia no pudo ser actualizada.');
+
                         }
+                        return $this->redirect('index');
                     }
                 }
                 catch (\Exception $e) {

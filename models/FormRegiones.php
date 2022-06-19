@@ -6,9 +6,13 @@
  */
 
 namespace app\models;
-use yii\base\model;
+use yii\base\Model;
 
-class FormRegiones extends model
+/**
+ * Class FormRegiones
+ * @package app\models
+ */
+class FormRegiones extends Model
 {
     public $codRegion;
     public $region;
@@ -32,11 +36,14 @@ class FormRegiones extends model
           ];
     }
 
-    public function region_existe($attribute,$params)
+    /**
+     * @param $attribute
+     */
+    public function region_existe($attribute)
     {
-        //Buscar el c�digo de la regi�n
+        //Buscar el código de la región
         $table = Regiones::find()->where("codRegion=:codRegion", [":codRegion" => $this->codRegion]);
-        //Si existe el c�digo mostrar el error
+        //Si existe el código mostrar el error
         if ($table->count() == 1) {
             $this->addError($attribute, "El código ya esta en uso.-");
         }

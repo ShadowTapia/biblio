@@ -7,6 +7,7 @@ use app\models\Comunas;
 use app\models\pivot\Pivot;
 use app\models\Provincias;
 use app\models\Regiones;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "apoderados".
@@ -32,6 +33,7 @@ use app\models\Regiones;
  * @property string|null $profesion
  * @property string|null $trabajoplace
  * @property string|null $relacion
+ * @property string|null $apoderado
  * @property int|null $rutalumno
  * @property int $idApo
  *
@@ -41,7 +43,7 @@ use app\models\Regiones;
  * @property Alumnos $rutalumno0
  * @property Pivot[] $pivots
  */
-class Apoderados extends \yii\db\ActiveRecord
+class Apoderados extends ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -59,7 +61,7 @@ class Apoderados extends \yii\db\ActiveRecord
         return [
             [['rutapo', 'codRegion', 'idProvincia', 'codComuna', 'rutalumno'], 'integer'],
             [['nombreapo', 'apepat', 'apemat'], 'required'],
-            [['relacion'], 'string'],
+            [['relacion', 'apoderado'], 'string'],
             [['digrut'], 'string', 'max' => 1],
             [['nombreapo', 'villa', 'fono'], 'string', 'max' => 25],
             [['apepat', 'apemat'], 'string', 'max' => 20],
@@ -67,13 +69,14 @@ class Apoderados extends \yii\db\ActiveRecord
             [['nro', 'depto'], 'string', 'max' => 8],
             [['block'], 'string', 'max' => 5],
             [['email'], 'string', 'max' => 150],
+            ['email','filter','filter'=>'trim'],
             [['celular'], 'string', 'max' => 12],
             [['estudios', 'niveledu', 'profesion'], 'string', 'max' => 60],
             [['trabajoplace'], 'string', 'max' => 70],
-            [['codComuna'], 'exist', 'skipOnError' => true, 'targetClass' => Comunas::className(), 'targetAttribute' => ['codComuna' => 'codComuna']],
-            [['idProvincia'], 'exist', 'skipOnError' => true, 'targetClass' => Provincias::className(), 'targetAttribute' => ['idProvincia' => 'idProvincia']],
-            [['codRegion'], 'exist', 'skipOnError' => true, 'targetClass' => Regiones::className(), 'targetAttribute' => ['codRegion' => 'codRegion']],
-            [['rutalumno'], 'exist', 'skipOnError' => true, 'targetClass' => Alumnos::className(), 'targetAttribute' => ['rutalumno' => 'rutalumno']],
+            [['codComuna'], 'exist', 'skipOnError' => true, 'targetClass' => Comunas::class, 'targetAttribute' => ['codComuna' => 'codComuna']],
+            [['idProvincia'], 'exist', 'skipOnError' => true, 'targetClass' => Provincias::class, 'targetAttribute' => ['idProvincia' => 'idProvincia']],
+            [['codRegion'], 'exist', 'skipOnError' => true, 'targetClass' => Regiones::class, 'targetAttribute' => ['codRegion' => 'codRegion']],
+            [['rutalumno'], 'exist', 'skipOnError' => true, 'targetClass' => Alumnos::class, 'targetAttribute' => ['rutalumno' => 'rutalumno']],
         ];
     }
 
@@ -104,6 +107,7 @@ class Apoderados extends \yii\db\ActiveRecord
             'profesion' => 'Profesion',
             'trabajoplace' => 'Trabajoplace',
             'relacion' => 'Relacion',
+            'apoderado' => 'Apoderado',
             'rutalumno' => 'Rutalumno',
             'idApo' => 'Id Apo',
         ];
@@ -116,7 +120,7 @@ class Apoderados extends \yii\db\ActiveRecord
      */
     public function getCodComuna0()
     {
-        return $this->hasOne(Comunas::className(), ['codComuna' => 'codComuna']);
+        return $this->hasOne(Comunas::class, ['codComuna' => 'codComuna']);
     }
 
     /**
@@ -126,7 +130,7 @@ class Apoderados extends \yii\db\ActiveRecord
      */
     public function getIdProvincia0()
     {
-        return $this->hasOne(Provincias::className(), ['idProvincia' => 'idProvincia']);
+        return $this->hasOne(Provincias::class, ['idProvincia' => 'idProvincia']);
     }
 
     /**
@@ -136,7 +140,7 @@ class Apoderados extends \yii\db\ActiveRecord
      */
     public function getCodRegion0()
     {
-        return $this->hasOne(Regiones::className(), ['codRegion' => 'codRegion']);
+        return $this->hasOne(Regiones::class, ['codRegion' => 'codRegion']);
     }
 
     /**
@@ -146,7 +150,7 @@ class Apoderados extends \yii\db\ActiveRecord
      */
     public function getRutalumno0()
     {
-        return $this->hasOne(Alumnos::className(), ['rutalumno' => 'rutalumno']);
+        return $this->hasOne(Alumnos::class, ['rutalumno' => 'rutalumno']);
     }
 
     /**
@@ -156,6 +160,6 @@ class Apoderados extends \yii\db\ActiveRecord
      */
     public function getPivots()
     {
-        return $this->hasMany(Pivot::className(), ['idApo' => 'idApo']);
+        return $this->hasMany(Pivot::class, ['idApo' => 'idApo']);
     }
 }

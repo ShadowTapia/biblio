@@ -2,7 +2,8 @@
 
 namespace app\models\autor;
 
-use Yii;
+use yii\db\ActiveRecord;
+use app\models\libros\Libros;
 
 /**
  * This is the model class for table "autor".
@@ -12,9 +13,9 @@ use Yii;
  * @property string|null $nacionalidad
  *
  * @property Digitales[] $digitales
- * @property Libros[] $libros
+ * @property Libros $libros
  */
-class Autor extends \yii\db\ActiveRecord
+class Autor extends ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -31,9 +32,9 @@ class Autor extends \yii\db\ActiveRecord
     {
         return [
             [['nombre'],'required','message'=> 'Campo requerido'],
-            [['nombre'],'match','pattern'=> '/^[a-zA-Zá-ü\s]+$/','message'=>'Solo se aceptan caracteres alfabéticos'],
+            [['nombre'],'match','pattern'=> '/^[a-zA-ZÀ-ÖØ-öø-ÿ]+\.?(( |\-)[a-zA-ZÀ-ÖØ-öø-ÿ]+\.?)*$/','message'=>'Solo se aceptan caracteres alfabéticos'],
             [['nombre'], 'string', 'max' => 60, 'message'=>'No se aceptan mas de 60 caracteres'],
-            [['nacionalidad'],'match','pattern'=> '/^[a-zA-Zá-ü\s]+$/','message'=>'Solo se aceptan caracteres alfabéticos'],
+            [['nacionalidad'],'match','pattern'=> '/^[a-zA-ZÀ-ÖØ-öø-ÿ]+\.?(( |\-)[a-zA-ZÀ-ÖØ-öø-ÿ]+\.?)*$/','message'=>'Solo se aceptan caracteres alfabéticos'],
             [['nacionalidad'], 'string', 'max' => 45,'message'=>'No se aceptan mas de 45 caracteres'],
         ];
     }
@@ -67,7 +68,7 @@ class Autor extends \yii\db\ActiveRecord
      */
     public function getLibros()
     {
-        return $this->hasMany(Libros::className(), ['idautor' => 'idautor']);
+        return $this->hasMany(Libros::class, ['idautor' => 'idautor']);
     }
 
     /**

@@ -6,9 +6,14 @@
  */
 
 namespace app\models;
-use yii\base\model;
+use yii\base\Model;
 
-class FormChangeDatos extends model{
+/**
+ * Class FormChangeDatos
+ * @package app\models
+ */
+class FormChangeDatos extends Model
+{
     public $UserMail;
     
     public function rules()
@@ -23,10 +28,8 @@ class FormChangeDatos extends model{
 
     /**
      * @param $attribute
-     * @param $params
-     * Verifica que no exista el mail
      */
-    public function email_existe($attribute,$params)
+    public function email_existe($attribute)
     {
         //Buscar e-mail en la tabla
         $table=Users::find()->where("UserMail=:UserMail",[":UserMail"=>$this->UserMail]);

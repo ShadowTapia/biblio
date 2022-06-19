@@ -8,9 +8,13 @@
 
 namespace app\models\Alumnos;
 
-use yii\base\model;
+use yii\base\Model;
 
-class FormAluRegister extends model
+/**
+ * Class FormAluRegister
+ * @package app\models\Alumnos
+ */
+class FormAluRegister extends Model
 {
     public $rutalumno;
     public $digrut;
@@ -31,6 +35,11 @@ class FormAluRegister extends model
     public $fechanac;
     public $nacionalidad;
     public $fechaing;
+    public $sangre;
+    public $enfermedades;
+    public $alergias;
+    public $medicamentos;
+
 
     public function rules()
     {
@@ -49,6 +58,10 @@ class FormAluRegister extends model
             ['block','string','max'=>5 ],
             ['villa','string','max'=>25],
             [['fono'], 'string', 'max' => 25],
+            [['sangre'],'string','max' => 20],
+            [['enfermedades'],'string','max' => 150],
+            [['alergias'],'string','max' => 50],
+            [['medicamentos'],'string','max' => 80],
             ['email','filter','filter'=>'trim'],
             ['email','email','message'=>'Formato no válido'],
             ['email','email_existe'],
@@ -57,10 +70,8 @@ class FormAluRegister extends model
 
     /**
      * @param $attribute
-     * @param $params
-     * Se encarga de validar que el email exista
      */
-    public function email_existe($attribute,$params)
+    public function email_existe($attribute)
     {
         $table = Alumnos::find()->where("email=:email",[":email"=>$this->email]);
         //Si el email existe mostrar el error
@@ -72,10 +83,8 @@ class FormAluRegister extends model
 
     /**
      * @param $attribute
-     * @param $params
-     * Se encarga de validar el rut del alumno
      */
-    public function validarRut($attribute,$params)
+    public function validarRut($attribute)
     {
         $rut=$this->rutalumno;//recibo el rut
         $rut_sin_puntos=str_replace('.',"",$rut);//le quito los puntos

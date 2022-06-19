@@ -2,8 +2,13 @@
 
 namespace app\models;
 
-
-class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
+use yii\web\IdentityInterface;
+use yii\base\BaseObject;
+/**
+ * Class User
+ * @package app\models
+ */
+class User extends BaseObject implements IdentityInterface
 {
     
     public $idUser;
@@ -17,14 +22,12 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
     public $accessToken;
     public $activate;
     public $verification_code;
-        
-    
+
+
     /**
-     * {@inheritdoc}
+     * @param int|string $id
+     * @return null|static
      */
-     
-    /** Busca la identidad del usuario a tráves de su $id **/
-     
     public static function findIdentity($id)
     {
         $user = Users::find()
@@ -39,7 +42,12 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
      * {@inheritdoc}
      */
      
-    /** Busca la identidad del usuario a tráves de su token de acceso */ 
+    /** Busca la identidad del usuario a tráves de su token de acceso */
+    /**
+     * @param mixed $token
+     * @param null $type
+     * @return null|static
+     */
     public static function findIdentityByAccessToken($token, $type = null)
     {
         $users = Users::find()
@@ -77,7 +85,12 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
         
         return null;
     }
-    
+
+    /**
+     * @param $id
+     * @return bool
+     * Retorna verdadero si el usuario es Administrador
+     */
     public static function isUserAdmin($id)
     {
         if(Users::findOne(['idUser'=>$id,'activate'=>'1','Idroles'=>1]))
@@ -89,7 +102,12 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
             return false;
         }
     }
-    
+
+    /**
+     * @param $id
+     * @return bool
+     * Valida si el usuario que loguea tiene permisos relacionados a Bilbiotecario
+     */
     public static function isUserBiblio($id)
     {
         if(Users::findOne(['idUser'=>$id,'activate'=>'1','Idroles'=>2]))
@@ -100,7 +118,57 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
         {
             return false;
         }
-    }    
+    }
+
+    /**
+     * @param $id
+     * @return bool
+     * Valida si el usuario que loguea es un Inspector
+     */
+    public static function isUserInspec($id)
+    {
+        if(Users::findOne(['idUser' => $id, 'activate' => '1', 'Idroles' => 11]))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    /**
+     * @param $id
+     * @return bool
+     * Valida si el usuario que loguea es un profesor
+     */
+    public static function isUserProfe($id)
+    {
+        if(Users::findOne(['idUser' => $id, 'activate' => '1', 'Idroles' => 3]))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    /**
+     * @param $id
+     * @return bool
+     */
+    public static function isUserFuncionario($id)
+    {
+        if(Users::findOne(['idUser' => $id, 'activate' => '1', 'Idroles' => 12]))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 
     /**
      * {@inheritdoc}
@@ -139,7 +207,7 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
         {
             return $password === $password;    
         }
-        
+        return null;
     }
 
 }

@@ -10,6 +10,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\widgets\ActiveForm;
 use yii\web\Response;
+use yii\filters\AccessControl;
 
 /**
  * EjemplarController implements the CRUD actions for Ejemplar model.
@@ -22,8 +23,17 @@ class EjemplarController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@']
+                    ]
+                ]
+            ],
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
                 ],
@@ -60,9 +70,10 @@ class EjemplarController extends Controller
     }
 
     /**
-     * Creates a new Ejemplar model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
+     * @param $id
+     * @return array|string
+     * @throws \Exception
+     * @throws \Throwable
      */
     public function actionCreate($id)
     {
@@ -90,13 +101,12 @@ class EjemplarController extends Controller
                     if ($table->insert())
                     {
                         $transaction->commit();
-                        Yii::$app->session->setFlash('success','El <b>Ejemplar</b> se ha ingresado exitosamente.-');
-                        return $this->redirect(['libros/index']);
+                        \Yii::$app->session->setFlash('success','El Ejemplar se ha ingresado exitosamente.-');
                     }else{
                         $transaction->rollBack();
-                        Yii::$app->session->setFlash('error','No se logro ingresar el <b>Ejemplar</b>.-');
-                        return $this->redirect(['libros/index']);
+                        \Yii::$app->session->setFlash('error','No se logro ingresar el Ejemplar.-');
                     }
+                    return $this->redirect(['libros/index']);
                 }
                 catch (\Exception $e)
                 {
@@ -119,11 +129,10 @@ class EjemplarController extends Controller
     }
 
     /**
-     * Updates an existing Ejemplar model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param string $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return array|string
+     * @throws \Exception
+     * @throws \Throwable
      */
     public function actionUpdate($id)
     {
@@ -155,13 +164,12 @@ class EjemplarController extends Controller
                         if ($table->update())
                         {
                             $transaction->commit();
-                            Yii::$app->session->setFlash('success','El Ejemplar se ha actualizado exitosamente.-');
-                            return $this->redirect(['ejemplar/index']);
+                            \Yii::$app->session->setFlash('success','El Ejemplar se ha actualizado exitosamente.-');
                         }else{
                             $transaction->rollBack();
-                            Yii::$app->session->setFlash('error','No se ha actualizado el Ejemplar.-');
-                            return $this->redirect(['ejemplar/index']);
+                            \Yii::$app->session->setFlash('error','No se ha actualizado el Ejemplar.-');
                         }
+                        return $this->redirect(['ejemplar/index']);
                     }
                 }
                 catch (\Exception $e) {
@@ -186,11 +194,10 @@ class EjemplarController extends Controller
     }
 
     /**
-     * Deletes an existing Ejemplar model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param string $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return Response
+     * @throws \Exception
+     * @throws \Throwable
      */
     public function actionDelete($id)
     {
@@ -203,10 +210,10 @@ class EjemplarController extends Controller
             if ($table->deleteAll("idejemplar=:idejemplar",[":idejemplar" => $id]))
             {
                 $transaction->commit();
-                Yii::$app->session->setFlash('success', 'Se ha borrado correctamente el Ejemplar para '. $table->idLibros0->titulo);
+                \Yii::$app->session->setFlash('success', 'Se ha borrado correctamente el Ejemplar.-');
             }else{
                 $transaction->rollBack();
-                Yii::$app->session->setFlash('error', 'Ocurrió un error, no se borro el Ejemplar.-');
+                \Yii::$app->session->setFlash('error', 'Ocurrió un error, no se borro el Ejemplar.-');
             }
         }
         catch (\Exception $e) {

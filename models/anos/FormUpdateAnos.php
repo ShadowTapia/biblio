@@ -6,9 +6,13 @@
  */
 
 namespace app\models\anos;
-use yii\base\model;
+use yii\base\Model;
 
-class FormUpdateAnos extends model
+/**
+ * Class FormUpdateAnos
+ * @package app\models\anos
+ */
+class FormUpdateAnos extends Model
 {
     public $nombreano;
     public $activo;

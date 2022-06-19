@@ -13,6 +13,25 @@ use yii\widgets\Pjax;
 $this->title = "Listado de alumnos para cambio de curso";
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+<?= \lavrentiev\widgets\toastr\NotificationFlash::widget([
+    'options' => [
+        "closeButton" => true,
+        "debug" => false,
+        "newestOnTop" => false,
+        "progressBar" => false,
+        "positionClass" => \lavrentiev\widgets\toastr\NotificationFlash::POSITION_TOP_RIGHT,
+        "preventDuplicates" => false,
+        "onclick" => null,
+        "showDuration" => "300",
+        "hideDuration" => "1000",
+        "timeOut" => "5000",
+        "extendedTimeOut" => "1000",
+        "showEasing" => "swing",
+        "hideEasing" => "linear",
+        "showMethod" => "fadeIn",
+        "hideMethod" => "fadeOut"
+    ]
+]) ?>
 <div id="variable" style="display: none;"><?= $count ?></div>
 <?php
 $this->registerJs(
@@ -31,7 +50,7 @@ $this->registerJs(
 ?>
 <div class="alumnos-index">
     <h1><?= Html::encode($this->title) ?></h1>
-
+    <h6>*No incluye alumnos retirados</h6>
     <!-- Renderizamos el combo de consulta -->
     <?= $this->render('_form',['model' => $model,]) ?>
 
@@ -87,7 +106,7 @@ $this->registerJs(
                     'template'=> ' {update} ',
                     'buttons'=>[
                             'update'=>function($url,$model){
-                                return Html::a("<span class='glyphicon glyphicon-pencil'></span>",['alumnos/cambiocurso','id'=>$model->idalumno],
+                                return Html::a("<span class='glyphicon glyphicon-pencil'></span>",['alumnos/cambiocurso','id'=>$model->idalumno, 'name' => $model->nombrealu . " " . $model->paternoalu],
                                     ['class'=>'btn btn-circle btn-success btn-sm','title'=>'Actualizar Curso']);
                             },
                     ],

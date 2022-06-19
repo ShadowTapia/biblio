@@ -2,11 +2,21 @@
 
 namespace app\models\alumnos;
 
+use app\models\apoderados\Apoderados;
+use app\models\Comunas;
+use app\models\Provincias;
+use app\models\Regiones;
+use app\models\Users;
+use app\models\pivot\Pivot;
+use yii\db\ActiveRecord;
+
+
 /**
  * This is the model class for table "alumnos".
  *
  * @property int|null $rutalumno
  * @property string|null $digrut
+ * @property string|null $sexo
  * @property string $nombrealu
  * @property string $paternoalu
  * @property string $maternoalu
@@ -18,30 +28,28 @@ namespace app\models\alumnos;
  * @property int|null $codRegion
  * @property int|null $idProvincia
  * @property int|null $codComuna
- * @property string|null $fono
- * @property string|null $sexo
  * @property string|null $email
+ * @property string|null $fono
  * @property string|null $fechanac
  * @property string|null $nacionalidad
- * @property string|null $fecharet
  * @property string|null $fechaing
+ * @property string|null $fecharet
+ * @property string|null $sangre
+ * @property string|null $enfermedades
+ * @property string|null $alergias
+ * @property string|null $medicamentos
  * @property string $idalumno
  *
  * @property Comunas $codComuna0
  * @property Provincias $idProvincia0
  * @property Regiones $codRegion0
+ * @property Users $rutalumno0
  * @property Apoderados $apoderados
  * @property Pivot[] $pivots
  */
-
-use app\models\apoderados\Apoderados;
-use app\models\Comunas;
-use app\models\pivot\Pivot;
-use app\models\Provincias;
-use app\models\Regiones;
-
-class Alumnos extends \yii\db\ActiveRecord
+class Alumnos extends ActiveRecord
 {
+
     /**
      * {@inheritdoc}
      */
@@ -57,22 +65,23 @@ class Alumnos extends \yii\db\ActiveRecord
     {
         return [
             [['rutalumno', 'codRegion', 'idProvincia', 'codComuna'], 'integer'],
-            [['nombrealu', 'paternoalu', 'maternoalu', 'idalumno'], 'required'],
             [['sexo', 'nacionalidad'], 'string'],
-            [['fechanac', 'fecharet', 'fechaing'], 'safe'],
+            [['nombrealu', 'paternoalu', 'maternoalu', 'idalumno'], 'required'],
+            [['fechanac', 'fechaing', 'fecharet'], 'safe'],
             [['digrut'], 'string', 'max' => 1],
-            [['nombrealu'], 'string', 'max' => 40],
-            [['paternoalu', 'maternoalu'], 'string', 'max' => 20],
-            [['calle', 'villa'], 'string', 'max' => 50],
+            [['nombrealu', 'alergias'], 'string', 'max' => 50],
+            [['paternoalu', 'maternoalu', 'sangre'], 'string', 'max' => 20],
+            [['calle', 'medicamentos'], 'string', 'max' => 80],
             [['nro', 'depto'], 'string', 'max' => 8],
-            [['block'], 'string', 'max' => 10],
-            [['fono'], 'string', 'max' => 25],
-            [['email'], 'string', 'max' => 150],
+            [['block'], 'string', 'max' => 5],
+            [['villa', 'fono'], 'string', 'max' => 25],
+            [['email', 'enfermedades'], 'string', 'max' => 150],
             [['idalumno'], 'string', 'max' => 15],
             [['idalumno'], 'unique'],
-            [['codComuna'], 'exist', 'skipOnError' => true, 'targetClass' => Comunas::className(), 'targetAttribute' => ['codComuna' => 'codComuna']],
-            [['idProvincia'], 'exist', 'skipOnError' => true, 'targetClass' => Provincias::className(), 'targetAttribute' => ['idProvincia' => 'idProvincia']],
-            [['codRegion'], 'exist', 'skipOnError' => true, 'targetClass' => Regiones::className(), 'targetAttribute' => ['codRegion' => 'codRegion']],
+            [['codComuna'], 'exist', 'skipOnError' => true, 'targetClass' => Comunas::class, 'targetAttribute' => ['codComuna' => 'codComuna']],
+            [['idProvincia'], 'exist', 'skipOnError' => true, 'targetClass' => Provincias::class, 'targetAttribute' => ['idProvincia' => 'idProvincia']],
+            [['codRegion'], 'exist', 'skipOnError' => true, 'targetClass' => Regiones::class, 'targetAttribute' => ['codRegion' => 'codRegion']],
+            [['rutalumno'], 'exist', 'skipOnError' => true, 'targetClass' => Users::class, 'targetAttribute' => ['rutalumno' => 'UserRut']],
         ];
     }
 
@@ -84,6 +93,7 @@ class Alumnos extends \yii\db\ActiveRecord
         return [
             'rutalumno' => 'Rutalumno',
             'digrut' => 'Digrut',
+            'sexo' => 'Sexo',
             'nombrealu' => 'Nombrealu',
             'paternoalu' => 'Paternoalu',
             'maternoalu' => 'Maternoalu',
@@ -95,55 +105,78 @@ class Alumnos extends \yii\db\ActiveRecord
             'codRegion' => 'Cod Region',
             'idProvincia' => 'Id Provincia',
             'codComuna' => 'Cod Comuna',
-            'fono' => 'Fono',
-            'sexo' => 'Sexo',
             'email' => 'Email',
+            'fono' => 'Fono',
             'fechanac' => 'Fechanac',
             'nacionalidad' => 'Nacionalidad',
-            'fecharet' => 'Fecharet',
             'fechaing' => 'Fechaing',
+            'fecharet' => 'Fecharet',
+            'sangre' => 'Sangre',
+            'enfermedades' => 'Enfermedades',
+            'alergias' => 'Alergias',
+            'medicamentos' => 'Medicamentos',
             'idalumno' => 'Idalumno',
         ];
     }
+
     /**
+     * Gets query for [[CodComuna0]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getCodComuna0()
     {
-        return $this->hasOne(Comunas::className(), ['codComuna' => 'codComuna']);
+        return $this->hasOne(Comunas::class, ['codComuna' => 'codComuna']);
     }
 
     /**
+     * Gets query for [[IdProvincia0]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getIdProvincia0()
     {
-        return $this->hasOne(Provincias::className(), ['idProvincia' => 'idProvincia']);
+        return $this->hasOne(Provincias::class, ['idProvincia' => 'idProvincia']);
     }
 
     /**
+     * Gets query for [[CodRegion0]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getCodRegion0()
     {
-        return $this->hasOne(Regiones::className(), ['codRegion' => 'codRegion']);
+        return $this->hasOne(Regiones::class, ['codRegion' => 'codRegion']);
     }
 
     /**
+     * Gets query for [[Rutalumno0]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRutalumno0()
+    {
+        return $this->hasOne(Users::class, ['UserRut' => 'rutalumno']);
+    }
+
+    /**
+     * Gets query for [[Apoderados]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getApoderados()
     {
-        return $this->hasMany(Apoderados::className(), ['rutalumno' => 'rutalumno']);
+        return $this->hasMany(Apoderados::class, ['rutalumno' => 'rutalumno']);
     }
 
-
     /**
+     * Gets query for [[Pivots]].
+     *
      * @return \yii\db\ActiveQuery
      */
     public function getPivots()
     {
-        return $this->hasMany(Pivot::className(), ['idalumno' => 'idalumno']);
+        return $this->hasMany(Pivot::class, ['idalumno' => 'idalumno']);
     }
 
     /**
@@ -153,12 +186,12 @@ class Alumnos extends \yii\db\ActiveRecord
     public static function getAlumnosporcurso($idCurso)
     {
         $comboAlumnos = self::find()
-                        ->select(['alumnos.rutalumno as id','alumnos.nombrealu as name'])
-                        ->joinWith(['pivots pi'])
-                        ->where(['pi.idCurso'=>$idCurso])
-                        ->andWhere(['pi.idano'=>\Yii::$app->session->get('anoActivo')])
-                        ->asArray()
-                        ->all();
+            ->select(['rutalumno as id','nombrealu as name'])
+            ->joinWith(['pivots pi'])
+            ->where(['pi.idCurso'=> $idCurso])
+            ->andWhere(['pi.retirado' => '0'])
+            ->andWhere(['pi.idano'=>\Yii::$app->session->get('anoActivo')])
+            ->all();
         return $comboAlumnos;
     }
 
@@ -178,5 +211,4 @@ class Alumnos extends \yii\db\ActiveRecord
         }
         return $dropdown;
     }
-
 }

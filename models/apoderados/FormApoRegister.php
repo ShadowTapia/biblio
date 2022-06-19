@@ -7,9 +7,13 @@
  */
 
 namespace app\models\Apoderados;
-use yii\base\model;
+use yii\base\Model;
 
-class FormApoRegister extends model
+/**
+ * Class FormApoRegister
+ * @package app\models\Apoderados
+ */
+class FormApoRegister extends Model
 {
     public $rutapo;
     public $digrut;
@@ -61,7 +65,7 @@ class FormApoRegister extends model
      * @param $attribute
      * @param $params
      */
-    public function validarRut($attribute,$params)
+    public function validarRut($attribute)
     {
         $rut=$this->rutapo;//recibo el rut
         $rut_sin_puntos=str_replace('.',"",$rut);//le quito los puntos
@@ -97,13 +101,6 @@ class FormApoRegister extends model
         if($verificador!=$dv)
         {
             $this->addError($attribute,"Rut Inválido");
-        }else{
-            //Esta parte del código valida si existe el Run en la BBDD
-            $tabla = Apoderados::find()->where("rutapo=:rutapo",[":rutapo"=>$data[0]]);
-            if($tabla->count()==1)
-            {
-                $this->addError($attribute,"El Run ingresado ya existe.-");
-            }
         }
     }
 }

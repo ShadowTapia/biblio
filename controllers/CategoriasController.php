@@ -6,9 +6,11 @@ use Yii;
 use app\models\categorias\Categorias;
 use app\models\categorias\CategoriasSearch;
 use app\models\categorias\FormUpdateCategorias;
+use app\models\libros\Libros;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
 
@@ -23,8 +25,17 @@ class CategoriasController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@']
+                    ]
+                ]
+            ],
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
                 ],
@@ -61,9 +72,9 @@ class CategoriasController extends Controller
     }
 
     /**
-     * Creates a new Categorias model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
+     * @return array|string
+     * @throws \Exception
+     * @throws \Throwable
      */
     public function actionCreate()
     {
@@ -84,13 +95,12 @@ class CategoriasController extends Controller
                     if($table->insert())
                     {
                         $transaction->commit();
-                        Yii::$app->session->setFlash('success', 'Se ha ingresado correctamente la <b>Categoría</b>.-.');
-                        return $this->redirect(['categorias/index']);
+                        \Yii::$app->session->setFlash('success', 'Se ha ingresado correctamente la Categoría.-');
                     }else{
                         $transaction->rollBack();
-                        Yii::$app->session->setFlash('error', 'Ocurrió un error, al ingresar la <b>Categoría</b>.-');
-                        return $this->redirect(['categorias/index']);
+                        \Yii::$app->session->setFlash('error', 'Ocurrió un error, al ingresar la Categoría.-');
                     }
+                    return $this->redirect(['categorias/index']);
                 }
                 catch (\Exception $e) {
                     $transaction->rollBack();
@@ -113,11 +123,10 @@ class CategoriasController extends Controller
     }
 
     /**
-     * Updates an existing Categorias model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return array|string
+     * @throws \Exception
+     * @throws \Throwable
      */
     public function actionUpdate($id)
     {
@@ -143,12 +152,12 @@ class CategoriasController extends Controller
                             if($table->update())
                             {
                                 $transaction->commit();
-                                Yii::$app->session->setFlash('success','La <b>Categoría</b> se ha actualizado exitosamente.-');
-                                return $this->redirect(['categorias/index']);
+                                \Yii::$app->session->setFlash('success','La Categoría se ha actualizado exitosamente.-');
                             }else{
                                 $transaction->rollBack();
-                                Yii::$app->session->setFlash('error','No se ha actualizado la <b>Categoría</b>.-');
+                                \Yii::$app->session->setFlash('error','No se ha actualizado la Categoría.-');
                             }
+                            return $this->redirect(['categorias/index']);
                         }
                     }
                     catch (\Exception $e) {
@@ -176,40 +185,47 @@ class CategoriasController extends Controller
     }
 
     /**
-     * Deletes an existing Categorias model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return Response
+     * @throws \Exception
+     * @throws \Throwable
      */
     public function actionDelete($id)
     {
         //Se debe hacer la busqueda de categorías por libro
-        $table = new Categorias();
-
-        $transaction = $table->getDb()->beginTransaction();
-        try
+        $tableLibros = Libros::find()->where("idcategoria=:idcategoria",[":idcategoria" => $id]);
+        if ($tableLibros->count()>0)
         {
-            if($table->deleteAll("idcategoria=:idcategoria",[":idcategoria"=>$id]))
+            \Yii::$app->session->setFlash('error', 'Ocurrió un error, existen categorías asociadas a este Libro.-');
+            return $this->redirect(['index']);
+        }else{
+            $table = new Categorias();
+
+            $transaction = $table->getDb()->beginTransaction();
+            try
             {
-                $transaction->commit();
-                Yii::$app->session->setFlash('success', 'Se ha borrado correctamente la Categoría '. $table->categoria );
-            }else{
-                $transaction->rollBack();
-                Yii::$app->session->setFlash('error', 'Ocurrió un error, no se borro la Catgoría.-');
+                if($table->deleteAll("idcategoria=:idcategoria",[":idcategoria"=>$id]))
+                {
+                    $transaction->commit();
+                    \Yii::$app->session->setFlash('success', 'Se ha borrado correctamente la Categoría '. $table->categoria );
+                }else{
+                    $transaction->rollBack();
+                    \Yii::$app->session->setFlash('error', 'Ocurrió un error, no se borro la Categoría.-');
+                }
             }
-        }
-        catch (\Exception $e) {
-            $transaction->rollBack();
-            throw $e;
-        }
-        catch (\Throwable $e)
-        {
-            $transaction->rollBack();
-            throw $e;
+            catch (\Exception $e) {
+                $transaction->rollBack();
+                throw $e;
+            }
+            catch (\Throwable $e)
+            {
+                $transaction->rollBack();
+                throw $e;
+            }
+
+            return $this->redirect(['index']);
         }
 
-        return $this->redirect(['index']);
     }
 
     /**

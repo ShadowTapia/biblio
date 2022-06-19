@@ -5,9 +5,13 @@
  * @copyright 2019
  */
 namespace app\models;
-use yii\base\model;
+use yii\base\Model;
 
-class FormUpdateUser extends model
+/**
+ * Class FormUpdateUser
+ * @package app\models
+ */
+class FormUpdateUser extends Model
 {
     public $UserName;
     public $UserLastName;
@@ -20,14 +24,17 @@ class FormUpdateUser extends model
         return [
             [['UserName','UserLastName','idroles'],'required','message' => 'Campo requerido'],
             [['UserName','UserLastName'],'match','pattern'=>"/^.{3,45}$/",'message'=>'Mínimo 3 y máximo 50 caracteres'],
-            [['UserName','UserLastName'],'match','pattern' => "/^([a-zA-Zñ-Ñ\u00f1\u00d1\u00E0-\u00FC])\w+/",'message'=>'Sólo se aceptan letras'],
+            [['UserName','UserLastName'],'match','pattern' => "/^([a-zA-Zñ-Ñ\x{00f1}\x{00d1}\x{00E0}-\x{00FC}])\w+/",'message'=>'Sólo se aceptan letras'],
             ['UserMail','match','pattern'=>"/^.{5,80}$/",'message'=>'Mínimo 5 y máximo 80 caracteres'],
             ['UserMail','email','message'=>'Formato no válido'],
             ['activate','safe'],      
         ];
     }
-    
-    public function email_existe($attribute,$params)
+
+    /**
+     * @param $attribute
+     */
+    public function email_existe($attribute)
     {
         //Buscar e-mail en la tabla
         $table=Users::find()->where("UserMail=:UserMail",[":UserMail"=>$this->UserMail]);

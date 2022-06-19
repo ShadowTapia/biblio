@@ -7,13 +7,42 @@ use app\models\Roles;
 use app\models\Users;
 use Yii;
 use yii\data\ActiveDataProvider;
-use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
+use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 
+/**
+ * Class RolesController
+ * @package app\controllers
+ */
 class RolesController extends Controller
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@']
+                    ]
+                ]
+            ],
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'delete' => ['POST'],
+                ],
+            ],
+        ];
+    }
+
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider(['query' => Roles::find()]);
@@ -52,13 +81,11 @@ class RolesController extends Controller
                         //limpiamos los campos del formulario
                         $model->nombre = null;
                         $model->descripcion = null;
-
-                        Yii::$app->session->setFlash('success', 'Se ha creado correctamente el <b>Rol</b>.-.');
-
+                        \Yii::$app->session->setFlash('success', 'Se ha creado correctamente el Rol.-.');
                     }else{
-                        Yii::$app->session->setFlash('error', 'Ocurrio un error, al ingresar un <b>Rol</b>.-');
-
+                        \Yii::$app->session->setFlash('error', 'Ocurrio un error, al ingresar un Rol.-');
                     }
+                    return $this->redirect(['index']);
                 }
                  catch (\Exception $e) {
                     $transaction->rollBack();
@@ -69,22 +96,19 @@ class RolesController extends Controller
                     $transaction->rollBack();
                     throw $e;
                 }
-                return $this->redirect(['index']);
             }else{
                 $model->getErrors();
             }
         }
-        else
-        {
-            return $this->renderAjax('crearroles',["model" => $model]);
-        }
-
+        return $this->renderAjax('crearroles',["model" => $model]);
     }
+
     /**
-     * 
-     * Se encarga de borrar roles
-     * 
-     **/ 
+     * @param $id
+     * @return Response
+     * @throws \Exception
+     * @throws \Throwable
+     */
     public function actionDelete($id)
     {
         if((int)$id)
@@ -94,9 +118,8 @@ class RolesController extends Controller
             //Si existen usuarios asignados lanzamos la advertencia
             if($table2->count()>0)
             {
-                Yii::$app->session->setFlash('error', utf8_encode('Ocurrio un error, existen roles asociados a Usuarios.-'));
-                echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("roles/index") .
-                    "'>";
+                \Yii::$app->session->setFlash('error', utf8_encode('Ocurrio un error, existen roles asociados a Usuarios.-'));
+                return $this->redirect(['roles/index']);
             }else{
                 $table = new Roles;
                 
@@ -105,15 +128,12 @@ class RolesController extends Controller
                     if($table->deleteAll("Idroles=:Idroles", [":Idroles" => $id]))
                     {
                         $transaction->commit();
-                        Yii::$app->session->setFlash('success', utf8_encode('Se ha borrado correctamente el Rol.-'));
-                        echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("roles/index") .
-                            "'>";
+                        \Yii::$app->session->setFlash('success', utf8_encode('Se ha borrado correctamente el Rol.-'));
                     }else{
                         $transaction->rollBack();
                         Yii::$app->session->setFlash('error', utf8_encode('Ocurrio un error, no se borro el Rol.-'));
-                        echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("roles/index") .
-                            "'>";
                     }
+                    return $this->redirect(['roles/index']);
                 }
                 catch (\Exception $e) {
                     $transaction->rollBack();
@@ -126,8 +146,7 @@ class RolesController extends Controller
                 }
             }
         }else{
-             echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("roles/index") .
-                    "'>";
+            return $this->redirect(['roles/index']);
         }
     }
 

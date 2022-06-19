@@ -2,6 +2,7 @@
 
 namespace app\models\cursos;
 
+use Yii;
 use app\models\pivot\Pivot;
 use yii\db\ActiveRecord;
 
@@ -56,7 +57,21 @@ class Cursos extends ActiveRecord
      */
     public function getPivots()
     {
-        return $this->hasMany(Pivot::className(), ['idCurso' => 'idCurso']);
+        return $this->hasMany(Pivot::class, ['idCurso' => 'idCurso']);
+    }
+
+    /**
+     *
+     * Devuelve el Curso según el idalumno y el año activo
+     * @param $id
+     * @return array|null|ActiveRecord
+     */
+    public function getNombrecurso($id)
+    {
+        return self::find()->joinWith(['pivots pi'])
+            ->where(['pi.idano' => Yii::$app->session->get('anoActivo')])
+            ->andWhere(['pi.idalumno' => $id])
+            ->one();
     }
 
     /**

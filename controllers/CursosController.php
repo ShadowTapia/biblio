@@ -6,24 +6,54 @@ use app\models\cursos\Cursos;
 use app\models\cursos\FormCreaCursos;
 use Yii;
 use yii\data\ActiveDataProvider;
-use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
+use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 
+/**
+ * Class CursosController
+ * @package app\controllers
+ */
 class CursosController extends Controller
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@']
+                    ]
+                ]
+            ],
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'delete' => ['POST'],
+                ],
+            ],
+        ];
+    }
+
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider(['query' => Cursos::find()]);
         $dataProvider->sort->defaultOrder = ['Orden' => SORT_ASC];
         return $this->render('index',compact('dataProvider'));
     }
-    
+
     /**
-     * 
-     * Se encarga de actualizar un curso
-     * 
+     * @param $id
+     * @return array|string
+     * @throws \Exception
+     * @throws \Throwable
      */
     public function actionUpdatecurso($id)
     {
@@ -54,16 +84,12 @@ class CursosController extends Controller
                         if ($table->update())
                         {
                             $transaction->commit();
-                            \raoul2000\widget\pnotify\PNotify::widget(['pluginOptions' => ['title' =>
-                                utf8_encode('Cursos'), 'text' => utf8_encode('El Curso se ha actualizado exitosamente.-'), 'type' =>
-                                'success', ]]);
-                                echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("cursos/index") .
-                            "'>";
+                            \Yii::$app->session->setFlash('success','El curso se ha actualizado exitosamente.-');
                         }else{
                             $transaction->rollBack();
-                            \raoul2000\widget\pnotify\PNotify::widget(['pluginOptions' => ['title' =>
-                                utf8_encode('Cursos'), 'text' => utf8_encode('No se ha actualizado el Curso.-'), 'type' => 'error', ]]);
+                            \Yii::$app->session->setFlash('error','No se ha actualizado el Curso.-');
                         }
+                        return $this->redirect(['cursos/index']);
                     }   
                 }
                  catch (\Exception $e) {
@@ -123,24 +149,11 @@ class CursosController extends Controller
                         $transaction->commit();
                         $model->Nombre = null;
                         $model->Orden = null;
-                        \raoul2000\widget\pnotify\PNotify::widget([
-		                  'pluginOptions' => [
-			                 'title' => utf8_encode('Cursos'),
-			                 'text' => utf8_encode('Se ha creado correctamente el <b>Curso</b>.-.') ,
-                             'type' => 'info',
-		                      ]
-	                       ]);
-                           echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("cursos/index") .
-                            "'>";
+                        \Yii::$app->session->setFlash('info','Se ha creado correctamente el Curso.-');
                     }else{
-                        \raoul2000\widget\pnotify\PNotify::widget([
-		                  'pluginOptions' => [
-                            'title' => 'Error',
-                            'text' => utf8_encode('Ocurrio un error, al ingresar un <b>Curso</b>.-') ,
-                            'type' => 'error',
-		                      ]
-	                       ]);
+                        \Yii::$app->session->setFlash('error','Ocurrio un error, al ingresar un Curso.-');
                     }
+                    return $this->redirect(['cursos/index']);
                 }
                 catch (\Exception $e) {
                     $transaction->rollBack();

@@ -7,9 +7,13 @@
  */
 namespace app\models\editorial;
 
-use yii\base\model;
+use yii\base\Model;
 
-class FormUpdateEditorial extends model
+/**
+ * Class FormUpdateEditorial
+ * @package app\models\editorial
+ */
+class FormUpdateEditorial extends Model
 {
     public $ideditorial;
     public $nombre;

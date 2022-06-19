@@ -4,7 +4,6 @@ namespace app\models\categorias;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\categorias\Categorias;
 
 /**
  * CategoriasSearch represents the model behind the search form of `app\models\categorias\Categorias`.

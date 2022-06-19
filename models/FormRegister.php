@@ -7,15 +7,19 @@
 
 namespace app\models;
 
-use yii\base\model;
+use yii\base\Model;
 
-class FormRegister extends model{
+/**
+ * Class FormRegister
+ * @package app\models
+ */
+class FormRegister extends Model
+{
     public $UserRut;
     public $UserName;
     public $UserLastName;
     public $UserMail;
     public $idroles;
-    public $activate;
     public $UserPass;
     public $UserPass_repeat;
     
@@ -24,19 +28,21 @@ class FormRegister extends model{
         return [
             [['UserRut','UserName','UserMail','idroles','UserPass','UserPass_repeat'],'required','message'=>'Campo requerido'],
             ['UserRut','validateRut'], 
-            ['UserName','match','pattern'=>"/^.{3,45}$/",'message'=>'Mínimo 3 y máximo 50 caracteres'],
-            ['UserName','match','pattern' => "/^([a-zA-Zñ-Ñ\u00f1\u00d1\u00E0-\u00FC])\w+/",'message'=>'Sólo se aceptan letras'],
-            ['UserLastName','match','pattern' => "/^([a-zA-Zñ-Ñ\u00f1\u00d1\u00E0-\u00FC])\w+/",'message'=>'Sólo se aceptan letras'],
-            ['UserMail','match','pattern'=>"/^.{5,80}$/",'message'=>'Mínimo 5 y máximo 80 caracteres'],
-            ['UserMail','email','message'=>'Formato no válido'],
-            ['activate','safe'],
+            ['UserName','match','pattern'=>"/^.{3,50}$/",'message'=>'M�nimo 3 y m�ximo 50 caracteres'],
+            //['UserName','match','pattern' => "/^([a-zA-Zñ-�_\u00f1\u00d1\u00E0-\u00FC])\w+/",'message'=>'S�lo se aceptan letras'],
+            //['UserLastName','match','pattern' => "/^([a-zA-Zñ-�_\u00f1\u00d1\u00E0-\u00FC])\w+/",'message'=>'S�lo se aceptan letras'],
+            ['UserMail','match','pattern'=>"/^.{5,80}$/",'message'=>'M�nimo 5 y m�ximo 80 caracteres'],
+            ['UserMail','email','message'=>'Formato no v�lido'],
             ['UserMail','email_existe'],
-            ['UserPass','match','pattern'=>"/^.{7,16}$/",'message'=>'Mínimo 7 y máximo 16 caracteres'],
-            ['UserPass_repeat','compare','compareAttribute'=>'UserPass','message'=>'Las contraseñas no coinciden'],
+            ['UserPass','match','pattern'=>"/^.{7,16}$/",'message'=>'M�nimo 7 y m�ximo 16 caracteres'],
+            ['UserPass_repeat','compare','compareAttribute'=>'UserPass','message'=>'Las contrase�as no coinciden'],
         ];
     }
-    
-    public function email_existe($attribute,$params)
+
+    /**
+     * @param $attribute
+     */
+    public function email_existe($attribute)
     {
         //Buscar e-mail en la tabla
         $table=Users::find()->where("UserMail=:UserMail",[":UserMail"=>$this->UserMail]);
@@ -46,8 +52,11 @@ class FormRegister extends model{
             $this->addError($attribute,"El email seleccionado existe");
         }
     }
-    
-    public function validateRut($attribute,$params)
+
+    /**
+     * @param $attribute
+     */
+    public function validateRut($attribute)
     {
         $rut=$this->UserRut;//recibo el rut
         $rut_sin_puntos=str_replace('.',"",$rut);//le quito los puntos
@@ -82,7 +91,7 @@ class FormRegister extends model{
         }
         if($verificador!=$dv)
         {
-            $this->addError($attribute,"Rut Inválido");
+            $this->addError($attribute,"Rut Inv�lido");
         }
     }   
     

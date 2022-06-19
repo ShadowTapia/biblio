@@ -16,7 +16,6 @@ $this->params['breadcrumbs'][] = $this->title;
 <h1><?= $this->title ?></h1>
 
 <?php $form = ActiveForm::begin([
-     'id' => $model->formName(),
     'method' => 'post',
     'enableClientValidation' => true,
 ]);
@@ -25,7 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= $form->field($model,"nombre")->input("text",['style'=>'width:360px;'],['autofocus'=>true])->label('Nombre Rol') ?>
 </div>
 <div class="form-group">
-    <?= $form->field($model,"descripcion")->input("text",['style'=>'width:450px;'])->label(utf8_encode('Descripción')) ?>
+    <?= $form->field($model,"descripcion")->input("text",['style'=>'width:450px;'])->label('DescripciÃ³n') ?>
 </div>
 
 <?= Html::submitButton('Guardar',['class'=>'btn btn-primary']) ?>

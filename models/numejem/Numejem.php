@@ -2,8 +2,8 @@
 
 namespace app\models\numejem;
 
-use Yii;
-
+use yii\db\ActiveRecord;
+use app\models\libros\Libros;
 /**
  * This is the model class for table "numejem".
  *
@@ -13,7 +13,7 @@ use Yii;
  *
  * @property Libros $idLibros0
  */
-class Numejem extends \yii\db\ActiveRecord
+class Numejem extends ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -33,7 +33,7 @@ class Numejem extends \yii\db\ActiveRecord
             [['numlibros', 'numdispos'], 'integer'],
             [['idLibros'], 'string', 'max' => 15],
             [['idLibros'], 'unique'],
-            [['idLibros'], 'exist', 'skipOnError' => true, 'targetClass' => Libros::className(), 'targetAttribute' => ['idLibros' => 'idLibros']],
+            [['idLibros'], 'exist', 'skipOnError' => true, 'targetClass' => Libros::class, 'targetAttribute' => ['idLibros' => 'idLibros']],
         ];
     }
 
@@ -56,6 +56,6 @@ class Numejem extends \yii\db\ActiveRecord
      */
     public function getIdLibros0()
     {
-        return $this->hasOne(Libros::className(), ['idLibros' => 'idLibros']);
+        return $this->hasOne(Libros::class, ['idLibros' => 'idLibros']);
     }
 }

@@ -6,9 +6,13 @@
  */
 
 namespace app\models;
-use yii\base\model;
+use yii\base\Model;
 
-class FormUpdateRegiones extends model
+/**
+ * Class FormUpdateRegiones
+ * @package app\models
+ */
+class FormUpdateRegiones extends Model
 {
     public $region;
     public $orden;
@@ -22,7 +26,7 @@ class FormUpdateRegiones extends model
             [['orden'],'compare','compareValue' => 128, 'operator' => '<','message'=>'No se aceptan valores mayores a 127'],
             //Validamos que los valores sean mayores de 0
             [['orden'],'compare','compareValue' => 0, 'operator' => '>','message' => 'No se aceptan valores menores que 0'],
-            [['region'],'match','pattern' => "/^([a-zA-Zñ-Ñ\u00f1\u00d1\u00E0-\u00FC])\w+/", 'message' => 'Sólo se aceptan letras'],
+            //[['region'],'match','pattern' => "/^([a-zA-Zñ-Ñ\u00f1\u00d1\u00E0-\u00FC])\w+/", 'message' => 'Sólo se aceptan letras'],
         ];
     }
 }

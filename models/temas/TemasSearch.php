@@ -4,7 +4,6 @@ namespace app\models\temas;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\temas\Temas;
 
 /**
  * TemasSearch represents the model behind the search form of `app\models\temas\Temas`.

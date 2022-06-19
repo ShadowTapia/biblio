@@ -2,6 +2,10 @@
 
 namespace app\models\docente;
 
+use yii\db\ActiveRecord;
+use app\models\Comunas;
+use app\models\Provincias;
+use app\models\Regiones;
 /**
  * This is the model class for table "docente".
  *
@@ -25,7 +29,7 @@ namespace app\models\docente;
  * @property Provincias $provincias
  * @property Regiones $regiones
  */
-class Docente extends \yii\db\ActiveRecord
+class Docente extends ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -65,7 +69,7 @@ class Docente extends \yii\db\ActiveRecord
      */
     public function getComunas()
     {
-        return $this->hasOne(Comunas::className(), ['codComuna' => 'codComuna']);
+        return $this->hasOne(Comunas::class, ['codComuna' => 'codComuna']);
     }
 
     /**
@@ -73,7 +77,7 @@ class Docente extends \yii\db\ActiveRecord
      */
     public function getProvincias()
     {
-        return $this->hasOne(Provincias::className(), ['idProvincia' => 'idProvincia']);
+        return $this->hasOne(Provincias::class, ['idProvincia' => 'idProvincia']);
     }
 
     /**
@@ -81,6 +85,14 @@ class Docente extends \yii\db\ActiveRecord
      */
     public function getRegiones()
     {
-        return $this->hasOne(Regiones::className(), ['codRegion' => 'codRegion']);
+        return $this->hasOne(Regiones::class, ['codRegion' => 'codRegion']);
+    }
+
+    /**
+     * @return array
+     */
+    public static function getListdocentes()
+    {
+        return self::find()->select(['concat(paterno,SPACE(1),materno,SPACE(1),nombres) as name','rutdocente as rutdocente'])->indexBy('rutdocente')->orderBy('paterno')->addOrderBy('materno')->column();
     }
 }

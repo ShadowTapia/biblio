@@ -1,7 +1,9 @@
 <?php
 
+use yii\bootstrap\Modal;
 use yii\grid\GridView;
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\ProvinciasSearch */
@@ -10,14 +12,42 @@ use yii\helpers\Html;
 $this->title = 'Provincias';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+<?= \lavrentiev\widgets\toastr\NotificationFlash::widget([
+    'options' => [
+        "closeButton" => true,
+        "debug" => false,
+        "newestOnTop" => false,
+        "progressBar" => false,
+        "positionClass" => \lavrentiev\widgets\toastr\NotificationFlash::POSITION_TOP_RIGHT,
+        "preventDuplicates" => false,
+        "onclick" => null,
+        "showDuration" => "300",
+        "hideDuration" => "1000",
+        "timeOut" => "5000",
+        "extendedTimeOut" => "1000",
+        "showEasing" => "swing",
+        "hideEasing" => "linear",
+        "showMethod" => "fadeIn",
+        "hideMethod" => "fadeOut"
+    ]
+]) ?>
 <div class="provincias-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Crear Provincia', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::button('Crear Provincia',['value' => Url::to('create'), 'class'=>'btn btn-success', 'id' => 'modalButton']) ?>
     </p>
 
+    <?php
+        Modal::begin([
+            'header' => '<h4>Provincias</h4>',
+            'id' => 'modal',
+            'size' => 'modal-lg',
+        ]);
+    echo "<div id='modalContent'></div>";
+    Modal::end();
+    ?>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?= GridView::widget([

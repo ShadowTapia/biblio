@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use yii\db\ActiveRecord;
 /**
  * This is the model class for table "provincias".
  *
@@ -12,7 +13,7 @@ namespace app\models;
  * @property Comunas[] $comunas
  * @property Regiones $codRegion0
  */
-class Provincias extends \yii\db\ActiveRecord
+class Provincias extends ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -40,7 +41,7 @@ class Provincias extends \yii\db\ActiveRecord
      */
     public function getComunas()
     {
-        return $this->hasMany(Comunas::className(), ['idProvincia' => 'idProvincia']);
+        return $this->hasMany(Comunas::class, ['idProvincia' => 'idProvincia']);
     }
 
     /**
@@ -48,7 +49,7 @@ class Provincias extends \yii\db\ActiveRecord
      */
     public function getCodRegion0()
     {
-        return $this->hasOne(Regiones::className(), ['codRegion' => 'codRegion']);
+        return $this->hasOne(Regiones::class, ['codRegion' => 'codRegion']);
     }
     
     public function getRegionNombre()

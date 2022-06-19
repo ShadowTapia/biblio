@@ -6,6 +6,11 @@
  * Time: 0:28
  */
 
+/**
+ * @param $alumnos
+ * @param $curso
+ * @return string
+ */
 function getPlantilla($alumnos,$curso)
 {
 
@@ -43,7 +48,7 @@ function getPlantilla($alumnos,$curso)
       
     </main>
     <footer>';
-    $plantilla .= utf8_encode("The Kingstown School - Fundación Educacional Bosques de Santa Julia 2020.").'
+    $plantilla .= utf8_encode("The Kingstown School - Fundación Educacional Bosques de Santa Julia 2021.").'
         
     </footer>
   </body>';

@@ -7,9 +7,13 @@
  */
 namespace app\models\libros;
 
-use yii\base\model;
+use yii\base\Model;
 
-class FormUpdateLibros extends model
+/**
+ * Class FormUpdateLibros
+ * @package app\models\libros
+ */
+class FormUpdateLibros extends Model
 {
     public $idLibros;
     public $isbn;

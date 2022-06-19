@@ -5,10 +5,12 @@ namespace app\controllers;
 use Yii;
 use app\models\autor\Autor;
 use app\models\autor\FormUpdateAutor;
+use app\models\libros\Libros;
 use app\models\autor\AutorSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 use yii\widgets\ActiveForm;
 use yii\web\Response;
 
@@ -23,8 +25,17 @@ class AutorController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@']
+                    ]
+                ]
+            ],
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
                 ],
@@ -61,10 +72,10 @@ class AutorController extends Controller
     }
 
     /**
-     * Creates a new Autor model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     **/
+     * @return array|string
+     * @throws \Exception
+     * @throws \Throwable
+     */
     public function actionCreate()
     {
         $model = new Autor();
@@ -87,13 +98,12 @@ class AutorController extends Controller
                     if($table->insert())
                     {
                         $transaction->commit();
-                        Yii::$app->session->setFlash('success', 'Se ha ingresado correctamente el <b>Autor</b>.-.');
-                        return $this->redirect(['autor/index']);
+                        \Yii::$app->session->setFlash('success', 'Se ha ingresado correctamente el Autor.-');
                     }else{
                         $transaction->rollBack();
-                        Yii::$app->session->setFlash('error', 'Ocurrio un error, al ingresar el <b>Autor</b>.-');
-                        return $this->redirect(['autor/index']);
+                        \Yii::$app->session->setFlash('error', 'Ocurrio un error, al ingresar el Autor.-');
                     }
+                    return $this->redirect(['autor/index']);
                 }
                 catch (\Exception $e) {
                     $transaction->rollBack();
@@ -115,11 +125,10 @@ class AutorController extends Controller
     }
 
     /**
-     * Updates an existing Autor model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param string $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return array|string
+     * @throws \Exception
+     * @throws \Throwable
      */
     public function actionUpdate($id)
     {
@@ -145,12 +154,12 @@ class AutorController extends Controller
                         if($table->update())
                         {
                             $transaction->commit();
-                            Yii::$app->session->setFlash('success','El Autor se ha actualizado exitosamente.-');
-                            return $this->redirect(['autor/index']);
+                            \Yii::$app->session->setFlash('success','El Autor se ha actualizado exitosamente.-');
                         }else{
                             $transaction->rollBack();
-                            Yii::$app->session->setFlash('error','No se ha actualizado el Autor.-');
+                            \Yii::$app->session->setFlash('error','No se ha actualizado el Autor.-');
                         }
+                        return $this->redirect(['autor/index']);
                     }
                 }
                 catch (\Exception $e) {
@@ -180,17 +189,44 @@ class AutorController extends Controller
     }
 
     /**
-     * Deletes an existing Autor model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param string $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return Response
+     * @throws \Exception
+     * @throws \Throwable
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
 
-        return $this->redirect(['index']);
+        $tableLibro = Libros::find()->where("idautor=:idautor",[":idautor" => $id]);
+        if ($tableLibro->count()>0)
+        {
+            \Yii::$app->session->setFlash('error', 'Ocurrió un error, existen Libros asociadas a este Autor.-');
+            return $this->redirect(['index']);
+        }else{
+            $table = new Autor();
+            $transaction = $table->getDb()->beginTransaction();
+            try
+            {
+                if ($table->deleteAll("idautor=:idautor",[":idautor" => $id]))
+                {
+                    $transaction->commit();
+                    \Yii::$app->session->setFlash('success', 'Se ha borrado correctamente el Autor '. $table->nombre);
+                }else{
+                    $transaction->rollBack();
+                    \Yii::$app->session->setFlash('error', 'Ocurrió un error, no se borro el Autor.-');
+                }
+            }
+            catch (\Exception $e) {
+                $transaction->rollBack();
+                throw $e;
+            }
+            catch (\Throwable $e)
+            {
+                $transaction->rollBack();
+                throw $e;
+            }
+            return $this->redirect(['index']);
+        }
     }
 
     /**

@@ -6,9 +6,13 @@
  */
 
 namespace app\models;
-use Yii\base\model;
+use Yii\base\Model;
 
-class FormProvincias extends model
+/**
+ * Class FormProvincias
+ * @package app\models
+ */
+class FormProvincias extends Model
 {
     public $idProvincia;
     public $Provincia;
@@ -27,11 +31,14 @@ class FormProvincias extends model
             [['idProvincia'],'provincia_existe'],
             [['Provincia'], 'string', 'max' => 45],
             [['Provincia'],'match','pattern'=>"/^([a-zA-Zñ-Ñ\u00f1\u00d1\u00E0-\u00FC])\w+/",'message'=>'Sólo se aceptan letras'],
-            [['codRegion'], 'exist', 'skipOnError' => true, 'targetClass' => Regiones::className(), 'targetAttribute' => ['codRegion' => 'codRegion']],
+            [['codRegion'], 'exist', 'skipOnError' => true, 'targetClass' => Regiones::class, 'targetAttribute' => ['codRegion' => 'codRegion']],
         ];
     }
-    
-    public function provincia_existe($attribute,$params)
+
+    /**
+     * @param $attribute
+     */
+    public function provincia_existe($attribute)
     {
         //Buscar el c�digo de la provincia
         $table = Provincias::find()->where("idProvincia=:idProvincia", [":idProvincia" => $this->idProvincia]);

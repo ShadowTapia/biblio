@@ -42,7 +42,7 @@ class Comunas extends ActiveRecord
      */
     public function getProvincia()
     {        
-        return $this->hasOne(Provincias::className(), ['idProvincia' => 'idProvincia']);
+        return $this->hasOne(Provincias::class, ['idProvincia' => 'idProvincia']);
     }
     
     public function getNombreProvincia()
@@ -52,7 +52,7 @@ class Comunas extends ActiveRecord
     
     public function getCodRegion0()
     {
-        return $this->hasOne(Regiones::className(), ['codRegion' => 'codRegion'])->via('provincia');
+        return $this->hasOne(Regiones::class, ['codRegion' => 'codRegion'])->via('provincia');
     }
     
     public function getNombreRegion()
@@ -61,8 +61,8 @@ class Comunas extends ActiveRecord
     }
 
     /**
-     * @param $id
-     * @return $this
+     * @param $idProvincia
+     * @return array|ActiveRecord[]
      */
     public static function getComunalist($idProvincia)
     {

@@ -4,7 +4,6 @@ namespace app\models\autor;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\autor\Autor;
 
 /**
  * AutorSearch represents the model behind the search form of `app\models\autor\Autor`.

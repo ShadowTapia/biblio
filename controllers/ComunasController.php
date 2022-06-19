@@ -7,23 +7,55 @@ use app\models\FormComunas;
 use app\models\Provincias;
 use Yii;
 use yii\data\ActiveDataProvider;
-use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
+use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 
+/**
+ * Class ComunasController
+ * @package app\controllers
+ */
 class ComunasController extends Controller
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@']
+                    ]
+                ]
+            ],
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'delete' => ['POST'],
+                ],
+            ],
+        ];
+    }
+
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
         'query' => Comunas::find()->joinWith(['provincia pro'])->joinWith(['codRegion0 cod'])->orderBy('orden'),]);
         return $this->render('index',compact('dataProvider'));
     }
+
     /**
-     * Se encarga de borrar una comuna 
-     * 
-     **/
+     * @param $id
+     * @return Response
+     * @throws \Exception
+     * @throws \Throwable
+     */
     public function actionDelete($id)
     {
         if((int)$id)
@@ -33,15 +65,12 @@ class ComunasController extends Controller
             try{
                     if ($table::deleteAll("codComuna=:codComuna", [":codComuna" => $id])) {
                         $transaction->commit();
-                        Yii::$app->session->setFlash('success', utf8_encode('Se ha borrado correctamente la Comuna.-'));
-                        echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("comunas/index") .
-                            "'>";
+                        \Yii::$app->session->setFlash('success', 'Se ha borrado correctamente la Comuna.-');
                     } else {
                         $transaction->rollBack();
-                        Yii::$app->session->setFlash('error', utf8_encode('Ocurrio un error, no se borro la Comuna.-'));
-                        echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("Comunas/index") .
-                            "'>";
-                    }                    
+                        \Yii::$app->session->setFlash('error', 'Ocurrio un error, no se borro la Comuna.-');
+                    }
+
             }catch (\Exception $e){
                 $transaction->rollBack();
                 throw $e;
@@ -52,6 +81,7 @@ class ComunasController extends Controller
                     throw $e;
             }
         }
+        return $this->redirect('index');
     }
     /**
      * Procedimiento para crear comunas
@@ -86,27 +116,14 @@ class ComunasController extends Controller
                         //limpiamos los controles del formulario
                         $model->codComuna = null;
                         $model->comuna = null;
-                        \raoul2000\widget\pnotify\PNotify::widget([
-		                  'pluginOptions' => [
-			                 'title' => 'Ingreso',
-			                 'text' => 'Se ha creado correctamente la <b>Comuna</b>.',
-                             'type' => 'info',
-		                      ]
-	                       ]);
-                        
-                        //Yii::$app->session->setFlash('success', utf8_encode('Se ha agregado una nueva Comuna.-'));
-                        //Redireccionamos a la p�gina origen
-                        echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("comunas/index") ."'>";
+
+                        \Yii::$app->session->setFlash('success', 'Se ha creado correctamente la Comuna.');
+
                     }else{
-                        \raoul2000\widget\pnotify\PNotify::widget([
-		                  'pluginOptions' => [
-			                 'title' => 'Error',
-			                 'text' => 'Ocurrio un error, al ingresar la <b>Comuna</b>.-.',
-                             'type' => 'error',
-		                      ]
-	                       ]);
-                        //Yii::$app->session->setFlash('error', utf8_encode('Ocurrio un error, al ingresar la Comuna.-'));
+                        Yii::$app->session->setFlash('error', 'Ocurrio un error, al ingresar la Comuna.-.');
+
                     }
+                    return $this->redirect('index');
                 }
                 catch (\Exception $e){
                     $transaction->rollBack();
@@ -121,12 +138,12 @@ class ComunasController extends Controller
                 $model->getErrors();
             }
         }      
-        return $this->render('crearcomunas',["model" => $model]);
+        return $this->renderAjax('crearcomunas',["model" => $model]);
     }
+
     /**
-     * Se encarga de cargar y poblar el dropdown dependiente
-     * 
-     **/    
+     * @param $id
+     */
     public function actionLists($id) {        
         $countProvincias = Provincias::find()
             ->where(['codRegion' => $id])

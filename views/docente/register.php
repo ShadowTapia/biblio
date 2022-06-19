@@ -31,35 +31,35 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= $form->field($model,"rutdocente")->widget(MaskedInput::className(),['mask'=>'99.999.999-*',],['style'=>'width:20%'])->label('RUN*') ?>
         </div>
         <div class="col-xs-3">
-            <?= $form->field($model, "nombres")->input("text",['style'=>'width:100%'])->label('Nombre*') ?>
+            <?= $form->field($model, "nombres")->textInput(['style'=>'width:100%'])->label('Nombre*') ?>
         </div>
         <div class="col-xs-3">
-            <?= $form->field($model, "paterno")->input("text",['style'=>'width:100%'])->label('A. Paterno*') ?>
+            <?= $form->field($model, "paterno")->textInput(['style'=>'width:100%'])->label('A. Paterno*') ?>
         </div>
         <div class="col-xs-3">
-            <?= $form->field($model, "materno")->input("text",['style'=>'width:100%'])->label('A. Materno*') ?>      
+            <?= $form->field($model, "materno")->textInput(['style'=>'width:100%'])->label('A. Materno*') ?>
         </div>
     </div>
     <div class="row">
         <div class="col-xs-2">
-            <?= $form->field($model, "telefono")->input("text",['style'=>'width:100%'])->label('Teléfono') ?>
+            <?= $form->field($model, "telefono")->textInput(['style'=>'width:100%'])->label('Teléfono') ?>
         </div>
         <div class="col-sm-6">
-            <?= $form->field($model, "calle")->input("text",['style'=>'width:100%'])->label('Dirección') ?>
+            <?= $form->field($model, "calle")->textInput(['style'=>'width:100%'])->label('Dirección') ?>
         </div>
         <div class="col-xs-1">
-            <?= $form->field($model, "numero")->input("text",['style'=>'width:70%'])->label('Número') ?>
+            <?= $form->field($model, "numero")->textInput(['style'=>'width:70%'])->label('Número') ?>
         </div>
         <div class="col-xs-1">
-            <?= $form->field($model, "depto")->input("text",['style'=>'width:70%'])->label('Depto.') ?>
+            <?= $form->field($model, "depto")->textInput(['style'=>'width:70%'])->label('Depto.') ?>
         </div>
         <div class="col-xs-1">
-            <?= $form->field($model, "block")->input("text",['style'=>'width:60%'])->label('Block') ?>
+            <?= $form->field($model, "block")->textInput(['style'=>'width:60%'])->label('Block') ?>
         </div>    
     </div>
     <div class="row">
         <div class="col-xs-2">
-            <?= $form->field($model, "villa")->input("text",['style'=>'width:100%'])->label(utf8_encode('Villa')) ?>
+            <?= $form->field($model, "villa")->textInput(['style'=>'width:100%'])->label(utf8_encode('Villa')) ?>
         </div>
         <div class="col-xs-4">
             <?= $form->field($model,"codRegion")->dropDownList(Regiones::getListRegiones(),        
@@ -91,7 +91,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
     <div class="row">
         <div class="col-xs-3">
-            <?= $form->field($model,"email")->input("text",['style' => 'width:100%;'])->label(utf8_encode('E-Mail*')) ?>
+            <?= $form->field($model,"email")->textInput(['style' => 'width:100%;'])->label(utf8_encode('E-Mail*')) ?>
         </div>
     </div>
     <div class="row" style="text-align: center;">

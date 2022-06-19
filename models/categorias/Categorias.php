@@ -2,7 +2,8 @@
 
 namespace app\models\categorias;
 
-use Yii;
+use yii\db\ActiveRecord;
+use app\models\libros\Libros;
 
 /**
  * This is the model class for table "categorias".
@@ -10,9 +11,9 @@ use Yii;
  * @property int $idcategoria
  * @property string|null $categoria
  *
- * @property Libros[] $libros
+ * @property Libros $libros
  */
-class Categorias extends \yii\db\ActiveRecord
+class Categorias extends ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -52,7 +53,7 @@ class Categorias extends \yii\db\ActiveRecord
      */
     public function getLibros()
     {
-        return $this->hasMany(Libros::className(), ['idcategoria' => 'idcategoria']);
+        return $this->hasMany(Libros::class, ['idcategoria' => 'idcategoria']);
     }
 
     /**

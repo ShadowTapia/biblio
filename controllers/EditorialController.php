@@ -6,12 +6,13 @@ use Yii;
 use app\models\editorial\Editorial;
 use app\models\editorial\EditorialSearch;
 use app\models\editorial\FormUpdateEditorial;
+use app\models\libros\Libros;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
-
+use yii\filters\AccessControl;
 
 /**
  * EditorialController implements the CRUD actions for Editorial model.
@@ -24,8 +25,17 @@ class EditorialController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@']
+                    ]
+                ]
+            ],
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
                 ],
@@ -62,9 +72,9 @@ class EditorialController extends Controller
     }
 
     /**
-     * Creates a new Editorial model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
+     * @return array|string
+     * @throws \Exception
+     * @throws \Throwable
      */
     public function actionCreate()
     {
@@ -90,13 +100,12 @@ class EditorialController extends Controller
                     if($table->insert())
                     {
                         $transaction->commit();
-                        Yii::$app->session->setFlash('success', 'Se ha ingresado correctamente la <b>Editorial</b>.-.');
-                        return $this->redirect(['editorial/index']);
+                        \Yii::$app->session->setFlash('success', 'Se ha ingresado correctamente la Editorial.-');
                     }else{
                         $transaction->rollBack();
-                        Yii::$app->session->setFlash('error', 'Ocurrio un error, al ingresar la <b>Editorial</b>.-');
-                        return $this->redirect(['editorial/index']);
+                        \Yii::$app->session->setFlash('error', 'Ocurrio un error, al ingresar la Editorial.-');
                     }
+                    return $this->redirect(['editorial/index']);
                 }
                 catch (\Exception $e) {
                     $transaction->rollBack();
@@ -118,11 +127,10 @@ class EditorialController extends Controller
     }
 
     /**
-     * Updates an existing Editorial model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return array|string
+     * @throws \Exception
+     * @throws \Throwable
      */
     public function actionUpdate($id)
     {
@@ -151,12 +159,12 @@ class EditorialController extends Controller
                         if($table->update())
                         {
                             $transaction->commit();
-                            Yii::$app->session->setFlash('success','La <b>Editorial</b> se ha actualizado exitosamente.-');
-                            return $this->redirect(['editorial/index']);
+                            \Yii::$app->session->setFlash('success','La Editorial se ha actualizado exitosamente.-');
                         }else{
                             $transaction->rollBack();
-                            Yii::$app->session->setFlash('error','No se ha actualizado la <b>Editorial</b>.-');
+                            \Yii::$app->session->setFlash('error','No se ha actualizado la Editorial.-');
                         }
+                        return $this->redirect(['editorial/index']);
                     }
                 }
                 catch (\Exception $e) {
@@ -188,40 +196,46 @@ class EditorialController extends Controller
     }
 
     /**
-     * Deletes an existing Editorial model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return Response
+     * @throws \Exception
+     * @throws \Throwable
      */
     public function actionDelete($id)
     {
         //Se debe realizar la busqueda de Editorial por Libro
-        //
-        $table = new Editorial();
-
-        $transaction = $table->getDb()->beginTransaction();
-        try{
-            if($table->deleteAll("ideditorial=:ideditorial",[":ideditorial"=>$id]))
-            {
-                $transaction->commit();
-                Yii::$app->session->setFlash('success', 'Se ha borrado correctamente la Editorial '. $table->nombre );
-            }else{
-                $transaction->rollBack();
-                Yii::$app->session->setFlash('error', 'Ocurrió un error, no se borro la Editorial.-');
-            }
-        }
-        catch (\Exception $e) {
-            $transaction->rollBack();
-            throw $e;
-        }
-        catch (\Throwable $e)
+        $tableEditorial = Libros::find()->where("ideditorial=:ideditorial",[":ideditorial" => $id]);
+        if ($tableEditorial->count()>0)
         {
-            $transaction->rollBack();
-            throw $e;
+            \Yii::$app->session->setFlash('error', 'Ocurrió un error, existen Editoriales  asociadas a este Libro.-');
+            return $this->redirect(['index']);
+        }else{
+            $table = new Editorial();
+
+            $transaction = $table->getDb()->beginTransaction();
+            try{
+                if($table->deleteAll("ideditorial=:ideditorial",[":ideditorial"=>$id]))
+                {
+                    $transaction->commit();
+                    \Yii::$app->session->setFlash('success', 'Se ha borrado correctamente la Editorial '. $table->nombre );
+                }else{
+                    $transaction->rollBack();
+                    \Yii::$app->session->setFlash('error', 'Ocurrió un error, no se borro la Editorial.-');
+                }
+            }
+            catch (\Exception $e) {
+                $transaction->rollBack();
+                throw $e;
+            }
+            catch (\Throwable $e)
+            {
+                $transaction->rollBack();
+                throw $e;
+            }
+
+            return $this->redirect(['index']);
         }
 
-        return $this->redirect(['index']);
     }
 
     /**

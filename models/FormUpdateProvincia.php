@@ -6,10 +6,13 @@
  */
 
 namespace app\models;
-use Yii\base\model;
+use Yii\base\Model;
 
-
-class FormUpdateProvincia extends model
+/**
+ * Class FormUpdateProvincia
+ * @package app\models
+ */
+class FormUpdateProvincia extends Model
 {
     public $Provincia;
     public $codRegion;

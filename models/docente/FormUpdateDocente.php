@@ -6,9 +6,13 @@
  */
 
 namespace app\models\docente;
-use yii\base\model;
+use yii\base\Model;
 
-class FormUpdateDocente extends model
+/**
+ * Class FormUpdateDocente
+ * @package app\models\docente
+ */
+class FormUpdateDocente extends Model
 {
     public $nombres;
     public $paterno;
@@ -30,7 +34,7 @@ class FormUpdateDocente extends model
             [['nombres','paterno','materno',],'required','message'=>'Campo requerido'],
             ['nombres','match','pattern'=>"/^.{3,25}$/",'message'=>'Mínimo 3 y máximo 25 caracteres'],
             [['paterno','materno'],'match','pattern'=>"/^.{3,20}$/",'message'=>'Mínimo 3 y máximo 20 caracteres'],
-            [['nombres','paterno','materno'],'match','pattern' => "/^([a-zA-Zñ-Ñ\u00f1\u00d1\u00E0-\u00FC])\w+/",'message'=>'Sólo se aceptan letras'],
+            [['nombres','paterno','materno'],'match','pattern' => "/^([a-zA-Zñ-Ñ\x{00f1}\x{00d1}\x{00E0}-\x{00FC}])\w+/",'message'=>'Sólo se aceptan letras'],
             [['calle','telefono','numero','depto','block','villa','codRegion','idProvincia','codComuna'],'safe'],
             ['email','match','pattern'=>"/^.{5,80}$/",'message'=>'Mínimo 5 y máximo 80 caracteres'],
             ['email','email','message'=>'Formato no válido'],

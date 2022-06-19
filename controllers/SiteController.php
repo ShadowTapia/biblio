@@ -2,16 +2,21 @@
 
 namespace app\controllers;
 
-use app\models\anos\Anos;
-use app\models\ContactForm;
-use app\models\LoginForm;
-use app\models\User;
 use Yii;
+use app\models\anos\Anos;
+use app\models\User;
 use yii\filters\AccessControl;
-use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\Response;
+use yii\filters\VerbFilter;
+use app\models\LoginForm;
+use app\models\ContactForm;
+use yii\web\NotFoundHttpException;
 
+/**
+ * Class SiteController
+ * @package app\controllers
+ */
 class SiteController extends Controller
 {
     /**
@@ -20,59 +25,40 @@ class SiteController extends Controller
     public function behaviors()
     {
         return [
-                    'access' => [
-                        'class' => AccessControl::className(),
-                        'only' => ['logout'],
-                        'rules' => [
-                            [
-                                'actions' => ['logout'],
-                                'allow' => true,
-                                'roles' => ['@'],
-                            ],
-                        ],
+            'access' => [
+                'class' => AccessControl::class,
+                'only' => ['logout'],
+                'rules' => [
+                    [
+                        'actions' => ['logout'],
+                        'allow' => true,
+                        'roles' => ['@'],
                     ],
-                    'verbs' => [
-                        'class' => VerbFilter::className(),
-                        'actions' => [
-                            'logout' => ['post'],
-                        ],
-                    ],
-                ];
-
-        //return ['access' => ['class' => AccessControl::className(), 'only' => ['logout',
-//            'biblio', 'admin'], 'rules' => [[ //El administrador tiene permisos sobre las siguientes acciones
-//            'actions' => ['logout', 'admin'], //Esta propiedad establece que tiene permisos
-//            'allow' => true, //Usuarios autenticados, el signo ? es para invitados
-//            'roles' => ['@'], //Este m�todo nos permite crear un filtro sobre la identidad del usuario
-//            //y as� establecer si tiene permisos o no
-//        'matchCallback' => function ($rule, $action)
-//        {
-//            //Llamada al m�todo que comprueba si es un administrador
-//            return User::isUserAdmin(Yii::$app->user->identity->id);
-//        }
-//        , ], [ //Los usuarios simples tienen permisos sobre las siguientes acciones
-//           'actions' => ['logout', 'biblio'], //Esta propiedad establece que tiene permisos
-//            'allow' => true, //Usuarios autenticados, el signo ? es para invitados
-//            'roles' => ['@'], //Este m�todo nos permite crear un filtro sobre la identidad del usuario
-//            //y as� establecer si tiene permisos o no
-//       'matchCallback' => function ($rule, $action)
-//        {
-//           //Llamada al m�todo que comprueba si es un usuario simple
-//            return User::isUserBiblio(Yii::$app->user->identity->id);
-//        }
-//        , ], ], ], //Controla el modo en que se accede a las acciones, en este ejemplo a la acci�n logout
-//            //s�lo se puede acceder a trav�s del m�todo post
-//        'verbs' => ['class' => VerbFilter::className(), 'actions' => ['logout' => ['post'], ], ], ]; 
-
-    }    
+                ],
+            ],
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'logout' => ['post'],
+                ],
+            ],
+        ];
+    }
 
     /**
      * {@inheritdoc}
      */
     public function actions()
     {
-        return ['error' => ['class' => 'yii\web\ErrorAction', ], 'captcha' => ['class' =>
-            'yii\captcha\CaptchaAction', 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null, ], ];
+        return [
+            'error' => [
+                'class' => 'yii\web\ErrorAction',
+            ],
+            'captcha' => [
+                'class' => 'yii\captcha\CaptchaAction',
+                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
+            ],
+        ];
     }
 
     /**
@@ -103,46 +89,79 @@ class SiteController extends Controller
     public function actionLogin()
     {
         $year = Anos::find()
-                ->where(['activo'=>'1'])
-                ->one();
-                
+            ->where(['activo'=>'1'])
+            ->one();
+
         if (!\yii::$app->user->isGuest)
-       {
+        {
             if (User::isUserAdmin(Yii::$app->user->identity->id))
             {
-                Yii::$app->session['anoActivo'] = $year->idano;
-                Yii::$app->session['nameAno'] = $year->nombreano;
-                Yii::$app->session['adminUser'] = "admin";
+                Yii::$app->session->set('anoActivo',$year->idano);
+                Yii::$app->session->set('nameAno',$year->nombreano);
+                Yii::$app->session->set('adminUser',"admin");
             }elseif (User::isUserBiblio(Yii::$app->user->identity->id))
             {
-                Yii::$app->session['anoActivo'] = $year->idano;
-                Yii::$app->session['nameAno'] = $year->nombreano;               
-                Yii::$app->session['biblioUser'] = "biblio";
+                Yii::$app->session->set('anoActivo',$year->idano);
+                Yii::$app->session->set('nameAno',$year->nombreano);
+                Yii::$app->session->set('biblioUser','biblio');
+            }elseif (User::isUserInspec(Yii::$app->user->identity->id))
+            {
+                Yii::$app->session->set('anoActivo',$year->idano);
+                Yii::$app->session->set('nameAno',$year->nombreano);
+                Yii::$app->session->set('InspecUser','Inspec');
+            }elseif (User::isUserProfe(Yii::$app->user->identity->id))
+            {
+                Yii::$app->session->set('anoActivo',$year->idano);
+                Yii::$app->session->set('nameAno',$year->nombreano);
+                Yii::$app->session->set('profeUser', 'profe');
+            }elseif (User::isUserFuncionario(Yii::$app->user->identity->id))
+            {
+                Yii::$app->session->set('anoActivo',$year->idano);
+                Yii::$app->session->set('nameAno',$year->nombreano);
+                Yii::$app->session->set('funcionarioUser', 'funcionario');
             }
+            Yii::$app->session->set('userSessionTimeout',time() + Yii::$app->params['sessionTimeoutSeconds']);
             return $this->goHome();
-       }
-       
-       $model = new LoginForm();
-       if ($model->load(Yii::$app->request->post()) && $model->login())
-       {
+        }
+
+        $model = new LoginForm();
+        if ($model->load(Yii::$app->request->post()) && $model->login())
+        {
             if (User::isUserAdmin(Yii::$app->user->identity->id))
             {
-                Yii::$app->session['anoActivo'] = $year->idano;
-                Yii::$app->session['nameAno'] = $year->nombreano;
-                Yii::$app->session['adminUser'] = "admin";
+                Yii::$app->session->set('anoActivo',$year->idano);
+                Yii::$app->session->set('nameAno',$year->nombreano);
+                Yii::$app->session->set('adminUser','admin');
             }elseif (User::isUserBiblio(Yii::$app->user->identity->id))
             {
-                Yii::$app->session['anoActivo'] = $year->idano;
-                Yii::$app->session['nameAno'] = $year->nombreano;
-                Yii::$app->session['biblioUser'] = "biblio";
+                Yii::$app->session->set('anoActivo',$year->idano);
+                Yii::$app->session->set('nameAno',$year->nombreano);
+                Yii::$app->session->set('biblioUser','biblio');
+            }elseif (User::isUserInspec(Yii::$app->user->identity->id))
+            {
+                Yii::$app->session->set('anoActivo',$year->idano);
+                Yii::$app->session->set('nameAno',$year->nombreano);
+                Yii::$app->session->set('InspecUser','Inspec');
+            }elseif (User::isUserProfe(Yii::$app->user->identity->id))
+            {
+                Yii::$app->session->set('anoActivo',$year->idano);
+                Yii::$app->session->set('nameAno',$year->nombreano);
+                Yii::$app->session->set('profeUser', 'profe');
+            }elseif (User::isUserFuncionario(Yii::$app->user->identity->id))
+            {
+                Yii::$app->session->set('anoActivo',$year->idano);
+                Yii::$app->session->set('nameAno',$year->nombreano);
+                Yii::$app->session->set('funcionarioUser', 'funcionario');
             }
+
+            Yii::$app->session->set('userSessionTimeout',time() + Yii::$app->params['sessionTimeoutSeconds']);
             return $this->goBack();
-       }
-       else
-       {
+        }
+        else
+        {
             return $this->render('login',['model' => $model, ]);
-       } 
-       // if (!\Yii::$app->user->isGuest) {            
+        }
+        // if (!\Yii::$app->user->isGuest) {
 //            if (User::isUserAdmin(Yii::$app->user->identity->id)) {
 //                //Yii::$app->session['adminUser'] = "admin";
 //                return $this->redirect(["site/admin"]);
@@ -168,6 +187,31 @@ class SiteController extends Controller
 
 
     }
+    /**
+     * @param \yii\base\Action $action
+     * @return bool
+     */
+    public function beforeAction($action)
+    {
+        if (!parent::beforeAction($action))
+        {
+            return false;
+        }
+
+        if (!Yii::$app->user->isGuest)
+        {
+            if (Yii::$app->session['userSessionTimeout'] < time())
+            {
+                Yii::$app->user->logout();
+            }else{
+                Yii::$app->session->set('userSessionTimeout',time() + Yii::$app->params['sessionTimeoutSeconds']);
+                return true;
+            }
+        }
+        return true;
+
+    }
+
 
     /**
      * Logout action.
@@ -183,6 +227,22 @@ class SiteController extends Controller
         }
         if (isset(Yii::$app->session['biblioUser'])) {
             unset(Yii::$app->session['biblioUser']);
+            unset(Yii::$app->session['anoActivo']);
+            unset(Yii::$app->session['nameAno']);
+        }
+        if (isset(Yii::$app->session['InspecUser'])){
+            unset(Yii::$app->session['InspecUser']);
+            unset(Yii::$app->session['anoActivo']);
+            unset(Yii::$app->session['nameAno']);
+        }
+        if (isset(Yii::$app->session['profeUser'])){
+            unset(Yii::$app->session['profeUser']);
+            unset(Yii::$app->session['anoActivo']);
+            unset(Yii::$app->session['nameAno']);
+        }
+        if (isset(Yii::$app->session['funcionarioUser'])){
+            unset(Yii::$app->session['funcionarioUser']);
+            unset(Yii::$app->session['anoActivo']);
             unset(Yii::$app->session['nameAno']);
         }
         Yii::$app->user->logout();
@@ -196,15 +256,16 @@ class SiteController extends Controller
      * @return Response|string
      */
     public function actionContact()
-    {        
+    {
         $model = new ContactForm();
-        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->
-            params['adminEmail'])) {
+        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
             Yii::$app->session->setFlash('contactFormSubmitted');
 
             return $this->refresh();
         }
-        return $this->render('contact', ['model' => $model, ]);
+        return $this->render('contact', [
+            'model' => $model,
+        ]);
     }
 
     /**
@@ -224,7 +285,7 @@ class SiteController extends Controller
     public function actionError()
     {
         $exception = Yii::$app->errorHandler->exception;
-        if ($exception instanceof \yii\web\NotFoundHttpException)
+        if ($exception instanceof NotFoundHttpException)
         {
             //Al no existir controles mas acciones finaliza aqui
             return $this->render('pnf');
@@ -234,5 +295,4 @@ class SiteController extends Controller
             return $this->render('error',compact('exception'));
         }
     }
-
 }

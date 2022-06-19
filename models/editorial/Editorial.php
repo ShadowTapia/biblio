@@ -2,7 +2,8 @@
 
 namespace app\models\editorial;
 
-use Yii;
+use yii\db\ActiveRecord;
+use app\models\libros\Libros;
 
 /**
  * This is the model class for table "editorial".
@@ -14,9 +15,9 @@ use Yii;
  * @property string|null $mail
  *
  * @property Digitales[] $digitales
- * @property Libros[] $libros
+ * @property Libros $libros
  */
-class Editorial extends \yii\db\ActiveRecord
+class Editorial extends ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -61,7 +62,7 @@ class Editorial extends \yii\db\ActiveRecord
      */
     public function getDigitales()
     {
-        return $this->hasMany(Digitales::className(), ['ideditorial' => 'ideditorial']);
+        return $this->hasMany(Digitales::class, ['ideditorial' => 'ideditorial']);
     }
 
     /**
@@ -71,7 +72,7 @@ class Editorial extends \yii\db\ActiveRecord
      */
     public function getLibros()
     {
-        return $this->hasMany(Libros::className(), ['ideditorial' => 'ideditorial']);
+        return $this->hasMany(Libros::class, ['ideditorial' => 'ideditorial']);
     }
 
     /**

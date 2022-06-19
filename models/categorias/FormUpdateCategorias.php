@@ -7,9 +7,13 @@
  */
 namespace app\models\categorias;
 
-use yii\base\model;
+use yii\base\Model;
 
-class FormUpdateCategorias extends model
+/**
+ * Class FormUpdateCategorias
+ * @package app\models\categorias
+ */
+class FormUpdateCategorias extends Model
 {
     public $idcategoria;
     public $categoria;

@@ -8,13 +8,13 @@ use app\models\FormRegister;
 use app\models\FormUpdateUser;
 use app\models\SearchUsers;
 use app\models\Users;
-use raoul2000\widget\pnotify\PNotify;
 use Yii;
-use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
+use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 
 /**
  * UsersController implements the CRUD actions for Users model.
@@ -24,17 +24,26 @@ class UsersController extends Controller
     /**
      * {@inheritdoc}
      */
-//    public function behaviors()
-//    {
-//        return [
-//            'verbs' => [
-//                'class' => VerbFilter::className(),
-//                'actions' => [
-//                    'delete' => ['POST'],
-//                ],
-//            ],
-//        ];
-//    }
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@']
+                    ]
+                ]
+            ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                   'delete' => ['POST'],
+                ],
+            ],
+        ];
+    }
 
     /**
      * Lists all Users models.
@@ -64,15 +73,11 @@ class UsersController extends Controller
         ]);
     }
 
-    /**
-     *
-     * Se encarga de registrar un nuevo usuario
-     *
-     **/
+
     public function actionRegister()
     {
-        //Creamos la instancia con el model de validaciï¿½n
-        $model = new FormRegister;
+        //Creamos la instancia con el model de validación
+        $model = new FormRegister();
 
         //aqui comienza el codigo ya probado
         //Validaciï¿½n mediante ajax
@@ -87,7 +92,7 @@ class UsersController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             if ($model->validate()) {
                 //preparamos la consulta para guardar el usuario
-                $table = new Users;
+                $table = new Users();
 
                 $transaction = $table::getDb()->beginTransaction();
                 try {
@@ -109,9 +114,9 @@ class UsersController extends Controller
                     if ($table->insert()) {
                         //Nueva consulta para obtener el id del usuario
                         //para confirmar al usuario se requiere su id y su authkey
-                        $users = $table->find()->where(["UserMail" => $model->UserMail])->one();
-                        $id = urlencode($users->idUser);
-                        $authkey = urlencode($users->authkey);
+                        //$users = $table->find()->where(["UserMail" => $model->UserMail])->one();
+                        //$id = urlencode($users->idUser);
+                        //$authkey = urlencode($users->authkey);
 
                         /**
                          * $subject = "Confirmar registro";
@@ -134,18 +139,12 @@ class UsersController extends Controller
                         $model->UserMail = null;
                         $model->UserPass = null;
                         $model->UserPass_repeat = null;
-
-                        PNotify::widget(['pluginOptions' => ['title' =>
-                            'Ingreso', 'text' => 'Se ha ingresado correctamente un nuevo <b>Usuario</b>.',
-                            'type' => 'info', ]]);
-                        echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("usuarios/index") .
-                            "'>";
+                        \Yii::$app->session->setFlash('success','Se ha ingresado correctamente un nuevo Usuario.-');
                     } else {
                         $transaction->rollBack();
-                        PNotify::widget(['pluginOptions' => ['title' =>
-                            'Error', 'text' => 'Se ha producido un error al querer ingresar este <b>Usuario</b>.',
-                            'type' => 'error', ]]);
+                        \Yii::$app->session->setFlash('error','Se ha producido un error al querer ingresar este Usuario.-');
                     }
+                    return $this->redirect(['users/index']);
                 }
                 catch (\Exception $e) {
                     $transaction->rollBack();
@@ -258,7 +257,10 @@ class UsersController extends Controller
     }
 
     /**
-     * Se encarga de actualizar el usuario
+     * @param $id
+     * @return array|string
+     * @throws \Exception
+     * @throws \Throwable
      */
     public function actionUpdateuser($id)
     {
@@ -286,13 +288,14 @@ class UsersController extends Controller
 
                         if ($table->update()) {
                             $transaction->commit();
-                            Yii::$app->session->setFlash('success', 'El Usuario se ha actualizado exitosamente.-');
-                            return $this->redirect(['index']);
+                            \Yii::$app->session->setFlash('success', 'El Usuario se ha actualizado exitosamente.-');
+
 
                         } else {
                             $transaction->rollBack();
-                            Yii::$app->session->setFlash('error', 'No se ha actualizado el Usuario.-');
+                            \Yii::$app->session->setFlash('error', 'No se ha actualizado el Usuario.-');
                         }
+                        return $this->redirect(['index']);
                     }
                 }
                 catch (\Exception $e) {
@@ -322,26 +325,26 @@ class UsersController extends Controller
     }
 
     /**
-     *
-     * Se encarga de borrar un usuario
-     *
+     * @param $id
+     * @return Response
+     * @throws \Exception
+     * @throws \Throwable
      */
     public function actionDelete($id)
     {
+        //Antes de borrar se debe verificar que tipo de usuario es
+        // por ejemplo si es Alumno, lo primero es borrar al alumno y luego gracias a los disparadores de la BBDD
+        //Se borra el usuario
         if ($id != null) {
             $table = new Users;
             $transaction = $table::getDb()->beginTransaction();
             try {
                 if ($table::deleteAll("idUser=:idUser", [":idUser" => $id])) {
                     $transaction->commit();
-                    Yii::$app->session->setFlash('success', utf8_encode('Se ha borrado correctamente el Usuario.-'));
-                    echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("users/index") .
-                        "'>";
+                    \Yii::$app->session->setFlash('success', 'Se ha borrado correctamente el Usuario.-');
                 } else {
                     $transaction->rollBack();
-                    Yii::$app->session->setFlash('error', utf8_encode('Ocurrio un error, no se borro el Usuario.-'));
-                    echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("users/index") .
-                        "'>";
+                    \Yii::$app->session->setFlash('error', 'Ocurrio un error, no se borro el Usuario.-');
                 }
             }
             catch (\Exception $e) {
@@ -353,6 +356,7 @@ class UsersController extends Controller
                 throw $e;
             }
         }
+        return $this->redirect(['users/index']);
     }
 
     /**
@@ -384,32 +388,16 @@ class UsersController extends Controller
                         $table->UserPass = crypt($model->password_new, Yii::$app->params["salt"]);
                         if ($table->save()) {
                             $transaction->commit();
-
                             $model->password = null;
                             $model->password_new = null;
                             $model->password_repeat = null;
-                            PNotify::widget([
-                                'pluginOptions' => [
-                                    'title' => 'Usuarios',
-                                    'text' => utf8_encode('La contraseña fue actualizada correctamente.'),
-                                    'type' => 'success',
-                                ]]);
+                            \Yii::$app->session->setFlash('success', 'El correo fue cambiado exitosamente.-');
                         } else {
-                            PNotify::widget([
-                                'pluginOptions' => [
-                                    'title' => 'Error',
-                                    'text' => utf8_encode('La contraseña no pudo ser actualizada.'),
-                                    'type' => 'error',
-                                ]]);
+                            \Yii::$app->session->setFlash('error', 'La contraseña no pudo ser actualizada.-');
                         }
                     } else //la contraseï¿½a original no coincide con la almecanda en la BBDD
                     {
-                        PNotify::widget([
-                            'pluginOptions' => [
-                                'title' => 'Error',
-                                'text' => utf8_encode('La contraseña anterior no coincide con nuestros registros.- '),
-                                'type' => 'error',
-                            ]]);
+                        \Yii::$app->session->setFlash('error', 'La contraseña anterior no coincide con nuestros registros.- ');
                     }
                 }
                 catch (\Exception $e) {
@@ -439,8 +427,6 @@ class UsersController extends Controller
     {
         $model = new FormChangeDatos;
 
-        $table = new Users;
-
         //validación mediante ajax
         if ($model->load(Yii::$app->request->post()) && Yii::$app->request->isAjax) {
             Yii::$app->response->format = Response::FORMAT_JSON;
@@ -453,22 +439,9 @@ class UsersController extends Controller
                 if ($table) {
                     $table->UserMail = $model->UserMail;
                     if ($table->update()) {
-                        PNotify::widget([
-                            'pluginOptions' => [
-                                'title' => 'Usuarios',
-                                'text' => 'El correo fue cambiado exitosamente.-',
-                                'type' => 'success',
-                            ]]);
-
-                        //Yii::$app->session->setFlash('success', utf8_encode('El correo fue cambiado exitosamente.-'));
+                        \Yii::$app->session->setFlash('success', 'El correo fue cambiado exitosamente.-');
                     } else {
-                        PNotify::widget([
-                            'pluginOptions' => [
-                                'title' => 'Usuarios',
-                                'text' => 'El correo no pudo ser actualizado.-',
-                                'type' => 'error',
-                            ]]);
-                        //Yii::$app->session->setFlash('error', utf8_encode('El correo no fue cambiado.-'));
+                        \Yii::$app->session->setFlash('error', 'El correo no fue cambiado.-');
                     }
                 }
             } else {
@@ -485,15 +458,15 @@ class UsersController extends Controller
     }
 
     /**
-     *
-     * Se encarga de actualizar la contraseña del usuario
-     *
+     * @param $id
+     * @return Response
+     * @throws \Exception
+     * @throws \Throwable
      */
     public function actionUppass($id)
     {
         if ($id != null)
         {
-            $table = new Users;
             $table = Users::findOne(["idUser" => $id]);
             $run = $table->UserRut;
             if ($table)
@@ -505,16 +478,11 @@ class UsersController extends Controller
                     $table->UserPass = crypt($run, Yii::$app->params["salt"]);
                     if ($table->update()) {
                         $transaction->commit();
-                        Yii::$app->session->setFlash('success', 'Se ha actualizado correctamente la contraseña .-');
-                        echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("users/index") .
-                            "'>";
+                        \Yii::$app->session->setFlash('success', 'Se ha actualizado correctamente la contraseña .-');
                     } else {
                         $transaction->rollBack();
-                        Yii::$app->session->setFlash('error', 'Ocurrio un error, al actualizar la contraseña .-');
-                        echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("users/index") .
-                            "'>";
+                        \Yii::$app->session->setFlash('error', 'Ocurrio un error, al actualizar la contraseña .-');
                     }
-
                 }catch (\Exception $e) {
                     $transaction->rollBack();
                     throw $e;
@@ -525,5 +493,6 @@ class UsersController extends Controller
                 }
             }
         }
+        return $this->redirect(['users/index']);
     }
 }

@@ -5,16 +5,44 @@ namespace app\controllers;
 use app\models\anos\Anos;
 use app\models\anos\FormUpdateAnos;
 use app\models\pivot\Pivot;
-use raoul2000\widget\pnotify\PNotify;
 use Yii;
 use yii\data\ActiveDataProvider;
-use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
+use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 
+/**
+ * Class AnosController
+ * @package app\controllers
+ */
 class AnosController extends Controller
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@']
+                    ]
+                ]
+            ],
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'delete' => ['POST'],
+                ],
+            ],
+        ];
+    }
+
     /**
      * 
      * Indice del menu anos
@@ -29,7 +57,7 @@ class AnosController extends Controller
     
     /**
      * 
-     * Se encarga de seleccionar el a�o en el cual trabajar
+     * Se encarga de seleccionar el año en el cual trabajar
      * 
      */
     public function actionSelectano()
@@ -38,14 +66,20 @@ class AnosController extends Controller
         $dataProvider->sort->defaultOrder = ['idano' => SORT_ASC];
         return $this->render('selectano',compact('dataProvider'));
     }
-    
+
+    /**
+     *
+     * @param $id
+     * Se encarga de seleccionar el año
+     *
+     * @return Response
+     */
     public function actionSeleccionaano($id)
     {
         if (Yii::$app->session['anoActivo']==$id)
         {
-            Yii::$app->session->setFlash('error', 'Ocurrio un error, este año ya se encuentra seleccionado.-');
-            echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("anos/selectano") .
-                    "'>";     
+            \Yii::$app->session->setFlash('error', 'Ocurrio un error, este año ya se encuentra seleccionado.-');
+            return $this->redirect(['anos/selectano']);
         }
         else{
             unset(Yii::$app->session['anoActivo']);
@@ -53,18 +87,20 @@ class AnosController extends Controller
             $year = Anos::find()
                     ->where(['idano' => $id])
                     ->one();
-            Yii::$app->session['anoActivo'] = $year->idano;
-            Yii::$app->session['nameAno'] = $year->nombreano;
-            Yii::$app->session->setFlash('success', 'Se ha seleccionado el año '. Yii::$app->session['nameAno']);
-                        echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("anos/selectano") .
-                            "'>";
+            /** @noinspection PhpUndefinedFieldInspection */
+            Yii::$app->session->set('anoActivo',$year->idano);
+            /** @noinspection PhpUndefinedFieldInspection */
+            Yii::$app->session->set('nameAno',$year->nombreano);
+            \Yii::$app->session->setFlash('success', 'Se ha seleccionado el año '. Yii::$app->session['nameAno']);
+            return $this->redirect(['anos/selectano']);
         }
-        
     }
-    
+
     /**
-     * 
-     * Procedimiento de Actualizaci�n de anos
+     * @param $id
+     * @return array|string
+     * @throws \Exception
+     * @throws \Throwable
      */
     public function actionUpdateanos($id)
     {
@@ -94,13 +130,12 @@ class AnosController extends Controller
                         if ($table->update())
                         {
                             $transaction->commit();
-                            Yii::$app->session->setFlash('success','El Año se ha actualizado exitosamente.-');
-                            return $this->redirect(['anos/index']);
-
+                            \Yii::$app->session->setFlash('success','El Año se ha actualizado exitosamente.-');
                         }else{
                             $transaction->rollBack();
-                            Yii::$app->session->setFlash('error','No se ha actualizado el Año.-');
+                            \Yii::$app->session->setFlash('error','No se ha actualizado el Año.-');
                         }
+                        return $this->redirect(['anos/index']);
                     }   
                 }
                  catch (\Exception $e) {
@@ -157,24 +192,11 @@ class AnosController extends Controller
                     {
                         $transaction->commit();
                         $model->nombreano = null;
-                        PNotify::widget([
-		                  'pluginOptions' => [
-			                 'title' => 'Años',
-			                 'text' => 'Se ha creado correctamente el <b>Año</b>.-.' ,
-                             'type' => 'info',
-		                      ]
-	                       ]);
-                           echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("anos/index") .
-                            "'>";
+                        \Yii::$app->session->setFlash('success','Se ha creado correctamente el Año.-');
                     }else{
-                        PNotify::widget([
-		                  'pluginOptions' => [
-                            'title' => 'Error',
-                            'text' => 'Ocurrió un error, al ingresar un <b>Año</b>.-' ,
-                            'type' => 'error',
-		                      ]
-	                       ]);
-                    }   
+                        \Yii::$app->session->setFlash('error','Ocurrió un error, al ingresar un Año.-');
+                    }
+                    return $this->redirect(['anos/index']);
                 }
                 catch (\Exception $e) {
                     $transaction->rollBack();
@@ -191,11 +213,12 @@ class AnosController extends Controller
         }
         return $this->render('crearanos',["model" =>$model]);
     }
-    
+
     /**
-     * 
-     * Metodo de eliminaci�n de a�os
-     * 
+     * @param $id
+     * @return Response
+     * @throws \Exception
+     * @throws \Throwable
      */
     public function actionDelete($id)
     {
@@ -203,9 +226,8 @@ class AnosController extends Controller
         //Si existen alumnos con a�os ya asignados en la tabla
         if ($table2->count()>0)
         {
-            Yii::$app->session->setFlash('error', 'Ocurrio un error, existen años asociados a Alumnos.-');
-                echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("anos/index") .
-                    "'>";
+            \Yii::$app->session->setFlash('error', 'Ocurrio un error, existen años asociados a Alumnos.-');
+            return $this->redirect('anos/index');
         }else{
             $table = new Anos;
             
@@ -214,15 +236,12 @@ class AnosController extends Controller
                 if ($table->deleteAll("idano=:idano", [":idano" => $id]))
                 {
                     $transaction->commit();
-                        Yii::$app->session->setFlash('success', 'Se ha borrado correctamente el Año.-');
-                        echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("anos/index") .
-                            "'>";
+                        \Yii::$app->session->setFlash('success', 'Se ha borrado correctamente el Año.-');
                 }else{
                     $transaction->rollBack();
-                        Yii::$app->session->setFlash('error', 'Ocurrio un error, no se borro el Año.-');
-                        echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("anos/index") .
-                            "'>";
+                        \Yii::$app->session->setFlash('error', 'Ocurrió un error, no se borro el Año.-');
                 }
+                return $this->redirect(['anos/index']);
             }
              catch (\Exception $e) {
                     $transaction->rollBack();
@@ -235,5 +254,4 @@ class AnosController extends Controller
                 }
         }
     }
-
 }

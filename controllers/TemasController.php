@@ -6,9 +6,11 @@ use Yii;
 use app\models\temas\Temas;
 use app\models\temas\FormUpdateTemas;
 use app\models\temas\TemasSearch;
+use app\models\libros\Libros;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
 
@@ -23,8 +25,17 @@ class TemasController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@']
+                    ]
+                ]
+            ],
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
                 ],
@@ -61,9 +72,9 @@ class TemasController extends Controller
     }
 
     /**
-     * Creates a new Temas model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
+     * @return array|string
+     * @throws \Exception
+     * @throws \Throwable
      */
     public function actionCreate()
     {
@@ -85,13 +96,12 @@ class TemasController extends Controller
                     $table->codtemas = $model->codtemas;
                     if($table->insert()){
                         $transaction->commit();
-                        Yii::$app->session->setFlash('success', 'Se ha ingresado correctamente el <b>Tema</b>.-.');
-                        return $this->redirect(['temas/index']);
+                        \Yii::$app->session->setFlash('success', 'Se ha ingresado correctamente el Tema.-');
                     }else{
                         $transaction->rollBack();
-                        Yii::$app->session->setFlash('error', 'Ocurrió un error, al ingresar el <b>Tema</b>.-');
-                        return $this->redirect(['temas/index']);
+                        \Yii::$app->session->setFlash('error', 'Ocurrió un error, al ingresar el Tema.-');
                     }
+                    return $this->redirect(['temas/index']);
                 }
                 catch (\Exception $e) {
                     $transaction->rollBack();
@@ -113,11 +123,10 @@ class TemasController extends Controller
     }
 
     /**
-     * Updates an existing Temas model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return array|string
+     * @throws \Exception
+     * @throws \Throwable
      */
     public function actionUpdate($id)
     {
@@ -145,12 +154,12 @@ class TemasController extends Controller
                         if ($table->update())
                         {
                             $transaction->commit();
-                            Yii::$app->session->setFlash('success','El <b>Tema</b> se ha actualizado exitosamente.-');
-                            return $this->redirect(['temas/index']);
+                            \Yii::$app->session->setFlash('success','El Tema se ha actualizado exitosamente.-');
                         }else{
                             $transaction->rollBack();
-                            Yii::$app->session->setFlash('error','No se ha actualizado el <b>Tema</b>.-');
+                            \Yii::$app->session->setFlash('error','No se ha actualizado el Tema.-');
                         }
+                        return $this->redirect(['temas/index']);
                     }
                 }
                 catch (\Exception $e) {
@@ -180,39 +189,46 @@ class TemasController extends Controller
     }
 
     /**
-     * Deletes an existing Temas model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return Response
+     * @throws \Exception
+     * @throws \Throwable
      */
     public function actionDelete($id)
     {
-        $table = new Temas();
-
-        $transaction = $table->getDb()->beginTransaction();
-        try
+        $tableLibros = Libros::find()->where("idtemas=:idtemas",[":idtemas" => $id]);
+        if ($tableLibros->count()>0)
         {
-            if($table->deleteAll("idtemas=:idtemas",[":idtemas"=>$id]))
+            \Yii::$app->session->setFlash('error', 'Ocurrió un error, existen Temas  asociadas a este Libro.-');
+            return $this->redirect(['index']);
+        }else{
+            $table = new Temas();
+
+            $transaction = $table->getDb()->beginTransaction();
+            try
             {
-                $transaction->commit();
-                Yii::$app->session->setFlash('success', 'Se ha borrado correctamente el tema '. $table->nombre );
-            }else{
-                $transaction->rollBack();
-                Yii::$app->session->setFlash('error', 'Ocurrió un error, no se borro el Tema.-');
+                if($table->deleteAll("idtemas=:idtemas",[":idtemas"=>$id]))
+                {
+                    $transaction->commit();
+                    \Yii::$app->session->setFlash('success', 'Se ha borrado correctamente el tema '. $table->nombre );
+                }else{
+                    $transaction->rollBack();
+                    \Yii::$app->session->setFlash('error', 'Ocurrió un error, no se borro el Tema.-');
+                }
             }
-        }
-        catch (\Exception $e) {
-            $transaction->rollBack();
-            throw $e;
-        }
-        catch (\Throwable $e)
-        {
-            $transaction->rollBack();
-            throw $e;
+            catch (\Exception $e) {
+                $transaction->rollBack();
+                throw $e;
+            }
+            catch (\Throwable $e)
+            {
+                $transaction->rollBack();
+                throw $e;
+            }
+
+            return $this->redirect(['index']);
         }
 
-        return $this->redirect(['index']);
     }
 
     /**

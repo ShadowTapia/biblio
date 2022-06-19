@@ -2,8 +2,8 @@
 
 namespace app\models\temas;
 
-use Yii;
-
+use yii\db\ActiveRecord;
+use app\models\libros\Libros;
 /**
  * This is the model class for table "temas".
  *
@@ -11,9 +11,9 @@ use Yii;
  * @property string $nombre
  * @property string $codtemas
  *
- * @property Libros[] $libros
+ * @property Libros $libros
  */
-class Temas extends \yii\db\ActiveRecord
+class Temas extends ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -56,7 +56,7 @@ class Temas extends \yii\db\ActiveRecord
      */
     public function getLibros()
     {
-        return $this->hasMany(Libros::className(), ['idtemas' => 'idtemas']);
+        return $this->hasMany(Libros::class, ['idtemas' => 'idtemas']);
     }
 
     public static function getListTemas()

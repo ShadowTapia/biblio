@@ -12,6 +12,25 @@ $this->title='Seleccionar Año';
 $this->params['breadcrumbs'][] = ['label' => 'Administrar Años', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+<?= \lavrentiev\widgets\toastr\NotificationFlash::widget([
+    'options' => [
+        "closeButton" => true,
+        "debug" => false,
+        "newestOnTop" => false,
+        "progressBar" => false,
+        "positionClass" => \lavrentiev\widgets\toastr\NotificationFlash::POSITION_TOP_RIGHT,
+        "preventDuplicates" => false,
+        "onclick" => null,
+        "showDuration" => "300",
+        "hideDuration" => "1000",
+        "timeOut" => "5000",
+        "extendedTimeOut" => "1000",
+        "showEasing" => "swing",
+        "hideEasing" => "linear",
+        "showMethod" => "fadeIn",
+        "hideMethod" => "fadeOut"
+    ]
+]) ?>
 <h1><?= $this->title ?></h1>
 
 <div class="grid-view">

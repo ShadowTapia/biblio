@@ -6,9 +6,14 @@
  */
 
 namespace app\models;
-use yii\base\model;
+use yii\base\Model;
 
-class FormChangePass extends model{
+/**
+ * Class FormChangePass
+ * @package app\models
+ */
+class FormChangePass extends Model
+{
     public $password;
     public $password_new;
     public $password_repeat;

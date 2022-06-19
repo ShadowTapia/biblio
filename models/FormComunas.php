@@ -6,9 +6,13 @@
  */
 
 namespace app\models;
-use Yii\base\model;
+use Yii\base\Model;
 
-class FormComunas extends model
+/**
+ * Class FormComunas
+ * @package app\models
+ */
+class FormComunas extends Model
 {
     public $codComuna;
     public $comuna;
@@ -27,12 +31,15 @@ class FormComunas extends model
             [['idProvincia'], 'integer'],
             [['codComuna'],'comunas_existe'],
             [['comuna'], 'string', 'max' => 25],
-            [['comuna'],'match','pattern'=>"/^([a-zA-Z�-�\u00f1\u00d1\u00E0-\u00FC])\w+/",'message'=>'Sólo se aceptan letras'],
-            [['idProvincia'], 'exist', 'skipOnError' => true, 'targetClass' => Provincias::className(), 'targetAttribute' => ['idProvincia' => 'idProvincia']],
+            [['comuna'],'match','pattern'=>"/^([a-zA-Zñ-Ñ\u00f1\u00d1\u00E0-\u00FC])\w+/",'message'=>'Sólo se aceptan letras'],
+            [['idProvincia'], 'exist', 'skipOnError' => true, 'targetClass' => Provincias::class, 'targetAttribute' => ['idProvincia' => 'idProvincia']],
         ];
     }
-    
-    public function comunas_existe($attribute,$params)
+
+    /**
+     * @param $attribute
+     */
+    public function comunas_existe($attribute)
     {
         //Buscar el c�digo de la comuna
         $table = Comunas::find()->where("codComuna=:codComuna",[":codComuna" => $this->codComuna]);

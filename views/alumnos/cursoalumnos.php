@@ -11,7 +11,7 @@ use kartik\spinner\Spinner;
 use yii\helpers\Html;
 use yii\widgets\Pjax;
 
-$this->title='Alumnos por Curso ';
+$this->title='Alumnos por Curso '. Yii::$app->session->get('nameAno');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div id="variable" style="display: none;"><?= $count ?></div>
@@ -33,7 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <div class="alumnos-index">
     <h1><?= Html::encode($this->title) ?></h1>
-
+    <h6>*No incluye alumnos retirados</h6>
     <?= $this->render('_form',['model'=>$model,]) ?>
 
     <div id="well" style="display: none">

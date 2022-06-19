@@ -5,7 +5,7 @@
  * @copyright 2019
  */
 
-use yii\bootstrap\ActiveForm;
+use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 
 

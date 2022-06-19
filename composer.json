@@ -14,41 +14,43 @@
     },
     "minimum-stability": "stable",
     "require": {
-        "php": ">=5.4.0",
-        "yiisoft/yii2": "~2.0.14",
-        "yiisoft/yii2-bootstrap": "~2.0.0",	
-		"raoul2000/yii2-pnotify-widget": "*",
+        "php": ">=5.6.0",
+        "yiisoft/yii2": "2.0.42.1",
+        "yiisoft/yii2-bootstrap": "~2.0.0",
+		"yiisoft/yii2-bootstrap4": "@dev",
         "yiisoft/yii2-swiftmailer": "~2.0.0 || ~2.1.0",
-        "kartik-v/yii2-widget-switchinput": "*",
-		"kartik-v/yii2-grid": "@dev",
-		"kartik-v/yii2-export": "dev-master",
-		"kartik-v/yii2-widget-select2": "dev-master",
-		"kartik-v/yii2-widget-spinner": "dev-master",
-		"kartik-v/yii2-widget-depdrop": "dev-master",
-		"kartik-v/yii2-detail-view": "dev-master",
-		"kartik-v/yii2-builder": "dev-master",
-		"kartik-v/yii2-mpdf": "dev-master",
-		"demogorgorn/yii2-ajax-submit-button": "*",
-        "yiisoft/yii2-bootstrap4": "^2.0",
-		"softark/yii2-dual-listbox": "dev-master",
-        "kartik-v/yii2-bootstrap4-dropdown": "dev-master",
-        "kartik-v/yii2-nav-x": "@dev"
+        "kartik-v/yii2-nav-x": "dev-master",
+        "lavrentiev/yii2-toastr": "dev-master"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",
-        "yiisoft/yii2-gii": "~2.1.0",
-        "yiisoft/yii2-faker": "~2.0.0",
-		"yiisoft/yii2-jui": "~2.0.0",
-		
-        "codeception/verify": "~0.4.0",
+        "yiisoft/yii2-gii": "~2.1.0",        
+        "codeception/codeception": "^4.0",
+        "codeception/verify": "~0.5.0 || ~1.1.0",
         "codeception/specify": "~0.4.6",
-        "symfony/browser-kit": ">=2.7 <=4.2.4"
+        "symfony/browser-kit": ">=2.7 <=4.2.4",
+        "codeception/module-filesystem": "^1.0.0",
+        "codeception/module-yii2": "^1.0.0",
+        "codeception/module-asserts": "^1.0.0",
+		"raoul2000/yii2-pnotify-widget": "*",
+		"kartik-v/yii2-widget-switchinput": "dev-master",
+		"kartik-v/yii2-grid": "dev-master",
+		"kartik-v/yii2-widget-spinner": "dev-master",
+		"kartik-v/yii2-mpdf": "dev-master",
+		"kartik-v/yii2-widget-depdrop": "dev-master",
+		"kartik-v/yii2-detail-view": "dev-master",
+		"kartik-v/yii2-export": "dev-master",
+		"kartik-v/yii2-editable": "dev-master",
+		"kartik-v/yii2-dialog": "dev-master",
+		"yiisoft/yii2-jui": "~2.0.0"
     },
     "config": {
         "process-timeout": 1800,
-		"disable-tls": true,
         "fxp-asset": {
             "enabled": false
+        },
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true
         }
     },
     "scripts": {

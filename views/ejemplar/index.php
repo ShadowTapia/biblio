@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use kartik\grid\GridView;
 use yii\widgets\Pjax;
+
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\ejemplar\EjemplarSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -10,6 +11,25 @@ use yii\widgets\Pjax;
 $this->title = 'Ejemplares';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+<?= \lavrentiev\widgets\toastr\NotificationFlash::widget([
+    'options' => [
+        "closeButton" => true,
+        "debug" => false,
+        "newestOnTop" => false,
+        "progressBar" => false,
+        "positionClass" => \lavrentiev\widgets\toastr\NotificationFlash::POSITION_TOP_RIGHT,
+        "preventDuplicates" => false,
+        "onclick" => null,
+        "showDuration" => "300",
+        "hideDuration" => "1000",
+        "timeOut" => "5000",
+        "extendedTimeOut" => "1000",
+        "showEasing" => "swing",
+        "hideEasing" => "linear",
+        "showMethod" => "fadeIn",
+        "hideMethod" => "fadeOut"
+    ]
+]) ?>
 <div class="ejemplar-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
@@ -32,7 +52,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'label' => 'Libro',
                 'format' => 'html',
                 'value' => function($model){
-                    return $model->idLibros0->titulo;
+                    return !empty($model->idLibros0->titulo) ? ($model->idLibros0->titulo) : '<span class="glyphicon glyphicon-question-sign"></span>';
                 }
             ],
             //norden
@@ -82,7 +102,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'title' => 'Borrar Ejemplar',
                                 'data-toggle' => 'tooltip',
                                 'data' => [
-                                    'confirm' => '¿Estas seguro de borrar este Ejemplar ' . $model->idLibros0->titulo . '?',
+                                    'confirm' => '¿Estas seguro de borrar este Ejemplar ' . $model->idLibros . '?',
                                     'method' => 'post',
                                 ],
                             ]);

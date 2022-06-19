@@ -2,6 +2,7 @@
 
 namespace app\models\anos;
 
+use yii\db\ActiveRecord;
 /**
  * This is the model class for table "anos".
  *
@@ -9,7 +10,7 @@ namespace app\models\anos;
  * @property string|null $nombreano
  * @property string|null $activo
  */
-class Anos extends \yii\db\ActiveRecord
+class Anos extends ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -33,7 +34,7 @@ class Anos extends \yii\db\ActiveRecord
     
     public function getAnoActivo()
     {
-        return $this->hasOne(Anos::className(),['activo'=>'1']);        
+        return $this->hasOne(Anos::class,['activo'=>'1']);
     }
        
 }

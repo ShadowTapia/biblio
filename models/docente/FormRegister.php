@@ -7,9 +7,14 @@
 
 namespace app\models\docente;
 
-use yii\base\model;
+use yii\base\Model;
 
-class FormRegister extends model{
+/**
+ * Class FormRegister
+ * @package app\models\docente
+ */
+class FormRegister extends Model
+{
     public $rutdocente;
     public $digito;
     public $nombres;
@@ -34,7 +39,6 @@ class FormRegister extends model{
             [['digito'], 'string', 'max' => 1],
             ['nombres','match','pattern'=>"/^.{3,25}$/",'message'=>'Mínimo 3 y máximo 25 caracteres'],
             [['paterno','materno'],'match','pattern'=>"/^.{3,20}$/",'message'=>'Mínimo 3 y máximo 20 caracteres'],
-            [['nombres','paterno','materno'],'match','pattern' => "/^([a-zA-Zñ-Ñ\u00f1\u00d1\u00E0-\u00FC])\w+/",'message'=>'Sólo se aceptan letras'],
             [['calle','telefono','numero','depto','block','villa','region','provincia','comuna'],'safe'],
             [['calle'], 'string', 'max' => 30],
             [['numero', 'depto'], 'string', 'max' => 8],
@@ -44,8 +48,11 @@ class FormRegister extends model{
             ['email','email_existe'],            
         ];
     }
-    
-    public function email_existe($attribute,$params)
+
+    /**
+     * @param $attribute
+     */
+    public function email_existe($attribute)
     {
         //Buscar e-mail en la tabla
         $table=Docente::find()->where("email=:email",[":email"=>$this->email]);
@@ -58,9 +65,8 @@ class FormRegister extends model{
 
     /**
      * @param $attribute
-     * @param $params
      */
-    public function validarRut($attribute,$params)
+    public function validarRut($attribute)
     {
         $rut=$this->rutdocente;//recibo el rut
         $rut_sin_puntos=str_replace('.',"",$rut);//le quito los puntos

@@ -18,7 +18,25 @@ use yii\widgets\MaskedInput;
 $this->title = "Ingresa Alumno(a)";
 $this->params['breadcrumbs'][]= $this->title;
 ?>
-
+<?= \lavrentiev\widgets\toastr\NotificationFlash::widget([
+    'options' => [
+        "closeButton" => true,
+        "debug" => false,
+        "newestOnTop" => false,
+        "progressBar" => false,
+        "positionClass" => \lavrentiev\widgets\toastr\NotificationFlash::POSITION_TOP_RIGHT,
+        "preventDuplicates" => false,
+        "onclick" => null,
+        "showDuration" => "300",
+        "hideDuration" => "1000",
+        "timeOut" => "5000",
+        "extendedTimeOut" => "1000",
+        "showEasing" => "swing",
+        "hideEasing" => "linear",
+        "showMethod" => "fadeIn",
+        "hideMethod" => "fadeOut"
+    ]
+]) ?>
 <h1><?= Html::encode($this->title) ?></h1>
 <?php $form = ActiveForm::begin(['method' => 'post', 'id' => 'formIngAlus', 'class' => 'form-horizontal',
     'enableClientValidation' => false, 'enableAjaxValidation' => true, ]);
@@ -124,6 +142,20 @@ $this->params['breadcrumbs'][]= $this->title;
     </div>
     <div class="row">
         <div class="col-xs-2">
+            <?= $form->field($model,'sangre')->textInput(['style' => 'width:100%']) ?>
+        </div>
+        <div class="col-xs-4">
+            <?= $form->field($model,'enfermedades')->textInput(['style' => 'width:100%']) ?>
+        </div>
+        <div class="col-xs-2">
+            <?= $form->field($model,'alergias')->textInput(['style' => 'width:100%']) ?>
+        </div>
+        <div class="col-xs-4">
+            <?= $form->field($model,'medicamentos')->textInput(['style' => 'width:100%']) ?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
             <?= $form->field($modelPivot,'idCurso')->dropDownList(Cursos::getListCursos(),
                 ['class' => 'form-control', 'style' => 'width:100%;','prompt' => 'Seleccione Curso', 'id' => 'idCurso'])->label('Curso*') ?>
         </div>

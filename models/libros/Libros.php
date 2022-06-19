@@ -2,7 +2,7 @@
 
 namespace app\models\libros;
 
-use Yii;
+use yii\db\ActiveRecord;
 use app\models\autor\Autor;
 use app\models\categorias\Categorias;
 use app\models\editorial\Editorial;
@@ -36,7 +36,7 @@ use app\models\ejemplar\Ejemplar;
  * @property Numejem $numejem
  * @property Reserva[] $reservas
  */
-class Libros extends \yii\db\ActiveRecord
+class Libros extends ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -104,7 +104,7 @@ class Libros extends \yii\db\ActiveRecord
      */
     public function getEjemplars()
     {
-        return $this->hasMany(Ejemplar::className(), ['idLibros' => 'idLibros']);
+        return $this->hasMany(Ejemplar::class, ['idLibros' => 'idLibros']);
     }
 
     /**
@@ -114,7 +114,7 @@ class Libros extends \yii\db\ActiveRecord
      */
     public function getIdautor0()
     {
-        return $this->hasOne(Autor::className(), ['idautor' => 'idautor']);
+        return $this->hasOne(Autor::class, ['idautor' => 'idautor']);
     }
 
     /**
@@ -124,7 +124,7 @@ class Libros extends \yii\db\ActiveRecord
      */
     public function getIdcategoria0()
     {
-        return $this->hasOne(Categorias::className(), ['idcategoria' => 'idcategoria']);
+        return $this->hasOne(Categorias::class, ['idcategoria' => 'idcategoria']);
     }
 
     /**
@@ -134,7 +134,7 @@ class Libros extends \yii\db\ActiveRecord
      */
     public function getIdeditorial0()
     {
-        return $this->hasOne(Editorial::className(), ['ideditorial' => 'ideditorial']);
+        return $this->hasOne(Editorial::class, ['ideditorial' => 'ideditorial']);
     }
 
     /**
@@ -144,7 +144,7 @@ class Libros extends \yii\db\ActiveRecord
      */
     public function getIdtemas0()
     {
-        return $this->hasOne(Temas::className(), ['idtemas' => 'idtemas']);
+        return $this->hasOne(Temas::class, ['idtemas' => 'idtemas']);
     }
 
     /**
@@ -154,7 +154,7 @@ class Libros extends \yii\db\ActiveRecord
      */
     public function getNumejem()
     {
-        return $this->hasOne(Numejem::className(), ['idLibros' => 'idLibros']);
+        return $this->hasOne(Numejem::class, ['idLibros' => 'idLibros']);
     }
 
     /**
@@ -164,15 +164,14 @@ class Libros extends \yii\db\ActiveRecord
      */
     public function getReservas()
     {
-        return $this->hasMany(Reserva::className(), ['idLibros' => 'idLibros']);
+        return $this->hasMany(Reserva::class, ['idLibros' => 'idLibros']);
     }
 
     /**
      * @param $attribute
-     * @param $params
      * @return int
      */
-    public function validaISBN($attribute,$params)
+    public function validaISBN($attribute)
     {
         $regex = '/\b(?:ISBN(?:: ?| ))?((?:97[89])?\d{9}[\dx])\b/i';
 
@@ -183,5 +182,6 @@ class Libros extends \yii\db\ActiveRecord
         }else{
             $this->addError($attribute,"ISBN Invalido");
         }
+        return null;
     }
 }

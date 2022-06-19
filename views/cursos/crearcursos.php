@@ -16,7 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <h1><?= $this->title ?></h1>
 
-<?php $form = ActiveForm::begin(['method' => 'post','enableClientValidation' => true,'enableAjaxValidation' => false,]);
+<?php $form = ActiveForm::begin(['method' => 'post','enableClientValidation' => true,]);
 ?>
 <div class="form-group col-xs-2">
     <?= $form->field($model,"Nombre")->input("text",['width:450px;'])->label(utf8_encode('Nombre*')) ?>
@@ -25,7 +25,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= $form->field($model,"Orden")->input("text",['width: 200px;'])->label('Orden') ?>
 </div>
 <div class="form-group">
-    <?= $form->field($model,"visible")->widget(SwitchInput::className(),['type' => SwitchInput::CHECKBOX, 'pluginOptions' => ['size' => 'small', 'onText' => '<i class="glyphicon glyphicon-ok"></i>', 'offText' => '<i class="glyphicon glyphicon-remove"></i>', 'onColor' => 'success', 'offColor' => 'danger',],])->label('Visible') ?>
+    <?= $form->field($model,"visible")->widget(SwitchInput::className(),['type' => SwitchInput::CHECKBOX, 'pluginOptions' => ['size' => 'small','onText' => '<i class="glyphicon glyphicon-ok"></i>', 'offText' => '<i class="glyphicon glyphicon-remove"></i>', 'onColor' => 'success', 'offColor' => 'danger',],])->label('Visible') ?>
 </div>
 
 <?= Html::submitButton('Ingresar',['class'=>'btn btn-primary']) ?>

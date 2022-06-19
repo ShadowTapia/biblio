@@ -6,9 +6,13 @@
  */
 
 namespace app\models\cursos;
-use yii\base\model;
+use yii\base\Model;
 
-class FormCreaCursos extends model
+/**
+ * Class FormCreaCursos
+ * @package app\models\cursos
+ */
+class FormCreaCursos extends Model
 {
     public $Nombre;
     public $Orden;

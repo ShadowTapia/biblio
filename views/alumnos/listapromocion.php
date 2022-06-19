@@ -31,9 +31,28 @@ $this->registerJs(
             });'
 );
 ?>
+<?= \lavrentiev\widgets\toastr\NotificationFlash::widget([
+    'options' => [
+        "closeButton" => true,
+        "debug" => false,
+        "newestOnTop" => false,
+        "progressBar" => false,
+        "positionClass" => \lavrentiev\widgets\toastr\NotificationFlash::POSITION_TOP_RIGHT,
+        "preventDuplicates" => false,
+        "onclick" => null,
+        "showDuration" => "300",
+        "hideDuration" => "1000",
+        "timeOut" => "5000",
+        "extendedTimeOut" => "1000",
+        "showEasing" => "swing",
+        "hideEasing" => "linear",
+        "showMethod" => "fadeIn",
+        "hideMethod" => "fadeOut"
+    ]
+]) ?>
 <div class="alumnos-index">
     <h1><?= Html::encode($this->title) ?></h1>
-
+    <h6>*No Incluye alumnos retirados</h6>
     <!-- Renderizamos el combo de consulta -->
     <?= $this->render('_form',['model' => $model,]) ?>
 
