@@ -23,7 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="container">
             <div class="row">
                 <div class="col-xs-2">
-                    <?= $form->field($model,'rutapo')->widget(MaskedInput::className(),['mask'=>'99.999.999-*'],['style'=>'width:8%'])->label('RUN*') ?>
+                    <?= $form->field($model,'rutapo')->widget(MaskedInput::class,['mask'=>'99.999.999-*'],['style'=>'width:8%'])->label('RUN*') ?>
                 </div>
             </div>
             <div class="row">

@@ -2,6 +2,7 @@
 
 namespace app\models\alumnos;
 
+use Yii;
 use app\models\apoderados\Apoderados;
 use app\models\Comunas;
 use app\models\Provincias;
@@ -9,7 +10,7 @@ use app\models\Regiones;
 use app\models\Users;
 use app\models\pivot\Pivot;
 use yii\db\ActiveRecord;
-
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "alumnos".
@@ -122,7 +123,7 @@ class Alumnos extends ActiveRecord
     /**
      * Gets query for [[CodComuna0]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getCodComuna0()
     {
@@ -132,7 +133,7 @@ class Alumnos extends ActiveRecord
     /**
      * Gets query for [[IdProvincia0]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getIdProvincia0()
     {
@@ -142,7 +143,7 @@ class Alumnos extends ActiveRecord
     /**
      * Gets query for [[CodRegion0]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getCodRegion0()
     {
@@ -152,7 +153,7 @@ class Alumnos extends ActiveRecord
     /**
      * Gets query for [[Rutalumno0]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getRutalumno0()
     {
@@ -162,7 +163,7 @@ class Alumnos extends ActiveRecord
     /**
      * Gets query for [[Apoderados]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getApoderados()
     {
@@ -172,7 +173,7 @@ class Alumnos extends ActiveRecord
     /**
      * Gets query for [[Pivots]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getPivots()
     {
@@ -190,7 +191,7 @@ class Alumnos extends ActiveRecord
             ->joinWith(['pivots pi'])
             ->where(['pi.idCurso'=> $idCurso])
             ->andWhere(['pi.retirado' => '0'])
-            ->andWhere(['pi.idano'=>\Yii::$app->session->get('anoActivo')])
+            ->andWhere(['pi.idano'=> Yii::$app->session->get('anoActivo')])
             ->all();
         return $comboAlumnos;
     }

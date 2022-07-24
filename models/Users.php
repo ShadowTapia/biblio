@@ -3,6 +3,7 @@
 namespace app\models;
 
 use yii\db\ActiveRecord;
+use yii\db\ActiveQuery;
 use app\models\alumnos\Alumnos;
 use app\models\prestamos\Prestamos;
 
@@ -22,7 +23,7 @@ use app\models\prestamos\Prestamos;
  * @property string|null $verification_code
  *
  * @property Alumnos[] $alumnos
- * @property Historico[] $historicos
+ * @property Historico[] $historico
  * @property Prestamos[] $prestamos
  * @property Reserva[] $reservas
  * @property Roles $idroles
@@ -79,7 +80,7 @@ class Users extends ActiveRecord
     /**
      * Gets query for [[Alumnos]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getAlumnos()
     {
@@ -109,7 +110,7 @@ class Users extends ActiveRecord
     /**
      * Gets query for [[Reservas]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getReservas()
     {
@@ -119,7 +120,7 @@ class Users extends ActiveRecord
     /**
      * Gets query for [[Idroles]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getIdroles()
     {

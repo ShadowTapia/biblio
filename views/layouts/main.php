@@ -9,6 +9,7 @@ use kartik\nav\NavX;
 use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
+use bluezed\scrollTop\ScrollTop;
 
 AppAsset::register($this);
 ?>
@@ -28,7 +29,7 @@ AppAsset::register($this);
 </head>
 <body>
 <?php $this->beginBody() ?>
-
+<?= ScrollTop::widget() ?>
 <div class="wrap">
     <?php
     NavBar::begin([
@@ -48,15 +49,18 @@ AppAsset::register($this);
             ['label' => 'Libros',
                 'items' => [
                     ['label' => 'Libro', 'url' => ['/libros/index'],'visible'=> Yii::$app->session['biblioUser']=='biblio' || Yii::$app->session['adminUser']=='admin'],
-                    ['label' => 'Ejemplares', 'url' => ['/ejemplar/index'],'visible'=> Yii::$app->session['biblioUser']=='biblio' || Yii::$app->session['adminUser']=='admin'],
                     ['label' => 'Autor', 'url' => ['/autor/index'],'visible'=> Yii::$app->session['biblioUser']=='biblio' || Yii::$app->session['adminUser']=='admin'],
                     ['label' => 'Categorías', 'url' => ['/categorias/index'],'visible'=> Yii::$app->session['biblioUser']=='biblio' || Yii::$app->session['adminUser']=='admin'],
                     ['label' => 'Editorial','url'=> ['/editorial/index'],'visible'=> Yii::$app->session['biblioUser']=='biblio' || Yii::$app->session['adminUser']=='admin'],
+                    ['label' => 'Ejemplares', 'url' => ['/ejemplar/index'],'visible'=> Yii::$app->session['biblioUser']=='biblio' || Yii::$app->session['adminUser']=='admin'],
+                    ['label' => 'Reservas', 'url' => ['/reserva/index'],'visible'=> Yii::$app->session['biblioUser']=='biblio' || Yii::$app->session['adminUser']=='admin'],
                     ['label' => 'Temas','url' => ['/temas/index'],'visible'=> Yii::$app->session['biblioUser']=='biblio' || Yii::$app->session['adminUser']=='admin'],
                     ['label' => 'Consultar',
                         'items' => [
                                 ['label' => 'Libros', 'url' => ['/libros/consulta']],
-                        ],'visible'=> Yii::$app->session['biblioUser']=='biblio' || Yii::$app->session['adminUser']=='admin' || Yii::$app->session['profeUser']=='profe']
+                                ['label' => 'Mis Reservas', 'url' => ['/reserva/consulreserva']],
+                        ],'visible'=> Yii::$app->session['biblioUser']=='biblio' || Yii::$app->session['adminUser']=='admin' || Yii::$app->session['profeUser']=='profe' || Yii::$app->session['InspecUser']=='Inspec' || Yii::$app->session['alumnoUser']=='alumno'
+                    ],
                 ],
             ]
             //End Menu Libros
@@ -76,7 +80,11 @@ AppAsset::register($this);
             //Begin Menu Alumnos
             ['label' => 'Alumnos',
                 'items' => [
-                    ['label' => 'Ingresar', 'url' => ['/alumnos/ingresaalu'],'visible'=>Yii::$app->session['adminUser']=='admin' || Yii::$app->session['InspecUser']=='Inspec'],
+                    ['label' => 'Ingresar',
+                        'items' => [
+                                ['label' => 'General' , 'url' => ['/alumnos/ingresaalu']],
+                                ['label' => 'Alumnos Existentes', 'url' => ['/alumnos/consultarutalu']],
+                            ], 'visible'=>Yii::$app->session['adminUser']=='admin' || Yii::$app->session['InspecUser']=='Inspec'],
                     ['label' => 'Consultar',
                         'items' => [
                             ['label' => 'General', 'url' => ['/alumnos/congeneral']],
@@ -95,6 +103,7 @@ AppAsset::register($this);
                             ['label' => 'Promoción','url' => ['/alumnos/listapromocion'],'visible'=>Yii::$app->session['adminUser']=='admin'],
                             ['label' => 'Datos con curso','url' => ['/alumnos/upconcurso'],'visible'=>Yii::$app->session['adminUser']=='admin' || Yii::$app->session['InspecUser']=='Inspec'],
                             ['label' => 'Datos', 'url' => ['/alumnos/upgeneral'],'visible'=>Yii::$app->session['adminUser']=='admin' || Yii::$app->session['InspecUser']=='Inspec'],
+                            ['label' => 'Datos Apoderados', 'url' => ['/apoderados/modapoderados'], 'visible'=> Yii::$app->session['adminUser']=='admin' || Yii::$app->session['InspecUser']=='Inspec']
                         ],'visible'=> Yii::$app->session['biblioUser']=='biblio' || Yii::$app->session['adminUser']=='admin' || Yii::$app->session['InspecUser']=='Inspec'
                     ],
                     ['label' => 'Eliminar', 'url' => ['/alumnos/delalumno'],'visible'=>Yii::$app->session['adminUser']=='admin'],
@@ -176,8 +185,6 @@ AppAsset::register($this);
 <footer class="footer">
     <div class="container">
         <p class="pull-left">&copy; <?= Yii::$app->params["title"] ?> <?= date('Y') ?></p>
-
-         <p class="pull-right"><?= Yii::powered() ?></p>
     </div>
 </footer>
 

@@ -19,7 +19,7 @@ namespace app\models\prestamos;
 use app\models\ejemplar\Ejemplar;
 use app\models\Users;
 use yii\db\ActiveRecord;
-
+use yii\db\ActiveQuery;
 /**
  * Class Prestamos
  * @package app\models\prestamos
@@ -70,7 +70,7 @@ class Prestamos extends ActiveRecord
     /**
      * Gets query for [[Idejemplar0]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getIdejemplar0()
     {
@@ -80,7 +80,7 @@ class Prestamos extends ActiveRecord
     /**
      * Gets query for [[IdUser0]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getIdUser0()
     {

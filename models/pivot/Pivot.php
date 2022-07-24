@@ -7,6 +7,7 @@ use app\models\cursos\Cursos;
 use app\models\alumnos\Alumnos;
 use app\models\apoderados\Apoderados;
 use yii\db\ActiveRecord;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "pivot".
@@ -74,7 +75,7 @@ class Pivot extends ActiveRecord
     /**
      * Gets query for [[Idano0]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getIdano0()
     {
@@ -84,7 +85,7 @@ class Pivot extends ActiveRecord
     /**
      * Gets query for [[IdCurso0]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getIdCurso0()
     {
@@ -94,7 +95,7 @@ class Pivot extends ActiveRecord
     /**
      * Gets query for [[Idalumno0]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getIdalumno0()
     {
@@ -104,7 +105,7 @@ class Pivot extends ActiveRecord
     /**
      * Gets query for [[IdApo0]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getIdApo0()
     {

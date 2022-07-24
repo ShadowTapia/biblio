@@ -158,6 +158,22 @@ class User extends BaseObject implements IdentityInterface
      * @param $id
      * @return bool
      */
+    public static function isUserAlumno($id)
+    {
+        if(Users::findOne(['idUser' => $id, 'activate' => '1', 'Idroles' => 5]))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    /**
+     * @param $id
+     * @return bool
+     */
     public static function isUserFuncionario($id)
     {
         if(Users::findOne(['idUser' => $id, 'activate' => '1', 'Idroles' => 12]))

@@ -42,16 +42,7 @@ $this->params['breadcrumbs'][] = $this->title;
     ?>
 </div>
 <div class="form-group">
-    <?= $form->field($model,"activate")->widget(SwitchInput::className(),[
-            'type' => SwitchInput::CHECKBOX,
-            'pluginOptions' => [
-                    'size' => 'small',
-                    'onText' => '<i class="glyphicon glyphicon-ok"></i>',
-                    'offText'=>'<i class="glyphicon glyphicon-remove"></i>',
-                    'onColor' => 'success',
-                    'offColor' => 'danger',
-                ],
-            ])->label('Activo') ?>
+    <?= $form->field($model,"activate")->widget(SwitchInput::className(),['type' => SwitchInput::CHECKBOX,'pluginOptions' => ['size' => 'small','onText' => '<i class="glyphicon glyphicon-ok"></i>','offText'=>'<i class="glyphicon glyphicon-remove"></i>','onColor' => 'success','offColor' => 'danger',],])->label('Activo') ?>
 </div>
 <?= Html::submitButton('Modificar',['class'=>'btn btn-primary']) ?>
 

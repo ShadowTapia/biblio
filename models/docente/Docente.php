@@ -6,6 +6,7 @@ use yii\db\ActiveRecord;
 use app\models\Comunas;
 use app\models\Provincias;
 use app\models\Regiones;
+use yii\db\ActiveQuery;
 /**
  * This is the model class for table "docente".
  *
@@ -65,7 +66,7 @@ class Docente extends ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getComunas()
     {
@@ -73,7 +74,7 @@ class Docente extends ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getProvincias()
     {
@@ -81,7 +82,7 @@ class Docente extends ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getRegiones()
     {

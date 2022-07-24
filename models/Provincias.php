@@ -3,6 +3,7 @@
 namespace app\models;
 
 use yii\db\ActiveRecord;
+use yii\db\ActiveQuery;
 /**
  * This is the model class for table "provincias".
  *
@@ -37,7 +38,7 @@ class Provincias extends ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getComunas()
     {
@@ -45,7 +46,7 @@ class Provincias extends ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getCodRegion0()
     {

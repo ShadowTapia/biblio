@@ -4,6 +4,7 @@ namespace app\models\numejem;
 
 use yii\db\ActiveRecord;
 use app\models\libros\Libros;
+use yii\db\ActiveQuery;
 /**
  * This is the model class for table "numejem".
  *
@@ -52,7 +53,7 @@ class Numejem extends ActiveRecord
     /**
      * Gets query for [[IdLibros0]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getIdLibros0()
     {

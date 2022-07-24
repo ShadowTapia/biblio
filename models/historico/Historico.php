@@ -5,6 +5,7 @@ namespace app\models\historico;
 use app\models\ejemplar\Ejemplar;
 use app\models\Users;
 use yii\db\ActiveRecord;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "historico".
@@ -70,7 +71,7 @@ class Historico extends ActiveRecord
     /**
      * Gets query for [[Idejemplar0]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getIdejemplar0()
     {
@@ -80,7 +81,7 @@ class Historico extends ActiveRecord
     /**
      * Gets query for [[IdUser0]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getIdUser0()
     {

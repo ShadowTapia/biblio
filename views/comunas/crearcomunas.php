@@ -8,7 +8,6 @@ use app\models\Provincias;
 use app\models\Regiones;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use kartik\depdrop\DepDrop;
 
 
 $this->title='Ingresar Comunas';
@@ -30,7 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= $form->field($model,"comuna")->input("text",['style'=>'width:450px; text-transform: uppercase;'])->label('Comuna*') ?>
 </div>
 <div class="form-group">
-    <?= $form->field($model,"codRegion")->dropDownList(Regiones::getListRegiones(),
+    <?= $form->field($model,"codRegion")->dropDownList(Regiones::getListRegiones(),        
         ['class' => 'form-control', 'style'=>'width:450px;','prompt'=>'Seleccione Región','onchange' =>
         '$.post("lists?id= " +$(this).val(),function( data ) {
             $("select#idProvincia").html( data );

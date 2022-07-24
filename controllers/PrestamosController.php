@@ -22,6 +22,8 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\filters\AccessControl;
+use yii\base\Exception;
+use yii\db\StaleObjectException;
 
 /**
  * PrestamosController implements the CRUD actions for Prestamos model.
@@ -102,7 +104,7 @@ class PrestamosController extends Controller
      * @param $id
      * @param $titulo
      * @return array|string
-     * @throws \Exception
+     * @throws Exception
      * @throws \Throwable
      */
     public function actionPrestarfuncionario($id,$titulo)
@@ -160,7 +162,7 @@ class PrestamosController extends Controller
                         }
                         return $this->redirect(['prestamos/prestar']);
                     }
-                    catch (\Exception $e) {
+                    catch (Exception $e) {
                         $transaction->rollBack();
                         throw $e;
                     }
@@ -189,7 +191,7 @@ class PrestamosController extends Controller
      * @param $id
      * @param $titulo
      * @return array|string
-     * @throws \Exception
+     * @throws Exception
      * @throws \Throwable
      */
     public function actionPrestarprofesor($id,$titulo)
@@ -246,7 +248,7 @@ class PrestamosController extends Controller
                         }
                         return $this->redirect(['prestamos/prestar']);
                     }
-                    catch (\Exception $e) {
+                    catch (Exception $e) {
                         $transaction->rollBack();
                         throw $e;
                     }
@@ -275,7 +277,7 @@ class PrestamosController extends Controller
      * @param $id
      * @param $titulo
      * @return array|string
-     * @throws \Exception
+     * @throws Exception
      * @throws \Throwable
      */
     public function actionPrestarapoderado($id,$titulo)
@@ -333,7 +335,7 @@ class PrestamosController extends Controller
                         }
                         return $this->redirect(['prestamos/prestar']);
                     }
-                    catch (\Exception $e) {
+                    catch (Exception $e) {
                         $transaction->rollBack();
                         throw $e;
                     }
@@ -361,7 +363,7 @@ class PrestamosController extends Controller
     /**
      * @param $id
      * @return Response
-     * @throws \Exception
+     * @throws Exception
      * @throws \Throwable
      */
     public function actionDevolver($id)
@@ -380,7 +382,7 @@ class PrestamosController extends Controller
                     \Yii::$app->session->setFlash('error','Se ha producido un error y no se ha devuelto nada');
                     return $this->redirect(['prestamos/index']);
                }
-        }catch (\Exception $e) {
+        }catch (Exception $e) {
             $transaction->rollBack();
             throw $e;
         }
@@ -456,7 +458,7 @@ class PrestamosController extends Controller
                             }
                             return $this->redirect(['prestamos/prestar']);
                         }
-                        catch (\Exception $e) {
+                        catch (Exception $e) {
                             $transaction->rollBack();
                             throw $e;
                         }
@@ -599,7 +601,7 @@ class PrestamosController extends Controller
     /**
      * @param $id
      * @return array|string
-     * @throws \Exception
+     * @throws Exception
      * @throws \Throwable
      */
     public function actionUpdate($id)
@@ -641,7 +643,7 @@ class PrestamosController extends Controller
                         return $this->redirect(['prestamos/index']);
                     }
                 }
-                catch (\Exception $e) {
+                catch (Exception $e) {
                     $transaction->rollBack();
                     throw $e;
                 }
@@ -693,11 +695,11 @@ class PrestamosController extends Controller
     }
 
     /**
-     * Deletes an existing Prestamos model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param string $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return Response
+     * @throws NotFoundHttpException
+     * @throws \Throwable
+     * @throws StaleObjectException
      */
     public function actionDelete($id)
     {

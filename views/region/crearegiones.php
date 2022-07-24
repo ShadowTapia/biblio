@@ -5,7 +5,7 @@
  * @copyright 2019
  */
 
-use yii\widgets\ActiveForm;
+use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 
 $this->title='Ingresar Regiones';

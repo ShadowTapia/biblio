@@ -104,7 +104,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'class' => 'yii\grid\ActionColumn',
                     'header' => 'Acciones',
                     'headerOptions' => ['width'=> '220'],
-                    'template'=> '{devolver} {update}',
+                    'template'=> '{devolver} {extender}',
                     'buttons' => [
                             'devolver' => function($url,$model){
                                 return Html::a("<span class='glyphicon glyphicon-download'> Devolver</span>",['devolver', 'id'=>$model->idPrestamo],
@@ -117,8 +117,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                             ],
                                     ]);
                             },
-                            'update' => function($url,$model){
-                                return Html::a("<span class='glyphicon glyphicon-refresh'> Renovar</span>",['prestamos/update','id'=>$model->idPrestamo],
+                            'extender' => function($url,$model){
+                                return Html::a("<span class='glyphicon glyphicon-refresh'> Renovar</span>",['extender','id'=>$model->idPrestamo],
                                     ['class'=>'btn btn-circle btn-warning btn-sm','title'=>'Extender Prestamo']);
                             }
                     ],

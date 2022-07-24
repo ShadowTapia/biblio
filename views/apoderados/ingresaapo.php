@@ -62,18 +62,19 @@ $this->params['breadcrumbs'][] = $this->title;
                             'id'=>'codRegion'])->label('Regiones') ?>
             </div>
             <div class="col-xs-3">
-                <?= $form->field($model,'idProvincia')->widget(DepDrop::className(),[
+                <?= $form->field($model,'idProvincia')->widget(DepDrop::class,[
                         'options'=>['id'=>'idProvincia','prompt'=> 'Seleccione Provincia'],
                         'pluginOptions'=>[
                                 'depends'=>['codRegion'],
                                 'placeholder'=>'Seleccione Provincia',
                                 'url'=>Url::to(['apoderados/lista_provincia']),
+                                'initialize' => true,
                                 'loadingText' => 'Cargando Provincias...',
                         ]
                 ])->label('Provincia') ?>
             </div>
             <div class="col-xs-3">
-                <?= $form->field($model,'codComuna')->widget(DepDrop::className(),[
+                <?= $form->field($model,'codComuna')->widget(DepDrop::class,[
                         'options'=>['id'=>'codComuna','prompt'=>'Seleccione Comuna'],
                         'pluginOptions'=>[
                                 'depends'=>['idProvincia'],
