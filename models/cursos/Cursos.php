@@ -5,6 +5,7 @@ namespace app\models\cursos;
 use Yii;
 use app\models\pivot\Pivot;
 use yii\db\ActiveRecord;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "cursos".
@@ -53,7 +54,7 @@ class Cursos extends ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getPivots()
     {

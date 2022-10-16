@@ -54,7 +54,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="container">
         <div class="row">
             <div class="col-xs-2">
-                <?= $form->field($model,"rutalumno")->widget(MaskedInput::className(),['mask'=>'99.999.999-*',],['style'=>'width:20%'])->label('RUN*') ?>
+                <?= $form->field($model,"rutalumno")->widget(MaskedInput::class,['mask'=>'99.999.999-*',],['style'=>'width:20%'])->label('RUN*') ?>
             </div>
             <div class="col-xs-3">
                 <?= $form->field($model,"nombrealu")->input("text",['style'=> 'width:100%'])->label('Nombres*') ?>
@@ -68,7 +68,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
         <div class="row">
             <div class="col-xs-2">
-                <?= $form->field($model,"fechanac")->widget(DatePicker::className(),[
+                <?= $form->field($model,"fechanac")->widget(DatePicker::class,[
                     'dateFormat' => 'dd-MM-yyyy',
                     'language' => 'ES',
                     'clientOptions' => [
@@ -102,20 +102,21 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
             <?php echo Html::hiddenInput('selected_id', $model->idProvincia, ['id'=>'selected_id']) ?>
             <div class="col-xs-3">
-                <?= $form->field($model,"idProvincia")->widget(DepDrop::className(),[
+                <?= $form->field($model,"idProvincia")->widget(DepDrop::class,[
                     'options'=>['id'=>'idProvincia','prompt'=>'Seleccione Provincia'],
                     'pluginOptions'=>[
                         'depends'=>['codRegion'],
                         'placeholder'=>'Seleccione Provincia',
                         'url'=>Url::to(['apoderados/lista_provincia']),
                         'loadingText' => 'Cargando Provincias...',
+                        'initialize' => true,
                         'params' => ['selected_id'],
                     ]
                 ])->label('Provincia*') ?>
             </div>
             <?php echo Html::hiddenInput('selected_ic', $model->codComuna, ['id' => 'selected_ic']) ?>
             <div class="col-xs-3">
-                <?= $form->field($model,"codComuna")->widget(DepDrop::className(),[
+                <?= $form->field($model,"codComuna")->widget(DepDrop::class,[
                     'options'=>['id'=>'codComuna','prompt' => 'Seleccione Comuna','style' => 'width:80%;'],
                     'pluginOptions'=>[
                         'depends'=>['idProvincia'],
@@ -144,7 +145,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ['style' => 'width:100%;','prompt' => 'Seleccione','id' => 'Nacionalidad'])->label('Nacionalidad') ?>
             </div>
             <div class="col-xs-2">
-                <?= $form->field($model,"fechaing")->widget(DatePicker::className(),[
+                <?= $form->field($model,"fechaing")->widget(DatePicker::class,[
                     'dateFormat' => 'dd-MM-yyyy',
                     'clientOptions' => [
                         'yearRange' => '-115:+0',
@@ -170,7 +171,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
         <div class="row">
             <div class="col-xs-2">
-                <?= $form->field($modelPivot,'retirado')->widget(SwitchInput::className(),[
+                <?= $form->field($modelPivot,'retirado')->widget(SwitchInput::class,[
                         'type'=>SwitchInput::CHECKBOX,
                         'pluginOptions'=>[
                                 'size'=>'small',
@@ -181,7 +182,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             ],])->label('Retirar') ?>
             </div>
             <div id="fecharetiro"  class="col-xs-2">
-                <?= $form->field($model,"fecharet")->widget(DatePicker::className(),[
+                <?= $form->field($model,"fecharet")->widget(DatePicker::class,[
                     'dateFormat' => 'dd-MM-yyyy',
                     'language' => 'ES',
                     'clientOptions' => [

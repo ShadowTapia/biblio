@@ -1,6 +1,12 @@
 <?php
 
 namespace app\models\prestamos;
+
+use Yii;
+use app\models\Users;
+use app\models\ejemplar\Ejemplar;
+use app\models\anos\Anos;
+
 /**
  * This is the model class for table "prestamos".
  *
@@ -8,23 +14,16 @@ namespace app\models\prestamos;
  * @property string|null $idUser
  * @property string|null $idejemplar
  * @property string|null $norden
- * @property string|null $fechapres
- * @property string|null $fechadev
+ * @property string|null $fechapres Fecha en que realizado el prestamo
+ * @property string|null $fechadev Fecha en que debe ser devuelto
  * @property string|null $notas
+ * @property int $idano Corresponde al año de ingreso
  *
- * @property Ejemplar $idejemplar0
  * @property Users $idUser0
+ * @property Ejemplar $idejemplar0
+ * @property Anos $idano0
  */
-
-use app\models\ejemplar\Ejemplar;
-use app\models\Users;
-use yii\db\ActiveRecord;
-
-/**
- * Class Prestamos
- * @package app\models\prestamos
- */
-class Prestamos extends ActiveRecord
+class Prestamos extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -41,13 +40,14 @@ class Prestamos extends ActiveRecord
     {
         return [
             [['fechapres', 'fechadev'], 'safe'],
-            [['fechapres', 'fechadev'], 'required', 'message' => 'Campo requerido'],
+            [['idano'], 'integer'],
             [['idPrestamo', 'idUser', 'idejemplar'], 'string', 'max' => 15],
             [['norden'], 'string', 'max' => 5],
             [['notas'], 'string', 'max' => 255],
             [['idPrestamo'], 'unique'],
-            [['idejemplar'], 'exist', 'skipOnError' => true, 'targetClass' => Ejemplar::class, 'targetAttribute' => ['idejemplar' => 'idejemplar']],
             [['idUser'], 'exist', 'skipOnError' => true, 'targetClass' => Users::class, 'targetAttribute' => ['idUser' => 'idUser']],
+            [['idejemplar'], 'exist', 'skipOnError' => true, 'targetClass' => Ejemplar::class, 'targetAttribute' => ['idejemplar' => 'idejemplar']],
+            [['idano'], 'exist', 'skipOnError' => true, 'targetClass' => Anos::class, 'targetAttribute' => ['idano' => 'idano']],
         ];
     }
 
@@ -58,13 +58,24 @@ class Prestamos extends ActiveRecord
     {
         return [
             'idPrestamo' => 'Id Prestamo',
-            'idUser' => 'Id Usuario',
-            'idejemplar' => 'Id Ejemplar',
-            'norden' => 'N° orden',
-            'fechapres' => 'Fecha prestamo',
-            'fechadev' => 'Fecha devolución',
+            'idUser' => 'Id User',
+            'idejemplar' => 'Id ejemplar',
+            'norden' => 'N. Orden',
+            'fechapres' => 'F. prestamo',
+            'fechadev' => 'F. devolución',
             'notas' => 'Notas',
+            'idano' => 'Id Ano',
         ];
+    }
+
+    /**
+     * Gets query for [[IdUser0]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getIdUser0()
+    {
+        return $this->hasOne(Users::class, ['idUser' => 'idUser']);
     }
 
     /**
@@ -78,12 +89,12 @@ class Prestamos extends ActiveRecord
     }
 
     /**
-     * Gets query for [[IdUser0]].
+     * Gets query for [[Idano0]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getIdUser0()
+    public function getIdano0()
     {
-        return $this->hasOne(Users::class, ['idUser' => 'idUser']);
+        return $this->hasOne(Anos::class, ['idano' => 'idano']);
     }
 }

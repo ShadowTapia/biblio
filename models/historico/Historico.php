@@ -2,9 +2,10 @@
 
 namespace app\models\historico;
 
+use Yii;
+use app\models\anos\Anos;
 use app\models\ejemplar\Ejemplar;
 use app\models\Users;
-use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "historico".
@@ -18,11 +19,13 @@ use yii\db\ActiveRecord;
  * @property string|null $observacion
  * @property string|null $User
  * @property string|null $UserMail
+ * @property int|null $idAno
  *
  * @property Ejemplar $idejemplar0
+ * @property Anos $idAno0
  * @property Users $idUser0
  */
-class Historico extends ActiveRecord
+class Historico extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -40,11 +43,13 @@ class Historico extends ActiveRecord
         return [
             [['idhistorico'], 'required'],
             [['fechapres', 'fechadev', 'fechadevReal'], 'safe'],
+            [['idAno'], 'integer'],
             [['idhistorico', 'idUser', 'idejemplar'], 'string', 'max' => 15],
             [['observacion'], 'string', 'max' => 255],
             [['User', 'UserMail'], 'string', 'max' => 150],
             [['idhistorico'], 'unique'],
             [['idejemplar'], 'exist', 'skipOnError' => true, 'targetClass' => Ejemplar::class, 'targetAttribute' => ['idejemplar' => 'idejemplar']],
+            [['idAno'], 'exist', 'skipOnError' => true, 'targetClass' => Anos::class, 'targetAttribute' => ['idAno' => 'idano']],
             [['idUser'], 'exist', 'skipOnError' => true, 'targetClass' => Users::class, 'targetAttribute' => ['idUser' => 'idUser']],
         ];
     }
@@ -64,6 +69,7 @@ class Historico extends ActiveRecord
             'observacion' => 'Observacion',
             'User' => 'User',
             'UserMail' => 'User Mail',
+            'idAno' => 'Id Ano',
         ];
     }
 
@@ -75,6 +81,16 @@ class Historico extends ActiveRecord
     public function getIdejemplar0()
     {
         return $this->hasOne(Ejemplar::class, ['idejemplar' => 'idejemplar']);
+    }
+
+    /**
+     * Gets query for [[IdAno0]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getIdAno0()
+    {
+        return $this->hasOne(Anos::class, ['idano' => 'idAno']);
     }
 
     /**

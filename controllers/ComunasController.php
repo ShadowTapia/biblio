@@ -12,6 +12,7 @@ use yii\web\Response;
 use yii\widgets\ActiveForm;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use yii\base\Exception;
 
 /**
  * Class ComunasController
@@ -83,10 +84,11 @@ class ComunasController extends Controller
         }
         return $this->redirect('index');
     }
+
     /**
-     * Procedimiento para crear comunas
-     * 
-     **/
+     * @return array|string|Response
+     * @throws \Throwable
+     */
     public function actionCrearcomunas()
     {
         $model = new FormComunas;
@@ -125,7 +127,7 @@ class ComunasController extends Controller
                     }
                     return $this->redirect('index');
                 }
-                catch (\Exception $e){
+                catch (Exception $e){
                     $transaction->rollBack();
                     throw $e;
                 }

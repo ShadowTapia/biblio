@@ -1,10 +1,10 @@
 <?php
 
-namespace app\models;
+namespace app\models\historico;
 
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\historico\Historico;
 
 /**
  * HistoricoSearch represents the model behind the search form of `app\models\historico\Historico`.
@@ -17,7 +17,7 @@ class HistoricoSearch extends Historico
     public function rules()
     {
         return [
-            [['idhistorico', 'idUser', 'idejemplar', 'fechapres', 'fechadev', 'fechadevReal', 'observacion', 'User', 'UserMail'], 'safe'],
+            [['idhistorico', 'idUser', 'idejemplar', 'fechapres', 'fechadev', 'fechadevReal', 'observacion', 'User', 'UserMail', 'idano'], 'safe'],
         ];
     }
 
@@ -39,7 +39,9 @@ class HistoricoSearch extends Historico
      */
     public function search($params)
     {
-        $query = Historico::find();
+        $query = Historico::find()
+            ->where(['idano' => Yii::$app->session->get('anoActivo')])
+            ->orderBy('fechapres');
 
         // add conditions that should always apply here
 
@@ -60,6 +62,7 @@ class HistoricoSearch extends Historico
             'fechapres' => $this->fechapres,
             'fechadev' => $this->fechadev,
             'fechadevReal' => $this->fechadevReal,
+            'idano' => $this->idano,
         ]);
 
         $query->andFilterWhere(['like', 'idhistorico', $this->idhistorico])
@@ -67,8 +70,8 @@ class HistoricoSearch extends Historico
             ->andFilterWhere(['like', 'idejemplar', $this->idejemplar])
             ->andFilterWhere(['like', 'observacion', $this->observacion])
             ->andFilterWhere(['like', 'User', $this->User])
-            ->andFilterWhere(['like', 'UserMail', $this->UserMail]);
-
+            ->andFilterWhere(['like', 'UserMail', $this->UserMail])
+            ->andFilterWhere(['like', 'idano', $this->idano]);
         return $dataProvider;
     }
 }

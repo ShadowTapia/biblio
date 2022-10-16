@@ -94,31 +94,36 @@ class SiteController extends Controller
 
         if (!\yii::$app->user->isGuest)
         {
-            if (User::isUserAdmin(Yii::$app->user->identity->id))
+            if (User::isUserAdmin(Yii::$app->user->identity->getId()))
             {
                 Yii::$app->session->set('anoActivo',$year->idano);
                 Yii::$app->session->set('nameAno',$year->nombreano);
                 Yii::$app->session->set('adminUser',"admin");
-            }elseif (User::isUserBiblio(Yii::$app->user->identity->id))
+            }elseif (User::isUserBiblio(Yii::$app->user->identity->getId()))
             {
                 Yii::$app->session->set('anoActivo',$year->idano);
                 Yii::$app->session->set('nameAno',$year->nombreano);
                 Yii::$app->session->set('biblioUser','biblio');
-            }elseif (User::isUserInspec(Yii::$app->user->identity->id))
+            }elseif (User::isUserInspec(Yii::$app->user->identity->getId()))
             {
                 Yii::$app->session->set('anoActivo',$year->idano);
                 Yii::$app->session->set('nameAno',$year->nombreano);
                 Yii::$app->session->set('InspecUser','Inspec');
-            }elseif (User::isUserProfe(Yii::$app->user->identity->id))
+            }elseif (User::isUserProfe(Yii::$app->user->identity->getId()))
             {
                 Yii::$app->session->set('anoActivo',$year->idano);
                 Yii::$app->session->set('nameAno',$year->nombreano);
                 Yii::$app->session->set('profeUser', 'profe');
-            }elseif (User::isUserFuncionario(Yii::$app->user->identity->id))
+            }elseif (User::isUserFuncionario(Yii::$app->user->identity->getId()))
             {
                 Yii::$app->session->set('anoActivo',$year->idano);
                 Yii::$app->session->set('nameAno',$year->nombreano);
                 Yii::$app->session->set('funcionarioUser', 'funcionario');
+            }elseif (User::isUserAlumno(Yii::$app->user->identity->getId()))
+            {
+                Yii::$app->session->set('anoActivo',$year->idano);
+                Yii::$app->session->set('nameAno',$year->nombreano);
+                Yii::$app->session->set('alumnoUser', 'alumno');
             }
             Yii::$app->session->set('userSessionTimeout',time() + Yii::$app->params['sessionTimeoutSeconds']);
             return $this->goHome();
@@ -127,33 +132,37 @@ class SiteController extends Controller
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login())
         {
-            if (User::isUserAdmin(Yii::$app->user->identity->id))
+            if (User::isUserAdmin(Yii::$app->user->identity->getId()))
             {
                 Yii::$app->session->set('anoActivo',$year->idano);
                 Yii::$app->session->set('nameAno',$year->nombreano);
                 Yii::$app->session->set('adminUser','admin');
-            }elseif (User::isUserBiblio(Yii::$app->user->identity->id))
+            }elseif (User::isUserBiblio(Yii::$app->user->identity->getId()))
             {
                 Yii::$app->session->set('anoActivo',$year->idano);
                 Yii::$app->session->set('nameAno',$year->nombreano);
                 Yii::$app->session->set('biblioUser','biblio');
-            }elseif (User::isUserInspec(Yii::$app->user->identity->id))
+            }elseif (User::isUserInspec(Yii::$app->user->identity->getId()))
             {
                 Yii::$app->session->set('anoActivo',$year->idano);
                 Yii::$app->session->set('nameAno',$year->nombreano);
                 Yii::$app->session->set('InspecUser','Inspec');
-            }elseif (User::isUserProfe(Yii::$app->user->identity->id))
+            }elseif (User::isUserProfe(Yii::$app->user->identity->getId()))
             {
                 Yii::$app->session->set('anoActivo',$year->idano);
                 Yii::$app->session->set('nameAno',$year->nombreano);
                 Yii::$app->session->set('profeUser', 'profe');
-            }elseif (User::isUserFuncionario(Yii::$app->user->identity->id))
+            }elseif (User::isUserFuncionario(Yii::$app->user->identity->getId()))
             {
                 Yii::$app->session->set('anoActivo',$year->idano);
                 Yii::$app->session->set('nameAno',$year->nombreano);
                 Yii::$app->session->set('funcionarioUser', 'funcionario');
+            }elseif (User::isUserAlumno(Yii::$app->user->identity->getId()))
+            {
+                Yii::$app->session->set('anoActivo',$year->idano);
+                Yii::$app->session->set('nameAno',$year->nombreano);
+                Yii::$app->session->set('alumnoUser', 'alumno');
             }
-
             Yii::$app->session->set('userSessionTimeout',time() + Yii::$app->params['sessionTimeoutSeconds']);
             return $this->goBack();
         }
@@ -242,6 +251,11 @@ class SiteController extends Controller
         }
         if (isset(Yii::$app->session['funcionarioUser'])){
             unset(Yii::$app->session['funcionarioUser']);
+            unset(Yii::$app->session['anoActivo']);
+            unset(Yii::$app->session['nameAno']);
+        }
+        if (isset(Yii::$app->session['alumnoUser'])){
+            unset(Yii::$app->session['alumnoUser']);
             unset(Yii::$app->session['anoActivo']);
             unset(Yii::$app->session['nameAno']);
         }

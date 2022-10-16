@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\cursos\Cursos;
 use app\models\cursos\FormCreaCursos;
+use phpDocumentor\Reflection\DocBlock\Tags\Throws;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
@@ -11,6 +12,7 @@ use yii\web\Response;
 use yii\widgets\ActiveForm;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use yii\base\Exception;
 
 /**
  * Class CursosController
@@ -52,7 +54,7 @@ class CursosController extends Controller
     /**
      * @param $id
      * @return array|string
-     * @throws \Exception
+     * @throws Exception
      * @throws \Throwable
      */
     public function actionUpdatecurso($id)
@@ -92,7 +94,7 @@ class CursosController extends Controller
                         return $this->redirect(['cursos/index']);
                     }   
                 }
-                 catch (\Exception $e) {
+                 catch (Exception $e) {
                     $transaction->rollBack();
                     throw $e;
                 }
@@ -155,9 +157,9 @@ class CursosController extends Controller
                     }
                     return $this->redirect(['cursos/index']);
                 }
-                catch (\Exception $e) {
+                catch (Exception $e) {
                     $transaction->rollBack();
-                    throw $e;
+                    Throw $e;
                 }
                 catch (\Throwable $e)
                 {

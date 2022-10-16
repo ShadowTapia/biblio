@@ -20,6 +20,11 @@ use yii\web\Response;
 use yii\widgets\ActiveForm;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use yii\base\InvalidConfigException;
+use yii\base\Exception;
+use setasign\Fpdi\PdfParser\CrossReference\CrossReferenceException;
+use setasign\Fpdi\PdfParser\PdfParserException;
+use setasign\Fpdi\PdfParser\Type\PdfTypeException;
 /**
  * Class DocenteController
  * @package app\controllers
@@ -58,8 +63,12 @@ class DocenteController extends Controller
     }
 
     /**
-     * @return mixed
-     * Generador de reporte en formato pdf
+     * @return string
+     * @throws \Mpdf\MpdfException
+     * @throws CrossReferenceException
+     * @throws PdfParserException
+     * @throws PdfTypeException
+     * @throws InvalidConfigException
      */
     public function actionReporte()
     {
@@ -144,7 +153,7 @@ class DocenteController extends Controller
                     }
                     return $this->redirect(['docente/indexdocente']);
                 }
-                catch (\Exception $e) {
+                catch (Exception $e) {
                     $transaction->rollBack();
                     throw $e;
                 }
@@ -206,7 +215,7 @@ class DocenteController extends Controller
                         return $this->redirect(['docente/indexdocente']);
                     }
                 }
-                catch (\Exception $e) {
+                catch (Exception $e) {
                     $transaction->rollBack();
                     throw $e;
                 }
@@ -281,7 +290,7 @@ class DocenteController extends Controller
                     \Yii::$app->session->setFlash('error', 'Ocurrió un error, no se borro el Docente.-');
                 }
             }
-            catch (\Exception $e) {
+            catch (Exception $e) {
                 $transaction->rollBack();
                 throw $e;
             }

@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\models\apoderados\FormApoRegister;
 use app\models\cursos\Cursos;
 use app\models\pivot\FormSelectPivot;
+use app\models\apoderados\FormApoUpdate;
 use app\models\Comunas;
 use app\models\Provincias;
 use app\models\apoderados\FormApoConsultaRut;
@@ -18,6 +19,9 @@ use yii\filters\AccessControl;
 use yii\widgets\ActiveForm;
 use yii\web\Response;
 use yii\helpers\Json;
+use yii\db\StaleObjectException;
+use yii\base\Exception;
+
 
 /**
  * ApoderadosController implements the CRUD actions for Apoderados model.
@@ -95,6 +99,127 @@ class ApoderadosController extends Controller
     }
 
     /**
+     * @param $id
+     * @return array|string
+     * @throws Exception
+     * @throws \Throwable
+     */
+    public function actionUpdate($id)
+    {
+        $db = Yii::$app->db;
+
+        $model = new FormApoUpdate();
+
+        if ($model->load(Yii::$app->request->post()) && Yii::$app->request->isAjax)
+        {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return ActiveForm::validate($model);
+        }
+
+        if ($model->load(Yii::$app->request->post()))
+        {
+            if($model->validate())
+            {
+                $transaction = $db->beginTransaction();
+                try
+                {
+                    $db->createCommand()->update('apoderados',
+                        [
+                            'nombreapo' => $model->nombreapo,
+                            'apepat' => $model->apepat,
+                            'apemat' => $model->apemat,
+                            'calle' => $model->calle,
+                            'nro' => $model->nro,
+                            'depto' => $model->depto,
+                            'block' => $model->block,
+                            'villa' => $model->villa,
+                            'codRegion' => $model->codRegion,
+                            'idProvincia' => $model->idProvincia,
+                            'codComuna' => $model->codComuna,
+                            'fono' => $model->fono,
+                            'email' => $model->email,
+                            'celular' => $model->celular,
+                            'estudios' => $model->estudios,
+                            'niveledu' => $model->niveledu,
+                            'profesion' => $model->profesion,
+                            'trabajoplace' => $model->trabajoplace,
+                        ],
+                        [
+                            'idApo' => $id
+                        ])->execute();
+                        $transaction->commit();
+                        \Yii::$app->session->setFlash('success', 'Se ha actualizado correctamente el Apoderado.-.');
+                        return $this->redirect(['modapoderados']);
+                }
+                catch (Exception $e) {
+                    $transaction->rollBack();
+                    \Yii::$app->session->setFlash('error', 'Ocurrio un error, al actualizar el Apoderado.-');
+                    throw $e;
+                }
+                catch (\Throwable $e) {
+                    $transaction->rollBack();
+                    \Yii::$app->session->setFlash('error', 'Ocurrio un error, al actualizar el Apoderado.-');
+                    throw $e;
+                }
+            }else{
+                $model->getErrors();
+            }
+        }else{
+            $tableApoderados = Apoderados::findOne(['idApo' => $id]);
+            if($tableApoderados)
+            {
+                $model->nombreapo = $tableApoderados->nombreapo;
+                $model->apepat = $tableApoderados->apepat;
+                $model->apemat = $tableApoderados->apemat;
+                $model->calle = $tableApoderados->calle;
+                $model->nro = $tableApoderados->nro;
+                $model->depto = $tableApoderados->depto;
+                $model->block = $tableApoderados->block;
+                $model->villa = $tableApoderados->villa;
+                $model->codRegion = $tableApoderados->codRegion;
+                $model->idProvincia = $tableApoderados->idProvincia;
+                $model->codComuna = $tableApoderados->codComuna;
+                $model->email = $tableApoderados->email;
+                $model->fono = $tableApoderados->fono;
+                $model->celular = $tableApoderados->celular;
+                $model->email = $tableApoderados->email;
+                $model->niveledu = $tableApoderados->niveledu;
+                $model->estudios = $tableApoderados->estudios;
+                $model->profesion = $tableApoderados->profesion;
+                $model->trabajoplace = $tableApoderados->trabajoplace;
+
+            }
+        }
+        return $this->render('update',compact('model'));
+    }
+
+    /**
+     * @return string
+     */
+    public function actionModapoderados()
+    {
+        $model = new FormSelectPivot();
+
+        if($model->load(Yii::$app->request->post()))
+        {
+            Yii::$app->session->set('icurso',$model->idCurso);
+        }
+
+        $searchModel = new ApoderadosSearch();
+        $dataProvider = $searchModel->searchListaApos(Yii::$app->session->get('icurso'));
+        $name = Cursos::find()->where(['idCurso' => Yii::$app->session->get('icurso')])->one();
+        if($name)
+        {
+            $nomcurso = $name->Nombre;
+            $count = $dataProvider->getTotalCount();
+        }else{
+            $nomcurso = '';
+            $count = 0;
+        }
+        return $this->render('modapoderados',compact('model','searchModel','dataProvider','nomcurso','count'));
+    }
+
+    /**
      * @return string
      * Se encarga de suministrar una lista de apoderados
      */
@@ -148,7 +273,6 @@ class ApoderadosController extends Controller
         }
 
         return $this->render('consultarutapo',["model" => $model]);
-
     }
 
     /**
@@ -252,7 +376,7 @@ class ApoderadosController extends Controller
                     \Yii::$app->session->setFlash('success', 'Se ha ingresado correctamente el Apoderado.-.');
                     $apoinsert = true;
                 }
-                catch (\Exception $e) {
+                catch (Exception $e) {
                     $transaction->rollBack();
                     \Yii::$app->session->setFlash('error', 'Ocurrio un error, al ingresar un Apoderado.-');
                     throw $e;
@@ -272,7 +396,7 @@ class ApoderadosController extends Controller
                         $db->createCommand()->update('pivot',['idApo' => $idapoderado],['idalumno' => $id])->execute();
                         $transaction->commit();
                     }
-                    catch (\Exception $e) {
+                    catch (Exception $e) {
                         $transaction->rollBack();
                         throw $e;
                     }
@@ -335,32 +459,13 @@ class ApoderadosController extends Controller
         return $this->render('ingresaapo', ["model" => $model]);
     }
 
-    /**
-     * Updates an existing Apoderados model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionUpdate($id)
-    {
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->idApo]);
-        }
-
-        return $this->render('update', [
-            'model' => $model,
-        ]);
-    }
 
     /**
-     * Deletes an existing Apoderados model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return Response
+     * @throws NotFoundHttpException
+     * @throws \Throwable
+     * @throws StaleObjectException
      */
     public function actionDelete($id)
     {

@@ -4,13 +4,14 @@ namespace app\models;
 
 use yii\web\IdentityInterface;
 use yii\base\BaseObject;
+
 /**
  * Class User
  * @package app\models
  */
 class User extends BaseObject implements IdentityInterface
 {
-    
+
     public $idUser;
     public $UserRut;
     public $UserMail;
@@ -20,6 +21,7 @@ class User extends BaseObject implements IdentityInterface
     public $Idroles;
     public $authkey;
     public $accessToken;
+    public $expire_at;
     public $activate;
     public $verification_code;
 
@@ -31,18 +33,18 @@ class User extends BaseObject implements IdentityInterface
     public static function findIdentity($id)
     {
         $user = Users::find()
-                ->where("activate=:activate", [":activate" => '1'])
-                ->andWhere("idUser=:idUser",["idUser" => $id])
-                ->one();
-                
+            ->where("activate=:activate", [":activate" => '1'])
+            ->andWhere("idUser=:idUser", ["idUser" => $id])
+            ->one();
+
         return isset($user) ? new static($user) : null;
     }
 
     /**
      * {@inheritdoc}
      */
-     
-    /** Busca la identidad del usuario a tráves de su token de acceso */
+
+    /** Busca la identidad del usuario a trï¿½ves de su token de acceso */
     /**
      * @param mixed $token
      * @param null $type
@@ -51,10 +53,10 @@ class User extends BaseObject implements IdentityInterface
     public static function findIdentityByAccessToken($token, $type = null)
     {
         $users = Users::find()
-                ->where("activate=:activate", [":activate" => '1'])
-                ->andWhere("accessToken=:accessToken", [":accessToken" => $token])
-                ->all();
-                
+            ->where("activate=:activate", [":activate" => '1'])
+            ->andWhere("accessToken=:accessToken", [":accessToken" => $token])
+            ->all();
+
         foreach ($users as $user) {
             if ($user->accessToken === $token) {
                 return new static($user);
@@ -63,7 +65,7 @@ class User extends BaseObject implements IdentityInterface
 
         return null;
     }
-    
+
     /**
      * Finds user by userRun
      * 
@@ -73,16 +75,16 @@ class User extends BaseObject implements IdentityInterface
     public static function findByUserrut($userRun)
     {
         $users = Users::find()
-                ->where("activate=:activate", [":activate" => '1'])
-                ->andWhere("UserRut=:UserRut", [":UserRut" => $userRun])
-                ->all();
-                
-        foreach ($users as $user){
-            if($user->UserRut == $userRun){
+            ->where("activate=:activate", [":activate" => '1'])
+            ->andWhere("UserRut=:UserRut", [":UserRut" => $userRun])
+            ->all();
+
+        foreach ($users as $user) {
+            if ($user->UserRut == $userRun) {
                 return new static($user);
             }
         }
-        
+
         return null;
     }
 
@@ -93,12 +95,9 @@ class User extends BaseObject implements IdentityInterface
      */
     public static function isUserAdmin($id)
     {
-        if(Users::findOne(['idUser'=>$id,'activate'=>'1','Idroles'=>1]))
-        {
+        if (Users::findOne(['idUser' => $id, 'activate' => '1', 'Idroles' => 1])) {
             return true;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
@@ -110,12 +109,9 @@ class User extends BaseObject implements IdentityInterface
      */
     public static function isUserBiblio($id)
     {
-        if(Users::findOne(['idUser'=>$id,'activate'=>'1','Idroles'=>2]))
-        {
+        if (Users::findOne(['idUser' => $id, 'activate' => '1', 'Idroles' => 2])) {
             return true;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
@@ -127,12 +123,9 @@ class User extends BaseObject implements IdentityInterface
      */
     public static function isUserInspec($id)
     {
-        if(Users::findOne(['idUser' => $id, 'activate' => '1', 'Idroles' => 11]))
-        {
+        if (Users::findOne(['idUser' => $id, 'activate' => '1', 'Idroles' => 11])) {
             return true;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
@@ -144,12 +137,22 @@ class User extends BaseObject implements IdentityInterface
      */
     public static function isUserProfe($id)
     {
-        if(Users::findOne(['idUser' => $id, 'activate' => '1', 'Idroles' => 3]))
-        {
+        if (Users::findOne(['idUser' => $id, 'activate' => '1', 'Idroles' => 3])) {
             return true;
+        } else {
+            return false;
         }
-        else
-        {
+    }
+
+    /**
+     * @param $id
+     * @return bool
+     */
+    public static function isUserAlumno($id)
+    {
+        if (Users::findOne(['idUser' => $id, 'activate' => '1', 'Idroles' => 5])) {
+            return true;
+        } else {
             return false;
         }
     }
@@ -160,12 +163,9 @@ class User extends BaseObject implements IdentityInterface
      */
     public static function isUserFuncionario($id)
     {
-        if(Users::findOne(['idUser' => $id, 'activate' => '1', 'Idroles' => 12]))
-        {
+        if (Users::findOne(['idUser' => $id, 'activate' => '1', 'Idroles' => 12])) {
             return true;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
@@ -203,11 +203,9 @@ class User extends BaseObject implements IdentityInterface
     public function validatePassword($password)
     {
         /* Valida el password */
-        if(crypt($password, $this->UserPass) == $this->UserPass)
-        {
-            return $password === $password;    
+        if (crypt($password, $this->UserPass) == $this->UserPass) {
+            return $password === $password;
         }
         return null;
     }
-
 }

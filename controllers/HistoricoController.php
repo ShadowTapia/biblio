@@ -2,6 +2,8 @@
 
 namespace app\controllers;
 
+use Yii;
+use app\models\historico\HistoricoSearch;
 use yii\web\Controller;
 
 /**
@@ -12,7 +14,13 @@ class HistoricoController extends Controller
 {
     public function actionIndex()
     {
-        return $this->render('index');
-    }
+        $searchModel = new HistoricoSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
 }

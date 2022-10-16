@@ -4,7 +4,7 @@ namespace app\models\categorias;
 
 use yii\db\ActiveRecord;
 use app\models\libros\Libros;
-
+use yii\db\ActiveQuery;
 /**
  * This is the model class for table "categorias".
  *
@@ -49,7 +49,7 @@ class Categorias extends ActiveRecord
     /**
      * Gets query for [[Libros]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getLibros()
     {

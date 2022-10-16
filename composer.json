@@ -16,8 +16,8 @@
     "require": {
         "php": ">=5.6.0",
         "yiisoft/yii2": "2.0.42.1",
-        "yiisoft/yii2-bootstrap": "~2.0.0",
-		"yiisoft/yii2-bootstrap4": "@dev",
+		"yiisoft/yii2-bootstrap": "~2.0.0",
+		"yiisoft/yii2-bootstrap4": "@dev",		
         "yiisoft/yii2-swiftmailer": "~2.0.0 || ~2.1.0",
         "kartik-v/yii2-nav-x": "dev-master",
         "lavrentiev/yii2-toastr": "dev-master"
@@ -42,6 +42,8 @@
 		"kartik-v/yii2-export": "dev-master",
 		"kartik-v/yii2-editable": "dev-master",
 		"kartik-v/yii2-dialog": "dev-master",
+		"kartik-v/yii2-dropdown-x": "dev-master",
+		"bluezed/yii2-scroll-top": "*",
 		"yiisoft/yii2-jui": "~2.0.0"
     },
     "config": {

@@ -1,10 +1,12 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: chelo
  * Date: 10-08-2021
  * Time: 0:02
  */
+
 namespace app\models\Prestamos;
 
 use yii\base\Model;
@@ -21,15 +23,16 @@ class FormUpdatePrestamos extends Model
     public $fechapres;
     public $fechadev;
     public $notas;
+    public $idano;
 
     public function rules()
     {
         return [
-            [['idPrestamo'],'string','max'=>15],
+            //[['idPrestamo'], 'string', 'max' => 15],
             [['fechapres', 'fechadev'], 'safe'],
             [['fechapres', 'fechadev'], 'required', 'message' => 'Campo requerido'],
-            [['fechapres','fechadev'],'date','format'=>'dd-MM-yyyy'],
-            ['fechadev','comparedates'],
+            [['fechapres', 'fechadev'], 'date', 'format' => 'dd-MM-yyyy'],
+            ['fechadev', 'comparedates'],
             [['notas'], 'string', 'max' => 255],
         ];
     }
@@ -43,9 +46,8 @@ class FormUpdatePrestamos extends Model
         $dateend = strtotime($this->fechadev);
         $datediff = $dateend - $datestart;
         $date_dias = round($datediff / (60 * 60 * 24));
-        if($date_dias<0)
-        {
-            $this->addError($attribute,"Error en la fecha devolución");
+        if ($date_dias < 0) {
+            $this->addError($attribute, "Error en la fecha devolución");
         }
     }
 }

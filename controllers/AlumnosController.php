@@ -9,6 +9,7 @@ use app\models\alumnos\FormAluUpdate;
 use app\models\cursos\Cursos;
 use app\models\pivot\FormSelectPivot;
 use app\models\pivot\FormUpdatePivot;
+use app\models\alumnos\FormAluConsultaRut;
 use app\models\pivot\Pivot;
 use kartik\mpdf\Pdf;
 use Yii;
@@ -55,6 +56,9 @@ class AlumnosController extends Controller
         return $this->render('index');
     }
 
+    /**
+     * @return string
+     */
     public function actionFulllistaalumnos()
     {
         $model = new FormSelectPivot();
@@ -367,8 +371,12 @@ class AlumnosController extends Controller
     }
 
     /**
-     * @return mixed
-     * Genera reporte con la lista de alumnos retirados
+     * @return string|Response
+     * @throws \Mpdf\MpdfException
+     * @throws \setasign\Fpdi\PdfParser\CrossReference\CrossReferenceException
+     * @throws \setasign\Fpdi\PdfParser\PdfParserException
+     * @throws \setasign\Fpdi\PdfParser\Type\PdfTypeException
+     * @throws \yii\base\InvalidConfigException
      */
     public function actionReportretirado()
     {
@@ -490,14 +498,6 @@ class AlumnosController extends Controller
                         $tableAlumnos->codRegion = $model->codRegion;
                         $tableAlumnos->idProvincia = $model->idProvincia;
                         $tableAlumnos->codComuna = $model->codComuna;
-//                        if($model->sexo=="F")
-//                        {
-//                            $tableAlumnos->sexo = "F";
-//                        }
-//                        if($model->sexo=="M")
-//                        {
-//                            $tableAlumnos->sexo = "M";
-//                        }
                         $tableAlumnos->sexo = $model->sexo;
                         $tableAlumnos->email = $model->email;
                         $tableAlumnos->fono = $model->fono;
@@ -613,6 +613,174 @@ class AlumnosController extends Controller
             }
         }
         return $this->render('update', compact('model','modelPivot'));
+
+    }
+
+    /**
+     * @param $rutalu
+     * @return array|string
+     * @throws \Exception
+     * @throws \Throwable
+     */
+    public function actionPupilexist($rutalu)
+    {
+        $model = new FormAluUpdate();
+        $modelPivot = new FormSelectPivot();
+
+        $db = Yii::$app->db;
+
+        if($model->load(Yii::$app->request->post())&&Yii::$app->request->isAjax)
+        {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return ActiveForm::validate($model);
+        }
+        if($model->load(Yii::$app->request->post()) && $modelPivot->load(Yii::$app->request->post()))
+        {
+            if($model->validate() && $modelPivot->validate())
+            {
+                $transaction = $db->beginTransaction();
+                try
+                {
+                    $tableAlumnos = Alumnos::findOne(['rutalumno' => $this->quitarStringless($rutalu)]);
+                    if($tableAlumnos)
+                    {
+                        $encontro = true;
+                    }
+                    if($encontro==true)
+                    {
+                        //Actualiza
+                        $db->createCommand()->update('alumnos',
+                            [
+                                'nombrealu' => mb_strtoupper($model->nombrealu),
+                                'paternoalu' => mb_strtoupper($model->paternoalu),
+                                'maternoalu' => mb_strtoupper($model->maternoalu),
+                                'fechanac' => Yii::$app->formatter->asDate($model->fechanac,"yyyy-MM-dd"),
+                                'calle' => $model->calle,
+                                'nro' => $model->nro,
+                                'depto' => $model->depto,
+                                'block' => $model->block,
+                                'villa' => $model->villa,
+                                'codRegion' => $model->codRegion,
+                                'idProvincia' => $model->idProvincia,
+                                'codComuna' => $model->codComuna,
+                                'sexo' => $model->sexo,
+                                'email' => $model->email,
+                                'fono' => $model->fono,
+                                'nacionalidad' => $model->nacionalidad,
+                                'fechaing' => Yii::$app->formatter->asDate($model->fechaing,"yyyy-MM-dd")
+                            ],
+                            [
+                                'rutalumno' => $this->quitarStringless($model->rutalumno)
+                            ])->execute();
+                    }else{
+                        //ingresa
+                        $db->createCommand()->insert('alumnos',[
+                            'rutalumno' => $this->quitarStringless($rutalu),
+                            'digrut' => $this->devolverDigito($rutalu),
+                            'nombrealu' => mb_strtoupper($model->nombrealu),
+                            'paternoalu' => mb_strtoupper($model->paternoalu),
+                            'maternoalu' => mb_strtoupper($model->maternoalu),
+                            'fechanac' => Yii::$app->formatter->asDate($model->fechanac,"yyyy-MM-dd"),
+                            'calle' => $model->calle,
+                            'nro' => $model->nro,
+                            'depto' => $model->depto,
+                            'block' => $model->block,
+                            'villa' => $model->villa,
+                            'codRegion' => $model->codRegion,
+                            'idProvincia' => $model->idProvincia,
+                            'codComuna' => $model->codComuna,
+                            'sexo' => $model->sexo,
+                            'email' => $model->email,
+                            'fono' => $model->fono,
+                            'nacionalidad' => $model->nacionalidad,
+                            'fechaing' => Yii::$app->formatter->asDate($model->fechaing,"yyyy-MM-dd")
+                        ])->execute();
+                    }
+                    $transaction->commit();
+                    $aluinsert = true;
+                }
+                catch (\Exception $e) {
+                    $transaction->rollBack();
+                    \Yii::$app->session->setFlash('error','Se ha producido un error al querer ingresar este Alumno(a).');
+                    throw $e;
+                }
+                catch (\Throwable $e) {
+                    $transaction->rollBack();
+                    \Yii::$app->session->setFlash('error','Se ha producido un error al querer ingresar este Alumno(a).');
+                    throw $e;
+                }
+                if($aluinsert==true)
+                {
+                    $tableAlumnos = Alumnos::findOne(["rutalumno" => $this->quitarStringless($model->rutalumno)]);
+                    $transaction = $db->beginTransaction();
+                    try {
+                        //Actualiza tabla pivot
+                        $tablePivot = Pivot::findOne(["idalumno" => $tableAlumnos->idalumno]);
+                        $db->createCommand()->insert('pivot', [
+                            'idalumno' => $tableAlumnos->idalumno,
+                            'idCurso' => $modelPivot->idCurso,
+                            'idano' => Yii::$app->session->get('anoActivo'),
+                            'idApo' => $tablePivot->idApo,
+                        ])->execute();
+                        $transaction->commit();
+                        $model->rutalumno = null;
+                        $model->nombrealu = null;
+                        $model->paternoalu = null;
+                        $model->maternoalu = null;
+                        $model->fechanac = null;
+                        $model->calle = null;
+                        $model->nro = null;
+                        $model->depto = null;
+                        $model->block = null;
+                        $model->villa = null;
+                        $model->email = null;
+                        $model->fono = null;
+                        $model->fechaing = null;
+                        \Yii::$app->session->setFlash('success', 'El Alumno(a) se ha ingresado exitosamente.-');
+                    }
+                    catch (\Exception $e) {
+                        $transaction->rollBack();
+                        throw $e;
+                    }
+                    catch (\Throwable $e) {
+                        $transaction->rollBack();
+                        throw $e;
+                    }
+                }
+            }else{
+                $model->getErrors();
+            }
+        }else{
+            $rutsinptos = $this->quitarStringless($rutalu);
+            $tableAlumnos = Alumnos::findOne(['rutalumno' => $rutsinptos]);
+            if ($tableAlumnos)
+            {
+                $model->rutalumno = $rutalu;
+                $model->nombrealu = $tableAlumnos->nombrealu;
+                $model->paternoalu = $tableAlumnos->paternoalu;
+                $model->maternoalu = $tableAlumnos->maternoalu;
+                $model->fechanac = $tableAlumnos->fechanac;
+                $model->calle = $tableAlumnos->calle;
+                $model->nro = $tableAlumnos->nro;
+                $model->depto = $tableAlumnos->depto;
+                $model->block = $tableAlumnos->block;
+                $model->villa = $tableAlumnos->villa;
+                $model->codRegion = $tableAlumnos->codRegion;
+                $model->idProvincia = $tableAlumnos->idProvincia;
+                $model->codComuna = $tableAlumnos->codComuna;
+                $model->sexo = $tableAlumnos->sexo;
+                $model->email = $tableAlumnos->email;
+                $model->fono = $tableAlumnos->fono;
+                $model->nacionalidad = $tableAlumnos->nacionalidad;
+                $model->sangre = $tableAlumnos->sangre;
+                $model->enfermedades = $tableAlumnos->enfermedades;
+                $model->alergias = $tableAlumnos->alergias;
+                $model->medicamentos = $tableAlumnos->medicamentos;
+            }else{
+                $model->rutalumno = $rutalu;
+            }
+        }
+        return $this->render('pupilexist',compact('model','modelPivot'));
 
     }
 
@@ -740,6 +908,31 @@ class AlumnosController extends Controller
             }
         }
         return $this->render('ingresaalu',compact('model','modelPivot'));
+    }
+
+    /**
+     * @return array|string|Response
+     */
+    public function actionConsultarutalu()
+    {
+        $model = new FormAluConsultaRut();
+
+        //validación mediante ajax
+        if ($model->load(Yii::$app->request->post()) && Yii::$app->request->isAjax) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return ActiveForm::validate($model);
+        }
+        if($model->load(Yii::$app->request->post()))
+        {
+            if($model->validate())
+            {
+                $rutcompleto = $model->rutalumno;
+                return $this->redirect(['alumnos/pupilexist','rutalu' => $rutcompleto]);
+            }else{
+                $model->getErrors();
+            }
+        }
+        return $this->render('consultarutalu',compact('model'));
     }
 
     /**
@@ -892,29 +1085,32 @@ class AlumnosController extends Controller
 
     }
 
+    /**
+     * @param $id
+     * @return Response
+     * @throws \Exception
+     * @throws \Throwable
+     */
     public function actionDelete($id)
     {
         if($id != null)
         {
-            $table = new Alumnos();
-            $transaction = $table->getDb()->beginTransaction();
+            $db = Yii::$app->db;
+            $transaction = $db->beginTransaction();
             try
             {
-                if($table::deleteAll("idalumno=:idalumno",["idalumno"=>$id]))
-                {
-                    $transaction->commit();
-                    \Yii::$app->session->setFlash('success', 'Se ha borrado correctamente este Alumno.-');
-                }else{
-                    $transaction->rollBack();
-                    \Yii::$app->session->setFlash('error', 'Ocurrio un error, no se borro el Alumno.-');
-                }
+                $db->createCommand()->delete('pivot',['idalumno' => $id, 'idano'=>Yii::$app->session->get('anoActivo')])->execute();
+                $transaction->commit();
+                \Yii::$app->session->setFlash('success', 'Se ha borrado de forma exitosa el alumno(a) de este año.-');
             }
             catch (\Exception $e) {
                 $transaction->rollBack();
+                \Yii::$app->session->setFlash('error', 'Ocurrio un error, no se borro el Alumno.-');
                 throw $e;
             }
             catch (\Throwable $e) {
                 $transaction->rollBack();
+                \Yii::$app->session->setFlash('error', 'Ocurrio un error, no se borro el Alumno.-');
                 throw $e;
             }
         }

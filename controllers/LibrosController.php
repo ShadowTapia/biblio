@@ -14,7 +14,7 @@ use yii\web\UploadedFile;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
 use yii\filters\AccessControl;
-
+use yii\base\Exception;
 
 /**
  * LibrosController implements the CRUD actions for Libros model.
@@ -60,6 +60,9 @@ class LibrosController extends Controller
         ]);
     }
 
+    /**
+     * @return string
+     */
     public function actionConsulta()
     {
         $searchModel = new LibrosSearch();
@@ -86,7 +89,7 @@ class LibrosController extends Controller
 
     /**
      * @return array|string
-     * @throws \Exception
+     * @throws Exception
      * @throws \Throwable
      */
     public function actionCreate()
@@ -137,7 +140,7 @@ class LibrosController extends Controller
                     }
                     return $this->redirect(['libros/index']);
                 }
-                catch (\Exception $e)
+                catch (Exception $e)
                 {
                     $transaction->rollBack();
                     throw $e;
@@ -159,7 +162,7 @@ class LibrosController extends Controller
     /**
      * @param $id
      * @return array|string
-     * @throws \Exception
+     * @throws Exception
      * @throws \Throwable
      */
     public function actionUpdate($id)
@@ -206,7 +209,7 @@ class LibrosController extends Controller
                         return $this->redirect(['libros/index']);
                     }
                 }
-                catch (\Exception $e) {
+                catch (Exception $e) {
                     $transaction->rollBack();
                     throw $e;
                 }
@@ -244,7 +247,7 @@ class LibrosController extends Controller
     /**
      * @param $id
      * @return Response
-     * @throws \Exception
+     * @throws Exception
      * @throws \Throwable
      */
     public function actionDelete($id)
@@ -269,7 +272,7 @@ class LibrosController extends Controller
                     \Yii::$app->session->setFlash('error', 'Ocurrió un error, no se borro el Libro.-');
                 }
             }
-            catch (\Exception $e) {
+            catch (Exception $e) {
                 $transaction->rollBack();
                 throw $e;
             }

@@ -6,6 +6,7 @@ use yii\db\ActiveRecord;
 use app\models\libros\Libros;
 use app\models\prestamos\Prestamos;
 use app\models\historico\Historico;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "ejemplar".
@@ -68,7 +69,7 @@ class Ejemplar extends ActiveRecord
     /**
      * Gets query for [[IdLibros0]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getIdLibros0()
     {
@@ -78,7 +79,7 @@ class Ejemplar extends ActiveRecord
     /**
      * Gets query for [[Historicos]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getHistoricos()
     {
@@ -88,7 +89,7 @@ class Ejemplar extends ActiveRecord
     /**
      * Gets query for [[Prestamos]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getPrestamos()
     {

@@ -8,7 +8,7 @@ use app\models\pivot\Pivot;
 use app\models\Provincias;
 use app\models\Regiones;
 use yii\db\ActiveRecord;
-
+use yii\db\ActiveQuery;
 /**
  * This is the model class for table "apoderados".
  *
@@ -116,7 +116,7 @@ class Apoderados extends ActiveRecord
     /**
      * Gets query for [[CodComuna0]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getCodComuna0()
     {
@@ -126,7 +126,7 @@ class Apoderados extends ActiveRecord
     /**
      * Gets query for [[IdProvincia0]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getIdProvincia0()
     {
@@ -136,7 +136,7 @@ class Apoderados extends ActiveRecord
     /**
      * Gets query for [[CodRegion0]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getCodRegion0()
     {
@@ -146,7 +146,7 @@ class Apoderados extends ActiveRecord
     /**
      * Gets query for [[Rutalumno0]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getRutalumno0()
     {
@@ -156,7 +156,7 @@ class Apoderados extends ActiveRecord
     /**
      * Gets query for [[Pivots]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getPivots()
     {

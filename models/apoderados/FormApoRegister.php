@@ -63,7 +63,6 @@ class FormApoRegister extends Model
 
     /**
      * @param $attribute
-     * @param $params
      */
     public function validarRut($attribute)
     {

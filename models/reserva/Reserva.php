@@ -5,6 +5,7 @@ namespace app\models\reserva;
 use yii\db\ActiveRecord;
 use app\models\libros\Libros;
 use app\models\Users;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "reserva".
@@ -66,7 +67,7 @@ class Reserva extends ActiveRecord
     /**
      * Gets query for [[IdLibros0]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getIdLibros0()
     {
@@ -76,7 +77,7 @@ class Reserva extends ActiveRecord
     /**
      * Gets query for [[IdUser0]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getIdUser0()
     {

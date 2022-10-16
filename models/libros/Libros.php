@@ -5,11 +5,12 @@ namespace app\models\libros;
 use yii\db\ActiveRecord;
 use app\models\autor\Autor;
 use app\models\categorias\Categorias;
+use app\models\reserva\Reserva;
 use app\models\editorial\Editorial;
 use app\models\temas\Temas;
 use app\models\numejem\Numejem;
 use app\models\ejemplar\Ejemplar;
-
+use yii\db\ActiveQuery;
 /**
  * This is the model class for table "libros".
  *
@@ -34,7 +35,7 @@ use app\models\ejemplar\Ejemplar;
  * @property Editorial $ideditorial0
  * @property Temas $idtemas0
  * @property Numejem $numejem
- * @property Reserva[] $reservas
+ * @property Reserva[] $reserva
  */
 class Libros extends ActiveRecord
 {
@@ -100,7 +101,7 @@ class Libros extends ActiveRecord
     /**
      * Gets query for [[Ejemplars]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getEjemplars()
     {
@@ -110,7 +111,7 @@ class Libros extends ActiveRecord
     /**
      * Gets query for [[Idautor0]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getIdautor0()
     {
@@ -120,7 +121,7 @@ class Libros extends ActiveRecord
     /**
      * Gets query for [[Idcategoria0]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getIdcategoria0()
     {
@@ -130,7 +131,7 @@ class Libros extends ActiveRecord
     /**
      * Gets query for [[Ideditorial0]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getIdeditorial0()
     {
@@ -140,7 +141,7 @@ class Libros extends ActiveRecord
     /**
      * Gets query for [[Idtemas0]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getIdtemas0()
     {
@@ -150,7 +151,7 @@ class Libros extends ActiveRecord
     /**
      * Gets query for [[Numejem]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getNumejem()
     {
@@ -160,7 +161,7 @@ class Libros extends ActiveRecord
     /**
      * Gets query for [[Reservas]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getReservas()
     {

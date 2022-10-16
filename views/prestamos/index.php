@@ -34,96 +34,104 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?php Pjax::begin(); ?>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+    <?php // echo $this->render('_search', ['model' => $searchModel]); 
+    ?>
     <?php
-        $gridColumns = [
-                [
-                    'class' => 'yii\grid\SerialColumn',
-                    'headerOptions' => ['width' => '20px'],
-                    'header' => 'N°',
-                    'contentOptions' => ['style' => 'width: 20px;', 'class' => 'text-center'],
-                ],
-                //Usuario
-                [
-                    'attribute' => 'idUser',
-                    'label' => 'Usuario',
-                    'format' => 'html',
-                    'value' => function($model){
-                        return $model->idUser0->UserName . ' '. $model->idUser0->UserLastName;
-                    }
-                ],
-                //Titulo del libro
-                [
-                    'attribute' => 'idejemplar0',
-                    'label' => 'Libro',
-                    'format' => 'html',
-                    'value' => function($model){
-                        return $model->idejemplar0->idLibros0->titulo;
-                    }
-                ],
-                //Rol
-                [
-                    'label' => 'Rol',
-                    'format' => 'html',
-                    'value' => function($model){
-                        return $model->idUser0->idroles->nombre;
-                    }
-                ],
-                //N° orden
-                [
-                    'attribute' => 'norden',
-                    'label' => 'N° Orden',
-                    'format' => 'html',
-                    'headerOptions' => ['width' => '100px'],
-                    'value' => function($model){
-                        return $model->norden;
-                    }
-                ],
-                //Fecha Prestamo
-                [
-                    'attribute' => 'fechapres',
-                    'label' => 'F. Prestamo',
-                    'format' => 'html',
-                    'headerOptions' => ['width' => '120px'],
-                    'value' => function($model){
-                        return Yii::$app->formatter->asDate($model->fechapres,'dd-MM-yyyy');
-                    }
-                ],
-                //Fecha devolución
-                [
-                    'attribute' => 'fechadev',
-                    'label' => 'F. Devolución',
-                    'format' => 'html',
-                    'headerOptions' => ['width' => '120px'],
-                    'value' => function($model){
-                        return Yii::$app->formatter->asDate($model->fechadev,'dd-MM-yyyy');
-                    }
-                ],
-                //Acciones
-                [
-                    'class' => 'yii\grid\ActionColumn',
-                    'header' => 'Acciones',
-                    'headerOptions' => ['width'=> '220'],
-                    'template'=> '{devolver} {update}',
-                    'buttons' => [
-                            'devolver' => function($url,$model){
-                                return Html::a("<span class='glyphicon glyphicon-download'> Devolver</span>",['devolver', 'id'=>$model->idPrestamo],
-                                    [
-                                            'class' => 'btn btn-circle btn-danger btn-sm',
-                                            'title'=>'Devolver Prestamo',
-                                            'data' => [
-                                                'confirm' => '¿Estas seguro de devolver este prestamo?',
-                                                'method' => 'post',
-                                            ],
-                                    ]);
-                            },
-                            'update' => function($url,$model){
-                                return Html::a("<span class='glyphicon glyphicon-refresh'> Renovar</span>",['prestamos/update','id'=>$model->idPrestamo],
-                                    ['class'=>'btn btn-circle btn-warning btn-sm','title'=>'Extender Prestamo']);
-                            }
-                    ],
-                ],
-        ];
+    $gridColumns = [
+        [
+            'class' => 'yii\grid\SerialColumn',
+            'headerOptions' => ['width' => '20px'],
+            'header' => 'N°',
+            'contentOptions' => ['style' => 'width: 20px;', 'class' => 'text-center'],
+        ],
+        //Usuario
+        [
+            'attribute' => 'idUser',
+            'label' => 'Usuario',
+            'format' => 'html',
+            'value' => function ($model) {
+                return $model->idUser0->UserName . ' ' . $model->idUser0->UserLastName;
+            }
+        ],
+        //Titulo del libro
+        [
+            'attribute' => 'idejemplar0',
+            'label' => 'Libro',
+            'format' => 'html',
+            'value' => function ($model) {
+                return $model->idejemplar0->idLibros0->titulo;
+            }
+        ],
+        //Rol
+        [
+            'label' => 'Rol',
+            'format' => 'html',
+            'value' => function ($model) {
+                return $model->idUser0->idroles->nombre;
+            }
+        ],
+        //N° orden
+        [
+            'attribute' => 'norden',
+            'label' => 'N° Orden',
+            'format' => 'html',
+            'headerOptions' => ['width' => '100px'],
+            'value' => function ($model) {
+                return $model->norden;
+            }
+        ],
+        //Fecha Prestamo
+        [
+            'attribute' => 'fechapres',
+            'label' => 'F. Prestamo',
+            'format' => 'html',
+            'headerOptions' => ['width' => '120px'],
+            'value' => function ($model) {
+                return Yii::$app->formatter->asDate($model->fechapres, 'dd-MM-yyyy');
+            }
+        ],
+        //Fecha devolución
+        [
+            'attribute' => 'fechadev',
+            'label' => 'F. Devolución',
+            'format' => 'html',
+            'headerOptions' => ['width' => '120px'],
+            'value' => function ($model) {
+                return Yii::$app->formatter->asDate($model->fechadev, 'dd-MM-yyyy');
+            }
+        ],
+        //Acciones
+        [
+            'class' => 'yii\grid\ActionColumn',
+            'header' => 'Acciones',
+            'headerOptions' => ['width' => '120'],
+            'template' => '{devolver}', // {extender},
+            'buttons' => [
+                'devolver' => function ($url, $model) {
+                    return Html::a(
+                        "<span class='glyphicon glyphicon-download'> Devolver</span>",
+                        ['devolver', 'id' => $model->idPrestamo],
+                        [
+                            'class' => 'btn btn-circle btn-danger btn-sm',
+                            'title' => 'Devolver Prestamo',
+                            'data' => [
+                                'confirm' => '¿Estas seguro de devolver este prestamo?',
+                                'method' => 'post',
+                            ],
+                        ]
+                    );
+                },
+                // Opción no resuelta para actualización de prestamos 
+                // 'extender' => function ($url, $model) {
+                //     return Html::a(
+                //         "<span class='glyphicon glyphicon-refresh'> Renovar</span>",
+                //         ['update', 'id' => $model->idPrestamo],
+                //         ['class' => 'btn btn-circle btn-warning btn-sm', 'title' => 'Extender Prestamo']
+                //     );
+                // }
+            ],
+        ],
+    ];
     ?>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -140,7 +148,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
         'panel' => [
             'type' => 'primary',
-            'heading' => '<h3 class="panel-title">Listado de Prestamos realizados ' .'</h3>',
+            'heading' => '<h3 class="panel-title">Listado de Prestamos realizados ' . '</h3>',
         ]
     ]);
     ?>
