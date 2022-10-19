@@ -37,9 +37,9 @@ class UsersController extends Controller
                 ]
             ],
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
-                   'delete' => ['POST'],
+                    'delete' => ['POST'],
                 ],
             ],
         ];
@@ -139,18 +139,16 @@ class UsersController extends Controller
                         $model->UserMail = null;
                         $model->UserPass = null;
                         $model->UserPass_repeat = null;
-                        \Yii::$app->session->setFlash('success','Se ha ingresado correctamente un nuevo Usuario.-');
+                        \Yii::$app->session->setFlash('success', 'Se ha ingresado correctamente un nuevo Usuario.-');
                     } else {
                         $transaction->rollBack();
-                        \Yii::$app->session->setFlash('error','Se ha producido un error al querer ingresar este Usuario.-');
+                        \Yii::$app->session->setFlash('error', 'Se ha producido un error al querer ingresar este Usuario.-');
                     }
                     return $this->redirect(['users/index']);
-                }
-                catch (\Exception $e) {
+                } catch (\Exception $e) {
                     $transaction->rollBack();
                     throw $e;
-                }
-                catch (\Throwable $e) {
+                } catch (\Throwable $e) {
                     $transaction->rollBack();
                     throw $e;
                 }
@@ -192,18 +190,18 @@ class UsersController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-//    public function actionCreate()
-//    {
-//        $model = new Users();
-//
-//        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-//            return $this->redirect(['view', 'id' => $model->idUser]);
-//        }
-//
-//        return $this->render('create', [
-//            'model' => $model,
-//        ]);
-//    }
+    //    public function actionCreate()
+    //    {
+    //        $model = new Users();
+    //
+    //        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+    //            return $this->redirect(['view', 'id' => $model->idUser]);
+    //        }
+    //
+    //        return $this->render('create', [
+    //            'model' => $model,
+    //        ]);
+    //    }
 
     /**
      * Updates an existing Users model.
@@ -212,18 +210,18 @@ class UsersController extends Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-//    public function actionUpdate($id)
-//    {
-//        $model = $this->findModel($id);
-//
-//        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-//            return $this->redirect(['view', 'id' => $model->idUser]);
-//        }
-//
-//        return $this->render('update', [
-//            'model' => $model,
-//        ]);
-//    }
+    //    public function actionUpdate($id)
+    //    {
+    //        $model = $this->findModel($id);
+    //
+    //        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+    //            return $this->redirect(['view', 'id' => $model->idUser]);
+    //        }
+    //
+    //        return $this->render('update', [
+    //            'model' => $model,
+    //        ]);
+    //    }
 
     /**
      * Deletes an existing Users model.
@@ -232,12 +230,12 @@ class UsersController extends Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-//    public function actionDelete($id)
-//    {
-//        $this->findModel($id)->delete();
-//
-//        return $this->redirect(['index']);
-//    }
+    //    public function actionDelete($id)
+    //    {
+    //        $this->findModel($id)->delete();
+    //
+    //        return $this->redirect(['index']);
+    //    }
 
     /**
      * &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&6
@@ -262,7 +260,7 @@ class UsersController extends Controller
      * @throws \Exception
      * @throws \Throwable
      */
-    public function actionUpdateuser($id)
+    public function actionUpdateuser($id, $fuente)
     {
         $model = new FormUpdateUser;
 
@@ -289,24 +287,23 @@ class UsersController extends Controller
                         if ($table->update()) {
                             $transaction->commit();
                             \Yii::$app->session->setFlash('success', 'El Usuario se ha actualizado exitosamente.-');
-
-
                         } else {
                             $transaction->rollBack();
                             \Yii::$app->session->setFlash('error', 'No se ha actualizado el Usuario.-');
                         }
-                        return $this->redirect(['index']);
+                        if ($fuente == 1) {
+                            return $this->redirect(['index']);
+                        } elseif ($fuente == 2) {
+                            return $this->redirect(['alumnos/alumodper']);
+                        }
                     }
-                }
-                catch (\Exception $e) {
+                } catch (\Exception $e) {
+                    $transaction->rollBack();
+                    throw $e;
+                } catch (\Throwable $e) {
                     $transaction->rollBack();
                     throw $e;
                 }
-                catch (\Throwable $e) {
-                    $transaction->rollBack();
-                    throw $e;
-                }
-
             } else {
                 $model->getErrors();
             }
@@ -346,12 +343,10 @@ class UsersController extends Controller
                     $transaction->rollBack();
                     \Yii::$app->session->setFlash('error', 'Ocurrio un error, no se borro el Usuario.-');
                 }
-            }
-            catch (\Exception $e) {
+            } catch (\Exception $e) {
                 $transaction->rollBack();
                 throw $e;
-            }
-            catch (\Throwable $e) {
+            } catch (\Throwable $e) {
                 $transaction->rollBack();
                 throw $e;
             }
@@ -399,13 +394,10 @@ class UsersController extends Controller
                     {
                         \Yii::$app->session->setFlash('error', 'La contraseña anterior no coincide con nuestros registros.- ');
                     }
-                }
-                catch (\Exception $e) {
+                } catch (\Exception $e) {
                     $transaction->rollBack();
                     throw $e;
-                }
-                catch (\Throwable $e)
-                {
+                } catch (\Throwable $e) {
                     $transaction->rollBack();
                     throw $e;
                 }
@@ -463,18 +455,15 @@ class UsersController extends Controller
      * @throws \Exception
      * @throws \Throwable
      */
-    public function actionUppass($id)
+    public function actionUppass($id, $fuente)
     {
-        if ($id != null)
-        {
+        if ($id != null) {
             $table = Users::findOne(["idUser" => $id]);
             $run = $table->UserRut;
-            if ($table)
-            {
+            if ($table) {
                 //Iniciamos la transaction
                 $transaction = $table->getDb()->beginTransaction();
-                try
-                {
+                try {
                     $table->UserPass = crypt($run, Yii::$app->params["salt"]);
                     if ($table->update()) {
                         $transaction->commit();
@@ -483,16 +472,19 @@ class UsersController extends Controller
                         $transaction->rollBack();
                         \Yii::$app->session->setFlash('error', 'Ocurrio un error, al actualizar la contraseña .-');
                     }
-                }catch (\Exception $e) {
+                } catch (\Exception $e) {
                     $transaction->rollBack();
                     throw $e;
-                }
-                catch (\Throwable $e) {
+                } catch (\Throwable $e) {
                     $transaction->rollBack();
                     throw $e;
                 }
             }
         }
-        return $this->redirect(['users/index']);
+        if ($fuente == 1) {
+            return $this->redirect(['users/index']);
+        } elseif ($fuente == 2) {
+            return $this->redirect(['alumnos/alumodper']);
+        }
     }
 }

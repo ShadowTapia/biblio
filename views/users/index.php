@@ -39,18 +39,16 @@ $this->params['breadcrumbs'][] = $this->title;
     </p>
 
     <?php Pjax::begin(); ?>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+    <?php // echo $this->render('_search', ['model' => $searchModel]); 
+    ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
-        'rowOptions' => function($model){
-            if($model->activate == '1')
-            {
+        'rowOptions' => function ($model) {
+            if ($model->activate == '1') {
                 return ['class' => 'info'];
-            }
-            else
-            {
+            } else {
                 return ['class' => 'danger'];
             }
         },
@@ -63,14 +61,14 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'UserName',
                 'label' => 'Nombre',
-                'value' => function($model){
+                'value' => function ($model) {
                     return !empty($model->UserName) ? $model->UserName : '-';
                 }
             ],
             [
                 'attribute' => 'UserLastName',
                 'label' => 'Apellido',
-                'value' => function($model){
+                'value' => function ($model) {
                     return !empty($model->UserLastName) ? $model->UserLastName : '-';
                 }
             ],
@@ -78,7 +76,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'UserMail',
                 'label' => 'E-mail',
                 'format' => 'html',
-                'value' => function($model){
+                'value' => function ($model) {
                     return !empty($model->UserMail) ? $model->UserMail : '<span class="glyphicon glyphicon-question-sign"></span>';
                 }
             ],
@@ -88,42 +86,50 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'label' => 'Estado',
-                'value' => function($model){
-                    return ($model->activate === '1')? 'Activo':'Inactivo';
+                'value' => function ($model) {
+                    return ($model->activate === '1') ? 'Activo' : 'Inactivo';
                 }
             ],
-            
-
+            //Acciones
             [
                 'class' => 'yii\grid\ActionColumn',
                 'header' => 'Acciones',
-                'headerOptions' => ['width'=> '150'],
-                'template'=> '{view} {update} {delete}',
+                'headerOptions' => ['width' => '150'],
+                'template' => '{view} {update} {delete}',
                 'buttons' => [
-                    'view' => function($url,$model){
-                        return Html::a('<span class="glyphicon glyphicon-refresh"></span>',['uppass','id' => $model->idUser],
-                            [   'class' => 'btn btn-circle btn-success',
+                    'view' => function ($url, $model) {
+                        return Html::a(
+                            '<span class="glyphicon glyphicon-refresh"></span>',
+                            ['uppass', 'id' => $model->idUser, 'fuente' => 1],
+                            [
+                                'class' => 'btn btn-circle btn-success',
                                 'title' => 'Resetear contraseña',
                                 'data' => [
                                     'confirm' => 'Desea resetear la contraseña de ' . $model->UserName . ' ' . $model->UserLastName . '?',
                                     'method' => 'post',
                                 ],
-                            ]);
+                            ]
+                        );
                     },
-                    'update' => function ($url,$model){
-                        return Html::a("<span class='glyphicon glyphicon-pencil'></span>",[
-                            'updateuser','id' => $model->idUser],['class' => 'btn btn-circle btn-primary','title' => 'Actualizar']);
+                    'update' => function ($url, $model) {
+                        return Html::a("<span class='glyphicon glyphicon-pencil'></span>", [
+                            'updateuser', 'id' => $model->idUser, 'fuente' => 1
+                        ], ['class' => 'btn btn-circle btn-primary', 'title' => 'Actualizar']);
                     },
-                    'delete' => function ($url,$model){
-                        return Html::a('<span class="glyphicon glyphicon-trash"></span>',['delete','id' => $model->idUser],
-                            [   'class' => 'btn btn-circle btn-danger',
+                    'delete' => function ($url, $model) {
+                        return Html::a(
+                            '<span class="glyphicon glyphicon-trash"></span>',
+                            ['delete', 'id' => $model->idUser],
+                            [
+                                'class' => 'btn btn-circle btn-danger',
                                 'title' => 'Borrar Usuario',
                                 'data-toggle' => 'tooltip',
                                 'data' => [
                                     'confirm' => 'Estas seguro de borrar al Usuario ' . $model->UserName . ' ' . $model->UserLastName . '?',
                                     'method' => 'post',
                                 ],
-                            ]);
+                            ]
+                        );
                     },
                 ],
             ],

@@ -146,6 +146,7 @@ AppAsset::register($this);
                                 'items' => [
                                     ['label' => 'Administrar', 'url' => ['/users/index']],
                                     ['label' => 'Docentes', 'url' => ['/docente/indexdocente']],
+                                    ['label' => 'Alumnos', 'url' => ['/alumnos/alumodper']],
                                 ], 'visible' => Yii::$app->session['adminUser'] == 'admin'
                             ],
                             [
