@@ -72,12 +72,12 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
         //N° orden
         [
-            'attribute' => 'norden',
+            'attribute' => 'idejemplar0',
             'label' => 'N° Orden',
             'format' => 'html',
             'headerOptions' => ['width' => '100px'],
             'value' => function ($model) {
-                return $model->norden;
+                return $model->idejemplar0->norden;
             }
         ],
         //Fecha Prestamo
@@ -143,7 +143,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'showPageSummary' => false,
         'layout' => '{pager}', //Con esto logramos que se muestre la paginación
         'toolbar' => [
-            Html::a('Prestar', ['prestar'], ['class' => 'btn btn-success']),
+            Html::a('Prestar', ['lend'], ['class' => 'btn btn-success']),
 
         ],
         'panel' => [

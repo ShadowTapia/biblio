@@ -1,4 +1,7 @@
 <?php
+
+use yii\helpers\Html;
+
 /**
  * Created by PhpStorm.
  * User: chelo
@@ -6,12 +9,12 @@
  * Time: 0:28
  */
 
-function getPlantilla($alumnos,$curso)
+function getPlantilla($alumnos, $curso)
 {
 
-    $plantilla = '<body>
+  $plantilla = '<body>
     <header class="clearfix">
-       <div style="text-align: center"><h1>Listado '. $curso . '</h1></div>      
+       <div style="text-align: center"><h1>Listado ' . $curso . '</h1></div>      
     </header>
     <main>
           
@@ -26,28 +29,27 @@ function getPlantilla($alumnos,$curso)
           </tr>
         </thead>
         <tbody>';
-    $contador=0;
-    foreach ($alumnos as $pupils){
-        $contador++;
-        $plantilla .= '<tr>
-            <td class="no">'. $contador .'</td>
-            <td class="unit">'. number_format($pupils["rutalumno"],0,",","."). "-" . $pupils["digrut"]. '</td>    
-            <td class="qty">'. $pupils["paternoalu"]. '</td>
-            <td class="qty">'. $pupils["maternoalu"] .'</td>
-            <td class="qty">'. $pupils["nombrealu"] .'</td>
+  $contador = 0;
+  foreach ($alumnos as $pupils) {
+    $contador++;
+    $plantilla .= '<tr>
+            <td class="no">' . $contador . '</td>
+            <td class="unit">' . number_format($pupils["rutalumno"], 0, ",", ".") . "-" . $pupils["digrut"] . '</td>    
+            <td class="qty">' . $pupils["paternoalu"] . '</td>
+            <td class="qty">' . $pupils["maternoalu"] . '</td>
+            <td class="qty">' . $pupils["nombrealu"] . '</td>
           </tr>';
-    }
+  }
 
-    $plantilla .= '</tbody>        
+  $plantilla .= '</tbody>        
       </table>
       
     </main>
     <footer>';
-    $plantilla .= utf8_encode("The Kingstown School - Fundación Educacional Bosques de Santa Julia 2020.").'
+  $plantilla .= Html::encode("The Kingstown School - Fundación Educacional Bosques de Santa Julia 2020.") . '
         
     </footer>
   </body>';
 
-    return $plantilla;
-
+  return $plantilla;
 }

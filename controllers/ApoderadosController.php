@@ -110,20 +110,17 @@ class ApoderadosController extends Controller
 
         $model = new FormApoUpdate();
 
-        if ($model->load(Yii::$app->request->post()) && Yii::$app->request->isAjax)
-        {
+        if ($model->load(Yii::$app->request->post()) && Yii::$app->request->isAjax) {
             Yii::$app->response->format = Response::FORMAT_JSON;
             return ActiveForm::validate($model);
         }
 
-        if ($model->load(Yii::$app->request->post()))
-        {
-            if($model->validate())
-            {
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->validate()) {
                 $transaction = $db->beginTransaction();
-                try
-                {
-                    $db->createCommand()->update('apoderados',
+                try {
+                    $db->createCommand()->update(
+                        'apoderados',
                         [
                             'nombreapo' => $model->nombreapo,
                             'apepat' => $model->apepat,
@@ -146,28 +143,26 @@ class ApoderadosController extends Controller
                         ],
                         [
                             'idApo' => $id
-                        ])->execute();
-                        $transaction->commit();
-                        \Yii::$app->session->setFlash('success', 'Se ha actualizado correctamente el Apoderado.-.');
-                        return $this->redirect(['modapoderados']);
-                }
-                catch (Exception $e) {
+                        ]
+                    )->execute();
+                    $transaction->commit();
+                    \Yii::$app->session->setFlash('success', 'Se ha actualizado correctamente el Apoderado.-.');
+                    return $this->redirect(['modapoderados']);
+                } catch (Exception $e) {
+                    $transaction->rollBack();
+                    \Yii::$app->session->setFlash('error', 'Ocurrio un error, al actualizar el Apoderado.-');
+                    throw $e;
+                } catch (\Throwable $e) {
                     $transaction->rollBack();
                     \Yii::$app->session->setFlash('error', 'Ocurrio un error, al actualizar el Apoderado.-');
                     throw $e;
                 }
-                catch (\Throwable $e) {
-                    $transaction->rollBack();
-                    \Yii::$app->session->setFlash('error', 'Ocurrio un error, al actualizar el Apoderado.-');
-                    throw $e;
-                }
-            }else{
+            } else {
                 $model->getErrors();
             }
-        }else{
+        } else {
             $tableApoderados = Apoderados::findOne(['idApo' => $id]);
-            if($tableApoderados)
-            {
+            if ($tableApoderados) {
                 $model->nombreapo = $tableApoderados->nombreapo;
                 $model->apepat = $tableApoderados->apepat;
                 $model->apemat = $tableApoderados->apemat;
@@ -187,10 +182,9 @@ class ApoderadosController extends Controller
                 $model->estudios = $tableApoderados->estudios;
                 $model->profesion = $tableApoderados->profesion;
                 $model->trabajoplace = $tableApoderados->trabajoplace;
-
             }
         }
-        return $this->render('update',compact('model'));
+        return $this->render('update', compact('model'));
     }
 
     /**
@@ -200,23 +194,23 @@ class ApoderadosController extends Controller
     {
         $model = new FormSelectPivot();
 
-        if($model->load(Yii::$app->request->post()))
-        {
-            Yii::$app->session->set('icurso',$model->idCurso);
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->validate()) {
+                Yii::$app->session->set('icurso', $model->idCurso);
+            }
         }
 
         $searchModel = new ApoderadosSearch();
         $dataProvider = $searchModel->searchListaApos(Yii::$app->session->get('icurso'));
         $name = Cursos::find()->where(['idCurso' => Yii::$app->session->get('icurso')])->one();
-        if($name)
-        {
+        if ($name) {
             $nomcurso = $name->Nombre;
             $count = $dataProvider->getTotalCount();
-        }else{
+        } else {
             $nomcurso = '';
             $count = 0;
         }
-        return $this->render('modapoderados',compact('model','searchModel','dataProvider','nomcurso','count'));
+        return $this->render('modapoderados', compact('model', 'searchModel', 'dataProvider', 'nomcurso', 'count'));
     }
 
     /**
@@ -227,23 +221,21 @@ class ApoderadosController extends Controller
     {
         $model = new FormSelectPivot();
 
-        if($model->load(Yii::$app->request->post()))
-        {
-            Yii::$app->session->set('icurso',$model->idCurso);
+        if ($model->load(Yii::$app->request->post())) {
+            Yii::$app->session->set('icurso', $model->idCurso);
         }
 
         $searchModel = new ApoderadosSearch();
         $dataProvider = $searchModel->searchListaApos(Yii::$app->session->get('icurso'));
         $name = Cursos::find()->where(['idCurso' => Yii::$app->session->get('icurso')])->one();
-        if($name)
-        {
+        if ($name) {
             $nomcurso = $name->Nombre;
             $count = $dataProvider->getTotalCount();
-        }else{
+        } else {
             $nomcurso = '';
             $count = 0;
         }
-        return $this->render('listapoderados',compact('model','searchModel','dataProvider','nomcurso','count'));
+        return $this->render('listapoderados', compact('model', 'searchModel', 'dataProvider', 'nomcurso', 'count'));
     }
 
     /**
@@ -261,18 +253,16 @@ class ApoderadosController extends Controller
             return ActiveForm::validate($model);
         }
 
-        if ($model->load(Yii::$app->request->post()))
-        {
-            if ($model->validate())
-            {
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->validate()) {
                 $runcompleto = $model->rutapo;
                 return $this->redirect(['apoderados/ingresaapo', 'id' => $id, 'run' => $run, 'runapo' => $runcompleto]);
-            }else{
+            } else {
                 $model->getErrors();
             }
         }
 
-        return $this->render('consultarutapo',["model" => $model]);
+        return $this->render('consultarutapo', ["model" => $model]);
     }
 
     /**
@@ -283,7 +273,7 @@ class ApoderadosController extends Controller
      * @throws \Exception
      * @throws \Throwable
      */
-    public function actionIngresaapo($id,$run,$runapo)
+    public function actionIngresaapo($id, $run, $runapo)
     {
         $model = new FormApoRegister();
         $encontro = false;
@@ -296,29 +286,23 @@ class ApoderadosController extends Controller
             return ActiveForm::validate($model);
         }
 
-        if ($model->load(Yii::$app->request->post()))        {
+        if ($model->load(Yii::$app->request->post())) {
 
-            if ($model->validate())
-            {
+            if ($model->validate()) {
                 $transaction = $db->beginTransaction();
-                try
-                {
-                    if($model->apoderado=='1')
-                    {
+                try {
+                    if ($model->apoderado == '1') {
                         $apoasign = true;
-                    }
-                    else
-                    {
+                    } else {
                         $apoasign = false;
                     }
                     $tableApoderados = Apoderados::findOne(["rutapo" => $this->quitarStringless($runapo)]);
-                    if ($tableApoderados)
-                    {
+                    if ($tableApoderados) {
                         $encontro = true;
                     }
-                    if ($encontro == true)
-                    {
-                        $db->createCommand()->update('apoderados',
+                    if ($encontro == true) {
+                        $db->createCommand()->update(
+                            'apoderados',
                             [
                                 'nombreapo' => $model->nombreapo,
                                 'apepat' => $model->apepat,
@@ -344,9 +328,10 @@ class ApoderadosController extends Controller
                             ],
                             [
                                 'rutapo' => $this->quitarStringless($model->rutapo)
-                            ])->execute();
-                    }else{
-                        $db->createCommand()->insert('apoderados',[
+                            ]
+                        )->execute();
+                    } else {
+                        $db->createCommand()->insert('apoderados', [
                             'rutapo' => $this->quitarStringless($model->rutapo),
                             'digrut' => $this->devolverVerificador($model->rutapo),
                             'nombreapo' => $model->nombreapo,
@@ -375,32 +360,27 @@ class ApoderadosController extends Controller
                     $transaction->commit();
                     \Yii::$app->session->setFlash('success', 'Se ha ingresado correctamente el Apoderado.-.');
                     $apoinsert = true;
-                }
-                catch (Exception $e) {
+                } catch (Exception $e) {
                     $transaction->rollBack();
                     \Yii::$app->session->setFlash('error', 'Ocurrio un error, al ingresar un Apoderado.-');
                     throw $e;
-                }
-                catch (\Throwable $e) {
+                } catch (\Throwable $e) {
                     $transaction->rollBack();
                     \Yii::$app->session->setFlash('error', 'Ocurrio un error, al ingresar un Apoderado.-');
                     throw $e;
                 }
                 //Esta parte es para registrar el apoderado en la tabla Pivot
-                if($apoinsert==true && $apoasign==true)
-                {
+                if ($apoinsert == true && $apoasign == true) {
                     $tableApoderados = Apoderados::findOne(["rutalumno" => $run]);
                     $idapoderado = $tableApoderados->idApo;
                     $transaction = $db->beginTransaction();
-                    try{
-                        $db->createCommand()->update('pivot',['idApo' => $idapoderado],['idalumno' => $id])->execute();
+                    try {
+                        $db->createCommand()->update('pivot', ['idApo' => $idapoderado], ['idalumno' => $id])->execute();
                         $transaction->commit();
-                    }
-                    catch (Exception $e) {
+                    } catch (Exception $e) {
                         $transaction->rollBack();
                         throw $e;
-                    }
-                    catch (\Throwable $e) {
+                    } catch (\Throwable $e) {
                         $transaction->rollBack();
                         throw $e;
                     }
@@ -423,14 +403,13 @@ class ApoderadosController extends Controller
                 $model->profesion = null;
                 $model->trabajoplace = null;
                 return $this->redirect(['alumnos/relacionapos']);
-            }else{
+            } else {
                 $model->getErrors();
             }
-        }else{
+        } else {
             $rutsinptos = $this->quitarStringless($runapo);
             $tableApoderados = Apoderados::findOne(["rutapo" => $rutsinptos]);
-            if ($tableApoderados)
-            {
+            if ($tableApoderados) {
                 $model->rutapo = $runapo;
                 $model->nombreapo = $tableApoderados->nombreapo;
                 $model->apepat = $tableApoderados->apepat;
@@ -452,7 +431,7 @@ class ApoderadosController extends Controller
                 $model->trabajoplace = $tableApoderados->trabajoplace;
                 $model->relacion = $tableApoderados->relacion;
                 $model->apoderado = $tableApoderados->apoderado;
-            }else{
+            } else {
                 $model->rutapo = $runapo;
             }
         }
@@ -521,24 +500,22 @@ class ApoderadosController extends Controller
      */
     public function actionLista_provincia()
     {
-       if(Yii::$app->request->isPost){
+        if (Yii::$app->request->isPost) {
             $parents = Yii::$app->request->post('depdrop_parents');
-            if($parents != null)
-            {
+            if ($parents != null) {
                 $codRegion = empty($parents[0]) ? null : $parents[0];
                 $param1 = null;
-                if(!empty($_POST['depdrop_params']))
-                {
+                if (!empty($_POST['depdrop_params'])) {
                     $params = $_POST['depdrop_params'];
                     $param1 = $params[0];
                 }
                 $out = Provincias::getProvinciaList($codRegion);
 
                 $selected = Provincias::findOne($param1);
-                return Json::encode(['output'=> $out, 'selected'=> $selected]);
+                return Json::encode(['output' => $out, 'selected' => $selected]);
             }
-       }
-       return Json::encode(['output'=>'', 'selected'=>'']);
+        }
+        return Json::encode(['output' => '', 'selected' => '']);
     }
 
     /**
@@ -547,14 +524,12 @@ class ApoderadosController extends Controller
      */
     public function actionListcomu()
     {
-        if(Yii::$app->request->isPost){
+        if (Yii::$app->request->isPost) {
             $ids = Yii::$app->request->post('depdrop_parents');
-            if($ids != null)
-            {
+            if ($ids != null) {
                 $idProvincia = empty($ids[0]) ? null : $ids[0];
                 $param2 = null;
-                if(!empty($_POST['depdrop_params']))
-                {
+                if (!empty($_POST['depdrop_params'])) {
                     $params = $_POST['depdrop_params'];
                     $param2 = $params[0];
                 }
@@ -562,9 +537,9 @@ class ApoderadosController extends Controller
                 $data = Comunas::getComunalist($idProvincia);
                 $selected = Comunas::findOne($param2);
 
-                return Json::encode(['output'=>$data, 'selected'=>$selected]);
+                return Json::encode(['output' => $data, 'selected' => $selected]);
             }
         }
-        return Json::encode(['output'=>'', 'selected'=>'']);
+        return Json::encode(['output' => '', 'selected' => '']);
     }
 }

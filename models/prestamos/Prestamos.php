@@ -40,6 +40,7 @@ class Prestamos extends \yii\db\ActiveRecord
     {
         return [
             [['fechapres', 'fechadev'], 'safe'],
+            [['fechapres', 'fechadev'], 'required', 'message' => 'Campo requerido'],
             [['idano'], 'integer'],
             [['idPrestamo', 'idUser', 'idejemplar'], 'string', 'max' => 15],
             [['norden'], 'string', 'max' => 5],

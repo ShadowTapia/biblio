@@ -4,13 +4,9 @@ use yii\helpers\Html;
 use kartik\grid\GridView;
 use kartik\detail\DetailView;
 
-/* @var $this yii\web\View */
-/* @var $model app\models\prestamos\Prestamos */
-
-
 ?>
-<div class="prestamos-view">
 
+<div class="libros-view">
     <?= DetailView::widget([
         'model' => $model,
         'condensed' => true,
@@ -122,13 +118,6 @@ use kartik\detail\DetailView;
                     ],
                 ],
             ],
-            [
-                'attribute' => 'descripcion',
-                'format' => 'raw',
-                'value' => '<span class="text-justify"><em>' . $model->descripcion . '</em></span>',
-                'type' => DetailView::INPUT_TEXTAREA,
-                'options' => ['rows' => 3]
-            ],
         ],
     ]) ?>
 
@@ -152,42 +141,21 @@ use kartik\detail\DetailView;
         //ubicación
         [
             'attribute' => 'ubicacion',
-            'label' => 'Ubicación'
+            'label' => 'Ubicación',
         ],
-        //Acciones
+        //Accion
         [
             'class' => 'yii\grid\ActionColumn',
             'header' => 'Acciones',
-            'headerOptions' => ['width' => '430'],
+            'headerOptions' => ['width' => '200'],
             //Definir a las entidades a las que se les genarara los prestamos
-            'template' => '{alumnos} {apoderado} {Profesor} {Funcionario}',
+            'template' => '{barra}',
             'buttons' => [
-                'alumnos' => function ($url, $model) {
+                'barra' => function ($url, $model) {
                     return Html::a(
-                        "<span class='glyphicon glyphicon-share'> Alumno</span>",
-                        ['prestarlibro', 'id' => $model->idejemplar, 'titulo' => $model->idLibros0->titulo],
-                        ['class' => 'btn btn-circle btn-warning btn-sm', 'title' => 'Prestar Alumnos']
-                    );
-                },
-                'apoderado' => function ($url, $model) {
-                    return Html::a(
-                        "<span class='glyphicon glyphicon-share'> Apoderado</span>",
-                        ['prestarapoderado', 'id' => $model->idejemplar, 'titulo' => $model->idLibros0->titulo],
-                        ['class' => 'btn btn-circle btn-success btn-sm', 'title' => 'Prestar Apoderado']
-                    );
-                },
-                'Profesor' => function ($url, $model) {
-                    return Html::a(
-                        "<span class='glyphicon glyphicon-share'> Profesor</span>",
-                        ['prestarprofesor', 'id' => $model->idejemplar, 'titulo' => $model->idLibros0->titulo],
-                        ['class' => 'btn btn-circle btn-info btn-sm', 'title' => 'Prestar Profesor']
-                    );
-                },
-                'Funcionario' => function ($url, $model) {
-                    return Html::a(
-                        "<span class='glyphicon glyphicon-share'> Funcionario</span>",
-                        ['prestarfuncionario', 'id' => $model->idejemplar, 'titulo' => $model->idLibros0->titulo],
-                        ['class' => 'btn btn-circle btn-primary btn-sm', 'title' => 'Prestar Funcionario']
+                        "<span class='glyphicon glyphicon-barcode'> Cod. Barra</span>",
+                        ['generarbarra', 'id' => $model->idejemplar, 'codigo' => $model->norden, 'titulo' => $model->idLibros0->titulo],
+                        ['class' => 'btn btn-circle btn-warning btn-sm', 'title' => 'Generar Código de barra']
                     );
                 }
             ],

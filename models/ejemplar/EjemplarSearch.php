@@ -18,7 +18,7 @@ class EjemplarSearch extends Ejemplar
     {
         return [
             [['idejemplar', 'norden', 'edicion', 'ubicacion', 'idLibros', 'fechain', 'fechaout'], 'safe'],
-            [['disponible'], 'integer','message'=>'Debe ser un valor entre 0 y 1'],
+            [['disponible'], 'integer', 'message' => 'Debe ser un valor entre 0 y 1'],
         ];
     }
 
@@ -41,8 +41,7 @@ class EjemplarSearch extends Ejemplar
 
         $this->load($params);
 
-        if(!$this->validate())
-        {
+        if (!$this->validate()) {
             return $dataProvider;
         }
 
@@ -59,7 +58,6 @@ class EjemplarSearch extends Ejemplar
             ->andFilterWhere(['like', 'idLibros', $this->idLibros]);
 
         return $dataProvider;
-
     }
 
     /**
@@ -71,12 +69,12 @@ class EjemplarSearch extends Ejemplar
      */
     public function search($params)
     {
-        $query = Ejemplar::find()->joinWith(['idLibros0 li'])->orderBy('li.titulo');
+        $query = Ejemplar::find()->joinWith(['idLibros0'])->orderBy('titulo');
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
-            'query' => $query,'pagination' => ['pagesize' => 50],
+            'query' => $query, 'pagination' => ['pagesize' => 50],
         ]);
 
         $this->load($params);
@@ -102,7 +100,7 @@ class EjemplarSearch extends Ejemplar
 
         return $dataProvider;
     }
-    
+
     /**
      * @param $id
      * @return null|string
@@ -110,8 +108,7 @@ class EjemplarSearch extends Ejemplar
     public static function getNombreTitulo($id)
     {
         $model = Libros::findOne(['idLibros' => $id]);
-        if (!empty($model))
-        {
+        if (!empty($model)) {
             return ($model->titulo);
         }
         return null;

@@ -1,9 +1,11 @@
 <?php
 
+use yii\helpers\Html;
+
 function getPlantilla($profes)
 {
-    
-    $plantilla = '<body>
+
+  $plantilla = '<body>
     <header class="clearfix">
        <div style="text-align: center"><h1>Listado de Docentes</h1></div>      
     </header>
@@ -20,27 +22,25 @@ function getPlantilla($profes)
           </tr>
         </thead>
         <tbody>';
-        $contador=0;
-        foreach ($profes as $docente){           
-          $contador++;  
-          $plantilla .= '<tr>
-            <td class="no">'. $contador .'</td>
-            <td class="desc">'. number_format($docente["rutdocente"],0,  ",",  ".") . "-". $docente["digito"].'</td>
-            <td class="unit">'. strtoupper($docente["nombres"]) . " ". strtoupper($docente["paterno"]) . " ". strtoupper($docente["materno"]) . '</td>
-            <td class="qty">'. $docente["email"] .'</td>
+  $contador = 0;
+  foreach ($profes as $docente) {
+    $contador++;
+    $plantilla .= '<tr>
+            <td class="no">' . $contador . '</td>
+            <td class="desc">' . number_format($docente["rutdocente"], 0,  ",",  ".") . "-" . $docente["digito"] . '</td>
+            <td class="unit">' . strtoupper($docente["nombres"]) . " " . strtoupper($docente["paterno"]) . " " . strtoupper($docente["materno"]) . '</td>
+            <td class="qty">' . $docente["email"] . '</td>
           </tr>';
-        }
-        
-        $plantilla .= '</tbody>        
+  }
+
+  $plantilla .= '</tbody>        
       </table>
       
     </main>
     <footer>';
-        $plantilla .= "The Kingstown School - Fundación Educacional Bosques de Santa Julia 2019.".'
-        
+  $plantilla .= Html::encode("The Kingstown School - Fundación Educacional Bosques de Santa Julia 2019.") . '        
     </footer>
   </body>';
 
-    return $plantilla;
-
+  return $plantilla;
 }

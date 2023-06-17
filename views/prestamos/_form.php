@@ -18,21 +18,7 @@ use yii\jui\DatePicker;
         ],
     ]); ?>
     <div class="row">
-        <div class="col-xs-2">
-            <?= $form->field($modelEjemplar, 'norden')
-                ->textInput(['class' => 'form-control', 'placeholder' => 'N° Orden', 'disabled' => true])
-                ->label('N° Orden') ?>
-        </div>
-        <div class="col-xs-3">
-            <?= $form->field($modelEjemplar, 'edicion')
-                ->textInput(['class' => 'form-control', 'placeholder' => 'Edición', 'disabled' => true])
-                ->label('Edición') ?>
-        </div>
-        <div class="col-xs-2">
-            <?= $form->field($modelEjemplar, 'ubicacion')
-                ->textInput(['class' => 'form-control', 'placeholder' => 'Ubicación', 'disabled' => true])
-                ->label('Ubicación') ?>
-        </div>
+
     </div>
     <div class="row">
         <div class="col-xs-2">
@@ -56,7 +42,7 @@ use yii\jui\DatePicker;
                     'changeYear' => true
                 ],
                 'options' => ['class' => 'form-control datepicker', 'style' => 'width:80%']
-            ])->label('F. Devolución')
+            ])->label('F. Devolución*')
             ?>
         </div>
         <div class="col-sm-3">

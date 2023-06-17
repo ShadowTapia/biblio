@@ -61,6 +61,43 @@ class LibrosController extends Controller
     }
 
     /**
+     * Renderiza la opción para crear los códigos de barra por ejemplar
+     */
+    public function actionBarrauno()
+    {
+        $searchModel = new LibrosSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('barrauno', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+    /**
+     * Se encarga de poblar el reporte de codigos de barra de todos los libros
+     */
+    public function actionAllbarras()
+    {
+        $ejemplares = array();
+        $ejemplar = Ejemplar::find()->all();
+        if ($ejemplar > 0) {
+            foreach ($ejemplar as $unidad) {
+                $ejemplares[] = $unidad;
+            }
+        }
+
+        return $this->render('/reporte/barraalllibros', ['ejemplares' => $ejemplares]);
+    }
+
+    /**
+     * Se eencarga de generar la barra por libro
+     */
+    public function actionGenerarbarra($id, $codigo, $titulo)
+    {
+        return $this->render('/reporte/barraxlibro', ['id' => $id, 'codigo' => $codigo, 'titulo' => $titulo]);
+    }
+
+    /**
      * @return string
      */
     public function actionConsulta()
@@ -68,7 +105,7 @@ class LibrosController extends Controller
         $searchModel = new LibrosSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        return $this->render('consulta',[
+        return $this->render('consulta', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
@@ -101,14 +138,11 @@ class LibrosController extends Controller
             return ActiveForm::validate($model);
         }
 
-        if($model->load(Yii::$app->request->post()))
-        {
-            if($model->validate())
-            {
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->validate()) {
                 $table = new Libros();
                 $transaction = $table->getDb()->beginTransaction();
-                try
-                {
+                try {
                     $table->isbn = $model->isbn;
                     $table->titulo = mb_strtoupper($model->titulo);
                     $table->subtitulo = $model->subtitulo;
@@ -122,41 +156,33 @@ class LibrosController extends Controller
                     $table->idtemas = $model->idtemas;
                     $table->descripcion = $model->descripcion;
                     $librosId = $model->isbn;
-                    $image = UploadedFile::getInstance($model,'imagen');
-                    if (!is_null($image))
-                    {
+                    $image = UploadedFile::getInstance($model, 'imagen');
+                    if (!is_null($image)) {
                         $imgName = $librosId . '.' . $image->getExtension();
                         $image->saveAs(Yii::getAlias('@libroImgPath') . '/' . $imgName);
                         $table->imagen = $imgName;
                     }
-                    if($table->insert())
-                    {
+                    if ($table->insert()) {
                         $transaction->commit();
-                        \Yii::$app->session->setFlash('success','El Libro se ha ingresado exitosamente.-');
-
-                    }else{
+                        \Yii::$app->session->setFlash('success', 'El Libro se ha ingresado exitosamente.-');
+                    } else {
                         $transaction->rollBack();
-                        \Yii::$app->session->setFlash('error','Error No se ha ingresado el Libro.-');
+                        \Yii::$app->session->setFlash('error', 'Error No se ha ingresado el Libro.-');
                     }
                     return $this->redirect(['libros/index']);
-                }
-                catch (Exception $e)
-                {
+                } catch (Exception $e) {
+                    $transaction->rollBack();
+                    throw $e;
+                } catch (\Throwable $e) {
                     $transaction->rollBack();
                     throw $e;
                 }
-                catch (\Throwable $e)
-                {
-                    $transaction->rollBack();
-                    throw $e;
-                }
-            }else{
+            } else {
                 $model->getErrors();
             }
         }
 
         return $this->render('create', ['model' => $model,]);
-
     }
 
     /**
@@ -170,22 +196,17 @@ class LibrosController extends Controller
         $model = new FormUpdateLibros();
         $table = new Libros();
 
-        if ($model->load(Yii::$app->request->post()) && Yii::$app->request->isAjax)
-        {
+        if ($model->load(Yii::$app->request->post()) && Yii::$app->request->isAjax) {
             Yii::$app->response->format = Response::FORMAT_JSON;
             return ActiveForm::validate($model);
         }
 
-        if ($model->load(Yii::$app->request->post()))
-        {
-            if($model->validate())
-            {
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->validate()) {
                 $transaction = $table->getDb()->beginTransaction();
-                try
-                {
+                try {
                     $table = Libros::findOne(['idLibros' => $id]);
-                    if ($table)
-                    {
+                    if ($table) {
                         $table->isbn = $model->isbn;
                         $table->titulo = mb_strtoupper($model->titulo);
                         $table->subtitulo = $model->subtitulo;
@@ -198,32 +219,28 @@ class LibrosController extends Controller
                         $table->idtemas = $model->idtemas;
                         $table->idautor = $model->idautor;
                         $table->descripcion = $model->descripcion;
-                        if($table->update())
-                        {
+                        if ($table->update()) {
                             $transaction->commit();
-                            \Yii::$app->session->setFlash('success','El Libro se ha actualizado exitosamente.-');
-                        }else{
+                            \Yii::$app->session->setFlash('success', 'El Libro se ha actualizado exitosamente.-');
+                        } else {
                             $transaction->rollBack();
-                            \Yii::$app->session->setFlash('error','No se ha actualizado el Libro.-');
+                            \Yii::$app->session->setFlash('error', 'No se ha actualizado el Libro.-');
                         }
                         return $this->redirect(['libros/index']);
                     }
-                }
-                catch (Exception $e) {
+                } catch (Exception $e) {
+                    $transaction->rollBack();
+                    throw $e;
+                } catch (\Throwable $e) {
                     $transaction->rollBack();
                     throw $e;
                 }
-                catch (\Throwable $e) {
-                    $transaction->rollBack();
-                    throw $e;
-                }
-            }else{
+            } else {
                 $model->getErrors();
             }
-        }else{
+        } else {
             $table = Libros::findOne(['idLibros' => $id]);
-            if($table)
-            {
+            if ($table) {
                 $model->isbn = $table->isbn;
                 $model->titulo = $table->titulo;
                 $model->subtitulo = $table->subtitulo;
@@ -253,37 +270,30 @@ class LibrosController extends Controller
     public function actionDelete($id)
     {
         //Se debe verificar la existencia de ejemplares asociados
-        $tableEjemplar = Ejemplar::find()->where("idLibros=:idLibros",[":idLibros" => $id]);
-        if ($tableEjemplar->count()>0)
-        {
+        $tableEjemplar = Ejemplar::find()->where("idLibros=:idLibros", [":idLibros" => $id]);
+        if ($tableEjemplar->count() > 0) {
             \Yii::$app->session->setFlash('error', 'Ocurrió un error, existen ejemplares asociadas a este Libro.-');
             return $this->redirect(['index']);
-        }else{
+        } else {
             $table = new Libros();
             $transaction = $table->getDb()->beginTransaction();
-            try
-            {
-                if ($table->deleteAll("idLibros=:idLibros",[":idLibros" => $id]))
-                {
+            try {
+                if ($table->deleteAll("idLibros=:idLibros", [":idLibros" => $id])) {
                     $transaction->commit();
-                    \Yii::$app->session->setFlash('success', 'Se ha borrado correctamente el Libro '. $table->titulo);
-                }else{
+                    \Yii::$app->session->setFlash('success', 'Se ha borrado correctamente el Libro ' . $table->titulo);
+                } else {
                     $transaction->rollBack();
                     \Yii::$app->session->setFlash('error', 'Ocurrió un error, no se borro el Libro.-');
                 }
-            }
-            catch (Exception $e) {
+            } catch (Exception $e) {
                 $transaction->rollBack();
                 throw $e;
-            }
-            catch (\Throwable $e)
-            {
+            } catch (\Throwable $e) {
                 $transaction->rollBack();
                 throw $e;
             }
             return $this->redirect(['index']);
         }
-
     }
 
     /**

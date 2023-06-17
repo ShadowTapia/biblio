@@ -25,6 +25,7 @@ use yii\base\Exception;
 use setasign\Fpdi\PdfParser\CrossReference\CrossReferenceException;
 use setasign\Fpdi\PdfParser\PdfParserException;
 use setasign\Fpdi\PdfParser\Type\PdfTypeException;
+
 /**
  * Class DocenteController
  * @package app\controllers
@@ -79,20 +80,24 @@ class DocenteController extends Controller
                 $profes[] = $teachers;
             }
         }
-        require_once  ('/home/kingstownschoolc/biblio.kingstownschool.cl/biblio/views/reporte/listadoprofe.php');
-        //require_once Yii::$app->basePath . '\views\reporte\listadoprofe.php';
+        //require_once  ('/home/kingstownschoolc/biblio.kingstownschool.cl/biblio/views/reporte/listadoprofe.php');
+        require_once Yii::$app->basePath . '\views\reporte\listadoprofe.php';
         $plantilla = getPlantilla($profes);
         $content = $plantilla;
         Yii::$app->response->format = Response::FORMAT_RAW;
-        $pdf = new Pdf(['mode' => Pdf::MODE_UTF8, // leaner size using standard fonts
+        $pdf = new Pdf([
+            'mode' => Pdf::MODE_UTF8, // leaner size using standard fonts
             'format' => Pdf::FORMAT_FOLIO, 'destination' => Pdf::DEST_BROWSER, 'content' =>
             $content, 'cssFile' => '@vendor/kartik-v/yii2-mpdf/src/assets/kv-docente.css',
             'options' => [ // any mpdf options you wish to set
-            ], 'methods' => ['SetTitle' => 'Sistema Administración Bibliotecaria - Listado de Docentes',
-            'SetSubject' => 'Generado por Sistema Administración Bibliotecaria - The Kingstown School',
-            'SetHeader' => ['The Kingstown School - Sistema Administración Bibliotecaria: ' .
-            date("r")], 'SetFooter' => ['|Page {PAGENO}|'], 'SetAuthor' =>
-            'Marcelo Tapia D.', 'SetCreator' => 'Marcelo Tapia D.', ]]);
+            ], 'methods' => [
+                'SetTitle' => 'Sistema Administración Bibliotecaria - Listado de Docentes',
+                'SetSubject' => 'Generado por Sistema Administración Bibliotecaria - The Kingstown School',
+                'SetHeader' => ['The Kingstown School - Sistema Administración Bibliotecaria: ' .
+                    date("r")], 'SetFooter' => ['|Page {PAGENO}|'], 'SetAuthor' =>
+                'Marcelo Tapia D.', 'SetCreator' => 'Marcelo Tapia D.',
+            ]
+        ]);
         return $pdf->render();
     }
 
@@ -146,18 +151,16 @@ class DocenteController extends Controller
                         $model->villa = null;
                         $model->telefono = null;
                         $model->email = null;
-                        \Yii::$app->session->setFlash('success','Se ha ingresado correctamente un nuevo Docente.');
+                        \Yii::$app->session->setFlash('success', 'Se ha ingresado correctamente un nuevo Docente.');
                     } else {
                         $transaction->rollBack();
-                        \Yii::$app->session->setFlash('error','Se ha producido un error al querer ingresar este Docente.');
+                        \Yii::$app->session->setFlash('error', 'Se ha producido un error al querer ingresar este Docente.');
                     }
                     return $this->redirect(['docente/indexdocente']);
-                }
-                catch (Exception $e) {
+                } catch (Exception $e) {
                     $transaction->rollBack();
                     throw $e;
-                }
-                catch (\Throwable $e) {
+                } catch (\Throwable $e) {
                     $transaction->rollBack();
                     throw $e;
                 }
@@ -207,19 +210,17 @@ class DocenteController extends Controller
                         $table->email = $model->email;
                         if ($table->update()) {
                             $transaction->commit();
-                            \Yii::$app->session->setFlash('success','El docente se ha actualizado exitosamente.-');
+                            \Yii::$app->session->setFlash('success', 'El docente se ha actualizado exitosamente.-');
                         } else {
                             $transaction->rollBack();
-                            \Yii::$app->session->setFlash('error','No se ha actualizado el docente.-');
+                            \Yii::$app->session->setFlash('error', 'No se ha actualizado el docente.-');
                         }
                         return $this->redirect(['docente/indexdocente']);
                     }
-                }
-                catch (Exception $e) {
+                } catch (Exception $e) {
                     $transaction->rollBack();
                     throw $e;
-                }
-                catch (\Throwable $e) {
+                } catch (\Throwable $e) {
                     $transaction->rollBack();
                     throw $e;
                 }
@@ -289,12 +290,10 @@ class DocenteController extends Controller
                     $transaction->rollBack();
                     \Yii::$app->session->setFlash('error', 'Ocurrió un error, no se borro el Docente.-');
                 }
-            }
-            catch (Exception $e) {
+            } catch (Exception $e) {
                 $transaction->rollBack();
                 throw $e;
-            }
-            catch (\Throwable $e) {
+            } catch (\Throwable $e) {
                 $transaction->rollBack();
                 throw $e;
             }

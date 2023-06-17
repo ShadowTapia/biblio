@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: chelo
@@ -17,19 +18,21 @@ $this->title = 'Prestar Libro ' . $titulo;
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <?php
-    $this->registerJs(
-            '$("#rutalumno").on("change", function(e){
+$this->registerJs(
+    '$("#rutalumno").on("change", function(e){
                  var x = document.getElementById("togglesearch");
                  if(x.style.display==="none"){
                        x.style.display="block";
                  }
              });'
-    );
+);
 ?>
 <h1><?= Html::encode($this->title) ?></h1>
-<h2>Prestamo para Alumnos <?=  Yii::$app->session->get('nameAno') ?></h2>
-<?php $form = ActiveForm::begin(['method' => 'post', 'id' => 'formIngPrestamo','class'=> 'form-horizontal',
-    'enableClientValidation' => false, 'enableAjaxValidation' => true, ]);
+<h2>Prestamo para Alumnos <?= Yii::$app->session->get('nameAno') ?></h2>
+<?php $form = ActiveForm::begin([
+    'method' => 'post', 'id' => 'formIngPrestamo', 'class' => 'form-horizontal',
+    'enableClientValidation' => false, 'enableAjaxValidation' => true,
+]);
 ?>
 <div class="container">
     <div class="row">
@@ -39,24 +42,24 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
         <div class="col-xs-4">
-            <?= Html::dropDownList('idCurso',null,  ArrayHelper::map(Cursos::find()->where(['visible' => '1'])->indexBy('idCurso')->orderBy('Orden')->all(),'idCurso','Nombre'),['id'=>'idCurso']) ?>
+            <?= Html::dropDownList('idCurso', null,  ArrayHelper::map(Cursos::find()->where(['visible' => '1'])->indexBy('idCurso')->orderBy('Orden')->all(), 'idCurso', 'Nombre'), ['id' => 'idCurso']) ?>
         </div>
     </div>
     <div class="row">
         <div class="col-sm-5">
-            <?= $form->field($modelAlumno, 'rutalumno')->widget(DepDrop::className(),[
-                'options'=>['id'=>'rutalumno','prompt'=>'Seleccione Alumno(a)'],
-                'pluginOptions'=>[
-                    'depends'=>['idCurso'],
-                    'placeholder'=>'Seleccione Alumno(a)',
-                    'url'=>Url::to(['prestamos/lista_alumnos']),
-                    'loadingText'=>'Cargando Alumnos...',
+            <?= $form->field($modelAlumno, 'rutalumno')->widget(DepDrop::class, [
+                'options' => ['id' => 'rutalumno', 'prompt' => 'Seleccione Alumno(a)'],
+                'pluginOptions' => [
+                    'depends' => ['idCurso'],
+                    'placeholder' => 'Seleccione Alumno(a)',
+                    'url' => Url::to(['prestamos/lista_alumnos']),
+                    'loadingText' => 'Cargando Alumnos...',
                 ]
             ])->label('Alumnos*') ?>
         </div>
     </div>
-    <div id="togglesearch" style="display: none" >
-        <?= $this->render('_form',['model'=>$model,'modelEjemplar'=>$modelEjemplar]) ?>
+    <div id="togglesearch" style="display: none">
+        <?= $this->render('_form', ['model' => $model, 'modelEjemplar' => $modelEjemplar]) ?>
     </div>
 </div>
-<?php $form->end() ?>
+<?php ActiveForm::end(); ?>

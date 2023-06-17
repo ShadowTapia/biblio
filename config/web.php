@@ -3,6 +3,8 @@
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 
+use kartik\mpdf\Pdf;
+
 $config = [
     'id' => 'basic',
     'name' => 'SAB - The Kingstown School',
@@ -20,6 +22,14 @@ $config = [
         '@npm'   => '@vendor/npm-asset',
     ],
     'components' => [
+        // setup Krajee Pdf component
+        'pdf' => [
+            'class' => Pdf::class,
+            'format' => Pdf::FORMAT_A4,
+            'orientation' => Pdf::ORIENT_PORTRAIT,
+            'destination' => Pdf::DEST_BROWSER,
+            // refer settings section for all configuration options
+        ],
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'ejA6yGWw3CeiJKeUCArjnnS2NSqYH2Zj',
@@ -44,6 +54,7 @@ $config = [
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
+            'maxSourceLines' => 20,
         ],
         'mailer' => [
             'class' => 'yii\swiftmailer\Mailer',
@@ -69,10 +80,14 @@ $config = [
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
+            'flushInterval' => 1, // <- here
             'targets' => [
                 [
                     'class' => 'yii\log\FileTarget',
-                    'levels' => ['error', 'warning'],
+                    'levels' => ['error', 'warning', 'trace', 'info'],
+                    'logVars' => [],
+                    'logFile' => '@runtime/webapp/logs/myfile.log',
+                    'exportInterval' => 1, // <-- and here
                 ],
             ],
         ],

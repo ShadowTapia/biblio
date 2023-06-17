@@ -1,5 +1,6 @@
 <?php
 /* @var $this yii\web\View */
+
 /**
  * @author Marcelo
  * @copyright 2019
@@ -10,7 +11,7 @@ use kartik\switchinput\SwitchInput;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
-$this->title='Actualizar Años';
+$this->title = 'Actualizar Años';
 $this->params['breadcrumbs'][] = ['label' => 'Administrar Años', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -28,31 +29,33 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <?php $form = ActiveForm::begin([
     'options' => [
-        'id'=>'form_up',
+        'id' => 'form_up',
     ],
 ]);
 ?>
 <div class="container">
     <div class="row">
         <div class="col-xs-2">
-            <?= $form->field($model,"nombreano")->input("text",['width:450px;'])->label('Año*') ?>
+            <?= $form->field($model, "nombreano")->input("text", ['width:450px;'])->label('Año*') ?>
         </div>
         <div class="col-xs-offset-0">
-            <?= $form->field($model,"activo")->widget(SwitchInput::className(),
+            <?= $form->field($model, "activo")->widget(
+                SwitchInput::class,
                 [
-                    'type' => SwitchInput::CHECKBOX,'pluginOptions' =>
+                    'type' => SwitchInput::CHECKBOX, 'pluginOptions' =>
                     [
                         'size' => 'small',
                         'onText' => '<i class="glyphicon glyphicon-ok"></i>',
-                        'offText'=>'<i class="glyphicon glyphicon-remove"></i>',
+                        'offText' => '<i class="glyphicon glyphicon-remove"></i>',
                         'onColor' => 'success',
                         'offColor' => 'danger',
                     ],
-                ])->label('Activo') ?>
+                ]
+            )->label('Activo') ?>
         </div>
 
         <div class="col-ms-2">
-            <?= Html::submitButton('Modificar',['class'=>'btn btn-primary']) ?>
+            <?= Html::submitButton('Modificar', ['class' => 'btn btn-primary']) ?>
         </div>
     </div>
 </div>

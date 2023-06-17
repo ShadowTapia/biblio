@@ -21,9 +21,9 @@ AppAsset::register($this);
     <meta charset="<?= Yii::$app->charset ?>">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <? if (!Yii::$app->user->isGuest) { ?>
+    <?php if (!Yii::$app->user->isGuest) { ?>
         <meta http-equiv="refresh" content="<?php echo Yii::$app->params['sessionTimeoutSeconds']; ?>;" />
-    <? } ?>
+    <?php } ?>
     <?php $this->registerCsrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
@@ -59,6 +59,12 @@ AppAsset::register($this);
                             ['label' => 'Reservas', 'url' => ['/reserva/index'], 'visible' => Yii::$app->session['biblioUser'] == 'biblio' || Yii::$app->session['adminUser'] == 'admin'],
                             ['label' => 'Temas', 'url' => ['/temas/index'], 'visible' => Yii::$app->session['biblioUser'] == 'biblio' || Yii::$app->session['adminUser'] == 'admin'],
                             [
+                                'label' => 'Cod. Barras',
+                                'items' => [
+                                    ['label' => 'Por libro', 'url' => ['/libros/barrauno']],
+                                ], 'visible' => Yii::$app->session['biblioUser'] == 'biblio' || Yii::$app->session['adminUser'] == 'admin'
+                            ],
+                            [
                                 'label' => 'Consultar',
                                 'items' => [
                                     ['label' => 'Libros', 'url' => ['/libros/consulta']],
@@ -75,7 +81,13 @@ AppAsset::register($this);
                         'label' => 'Prestamo',
                         'items' => [
                             ['label' => 'Indice', 'url' => ['/prestamos/index'],],
-                            ['label' => 'Prestar', 'url' => ['/prestamos/prestar'],],
+                            [
+                                'label' => 'Prestar',
+                                'items' => [
+                                    ['label' => 'Barras', 'url' => ['/prestamos/lend']],
+                                    ['label' => 'Manual', 'url' => ['/prestamos/prestar']],
+                                ],
+                            ],
                             ['label' => 'Historico', 'url' => ['/historico/index']],
                         ], 'visible' => Yii::$app->session['biblioUser'] == 'biblio' || Yii::$app->session['adminUser'] == 'admin'
                     ]
