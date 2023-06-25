@@ -73,14 +73,16 @@ class UsersController extends Controller
         ]);
     }
 
-
+    /**
+     * 
+     */
     public function actionRegister()
     {
         //Creamos la instancia con el model de validación
         $model = new FormRegister();
 
         //aqui comienza el codigo ya probado
-        //Validaciï¿½n mediante ajax
+        //Validaciónn mediante ajax
         if ($model->load(Yii::$app->request->post()) && Yii::$app->request->isAjax) {
             Yii::$app->response->format = Response::FORMAT_JSON;
             return ActiveForm::validate($model);
@@ -91,59 +93,32 @@ class UsersController extends Controller
         //validación mediante ajax no puede ser llevada a cabo
         if ($model->load(Yii::$app->request->post())) {
             if ($model->validate()) {
-                //preparamos la consulta para guardar el usuario
-                $table = new Users();
-
-                $transaction = $table::getDb()->beginTransaction();
+                $db = Yii::$app->db;
+                $transaction = $db->beginTransaction();
                 try {
-                    $table->UserRut = $this->removeStringless($model->UserRut);
-                    $table->UserName = $model->UserName;
-                    $table->UserLastName = $model->UserLastName;
-                    $table->UserMail = $model->UserMail;
-                    $table->activate = 1;
-                    $table->Idroles = $model->idroles;
-                    //Encriptamos la password
-                    $table->UserPass = crypt($model->UserPass, Yii::$app->params["salt"]);
-                    //Creamos una cookie para autenticar al usuario cuando decida recordar la sesiï¿½n
-                    //Esta misma clave serï¿½ utilizada para activar el usuario
-                    $table->authkey = $this->randKey("abcdef0123456789", 200);
-                    //Creamos un token de acceso ï¿½nico para el usuario
-                    $table->accessToken = $this->randKey("abcdef0123456789", 200);
-
-                    //Si el registro es guardado correctamente
-                    if ($table->insert()) {
-                        //Nueva consulta para obtener el id del usuario
-                        //para confirmar al usuario se requiere su id y su authkey
-                        //$users = $table->find()->where(["UserMail" => $model->UserMail])->one();
-                        //$id = urlencode($users->idUser);
-                        //$authkey = urlencode($users->authkey);
-
-                        /**
-                         * $subject = "Confirmar registro";
-                         * $body = "<h1>Haga click en el siguiente enlace para finalizar tu registro</h1>";
-                         * $body .= "<a href='http://http://localhost/php/biblio/web/index.php?r=site/confirm&id=".$id."&authKey=".$authKey."'>Confirmar</a>";
-
-                         * //Enviamos el correo
-                         * Yii::$app->mailer->compose()
-                         * ->setTo($user->email)
-                         * ->setFrom([Yii::$app->params["adminEmail"] => Yii::$app->params["title"]])
-                         * ->setSubject($subject)
-                         * ->setHtmlBody($body)
-                         * ->send();
-                         **/
-                        $transaction->commit();
-
-                        $model->UserRut = null;
-                        $model->UserName = null;
-                        $model->UserLastName = null;
-                        $model->UserMail = null;
-                        $model->UserPass = null;
-                        $model->UserPass_repeat = null;
-                        \Yii::$app->session->setFlash('success', 'Se ha ingresado correctamente un nuevo Usuario.-');
-                    } else {
-                        $transaction->rollBack();
-                        \Yii::$app->session->setFlash('error', 'Se ha producido un error al querer ingresar este Usuario.-');
-                    }
+                    $db->createCommand()->insert('Users', [
+                        'UserRut' => $this->removeStringless($model->UserRut),
+                        'UserName' => $model->UserName,
+                        'UserLastName' => $model->UserLastName,
+                        'UserMail' => $model->UserMail,
+                        'activate' => '1',
+                        'Idroles' => $model->idroles,
+                        //Encriptamos la password
+                        'UserPass' => crypt($model->UserPass, Yii::$app->params["salt"]),
+                        //Creamos una cookie para autenticar al usuario cuando decida recordar la sesión
+                        //Esta misma clave sería utilizada para activar el usuario
+                        'authkey' => $this->randKey("abcdef0123456789", 200),
+                        //Creamos un token de acceso único para el usuario
+                        'accessToken' => $this->randKey("abcdef0123456789", 200),
+                    ])->execute();
+                    $transaction->commit();
+                    $model->UserRut = null;
+                    $model->UserName = null;
+                    $model->UserLastName = null;
+                    $model->UserMail = null;
+                    $model->UserPass = null;
+                    $model->UserPass_repeat = null;
+                    \Yii::$app->session->setFlash('success', 'Se ha ingresado correctamente un nuevo Usuario.-');
                     return $this->redirect(['users/index']);
                 } catch (\Exception $e) {
                     $transaction->rollBack();

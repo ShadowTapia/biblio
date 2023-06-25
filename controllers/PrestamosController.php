@@ -216,10 +216,13 @@ class PrestamosController extends Controller
                 $modelEjemplar->edicion = $tableEjemplar->edicion;
                 $modelEjemplar->ubicacion = $tableEjemplar->ubicacion;
                 $idlib = $tableEjemplar->idLibros;
-            }
-            $tableLibros = Libros::findOne(['idLibros' => $idlib]);
-            if ($tableLibros) {
-                $titulo = $tableLibros->titulo;
+                $tableLibros = Libros::findOne(['idLibros' => $idlib]);
+                if ($tableLibros) {
+                    $titulo = $tableLibros->titulo;
+                }
+            } else {
+                \Yii::$app->session->setFlash('error', 'No se encuentra este código de ejemplar.');
+                return $this->redirect(['prestamos/lend']);
             }
         }
         return $this->render('lendbarra', compact('model', 'modelEjemplar', 'modelAlumno', 'modelProfesor', 'modelApoderado', 'modelUser', 'titulo'));

@@ -35,7 +35,7 @@ AppAsset::register($this);
     <div class="wrap">
         <?php
         NavBar::begin([
-            'brandLabel' => '<img src=' . Yii::$app->request->baseUrl . "/images/logo.gif" . ' style="margin-top: -10px;" class="img-responsive"></img>',
+            'brandLabel' => '<img src=' . Yii::$app->request->baseUrl . "/images/logo.gif" . ' alt="" style="margin-top: -10px;" class="img-responsive"></img>',
             'brandUrl' => Yii::$app->homeUrl,
             'options' => [
                 'class' => 'navbar-inverse navbar-fixed-top',

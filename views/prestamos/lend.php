@@ -38,8 +38,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     ->textInput(['class' => 'form-control', 'placeholder' => 'Código Ejemplar', 'maxlength' => true, 'autofocus' => true])
                     ->label("Código") ?>
             </div>
-            <div class="col-xs-3">
-                <?= Html::submitButton("consultar", ["class" => "btn btn-primary"]) ?>
+            <div class="mt-5">
+                <?= Html::submitButton("consultar", ["class" => "btn btn-primary btn-sm"]) ?>
             </div>
         </div>
     </div>
