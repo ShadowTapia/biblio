@@ -2,9 +2,9 @@
 
 return [
     'class' => 'yii\db\Connection',
-    'dsn' => 'mysql:host=localhost;dbname=nombre base de datos',
-    'username' => '',//colocar valor usuario
-    'password' => '',//colocar valor base de datos
+    'dsn' => 'mysql:host=localhost;dbname=kingstow_biblio',
+    'username' => 'kingstow_SysBiblio',
+    'password' => 'F5xDwbSL8q9yHKqM',
     'charset' => 'utf8',
 
     // Schema cache options (for production environment)

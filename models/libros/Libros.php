@@ -11,6 +11,7 @@ use app\models\temas\Temas;
 use app\models\numejem\Numejem;
 use app\models\ejemplar\Ejemplar;
 use yii\db\ActiveQuery;
+
 /**
  * This is the model class for table "libros".
  *
@@ -53,25 +54,26 @@ class Libros extends ActiveRecord
     public function rules()
     {
         return [
-            [['titulo', 'idcategoria', 'ideditorial', 'idautor'], 'required','message' => 'Campo requerido'],
-            [['isbn', 'numpag', 'ano', 'idcategoria', 'ideditorial','idtemas'], 'integer','message' => 'Sólo se aceptan valores númericos'],
-            ['isbn','validaISBN'],
-            [['idioma', 'formato','idautor'], 'string'],
-            [['imagen'],'file',
-                'extensions'=>'jpg,png,gif',
+            [['titulo', 'idcategoria', 'ideditorial', 'idautor'], 'required', 'message' => 'Campo requerido'],
+            [['isbn', 'numpag', 'ano', 'idcategoria', 'ideditorial', 'idtemas'], 'integer', 'message' => 'Sólo se aceptan valores númericos'],
+            ['isbn', 'validaISBN'],
+            [['idioma', 'formato', 'idautor'], 'string'],
+            [
+                ['imagen'], 'file',
+                'extensions' => 'jpg,png,gif',
                 'skipOnEmpty' => true,
-                'maxSize' => 1024*1024*1, //1MB
+                'maxSize' => 1024 * 1024 * 1, //1MB
                 'tooBig' => 'El tamaño máximo permitido es 1MB',
                 'wrongExtension' => 'El archivo {file} no contiene una extensión permitida'
-                ],
+            ],
             [['idLibros'], 'string', 'max' => 15],
             [['titulo'], 'string', 'max' => 60],
             [['subtitulo'], 'string', 'max' => 80],
             [['descripcion'], 'string', 'max' => 400],
-//            [['idautor'], 'exist', 'skipOnError' => true, 'targetClass' => Autor::className(), 'targetAttribute' => ['idautor' => 'idautor']],
-//            [['idcategoria'], 'exist', 'skipOnError' => true, 'targetClass' => Categorias::className(), 'targetAttribute' => ['idcategoria' => 'idcategoria']],
-//            [['ideditorial'], 'exist', 'skipOnError' => true, 'targetClass' => Editorial::className(), 'targetAttribute' => ['ideditorial' => 'ideditorial']],
-//            [['idtemas'], 'exist', 'skipOnError' => true, 'targetClass' => Temas::className(), 'targetAttribute' => ['idtemas' => 'idtemas']],
+            //            [['idautor'], 'exist', 'skipOnError' => true, 'targetClass' => Autor::className(), 'targetAttribute' => ['idautor' => 'idautor']],
+            //            [['idcategoria'], 'exist', 'skipOnError' => true, 'targetClass' => Categorias::className(), 'targetAttribute' => ['idcategoria' => 'idcategoria']],
+            //            [['ideditorial'], 'exist', 'skipOnError' => true, 'targetClass' => Editorial::className(), 'targetAttribute' => ['ideditorial' => 'ideditorial']],
+            //            [['idtemas'], 'exist', 'skipOnError' => true, 'targetClass' => Temas::className(), 'targetAttribute' => ['idtemas' => 'idtemas']],
         ];
     }
 
@@ -83,16 +85,16 @@ class Libros extends ActiveRecord
         return [
             'idLibros' => 'Id',
             'isbn' => 'ISBN',
-            'titulo' => 'Titulo',
+            'titulo' => 'Titulo *',
             'subtitulo' => 'Subtitulo',
             'descripcion' => 'Descripción',
             'numpag' => 'Páginas',
             'ano' => 'Año',
             'idioma' => 'Idioma',
             'formato' => 'Formato',
-            'idcategoria' => 'Categoría',
-            'ideditorial' => 'Editorial',
-            'idautor' => 'Autor',
+            'idcategoria' => 'Categoría *',
+            'ideditorial' => 'Editorial *',
+            'idautor' => 'Autor *',
             'idtemas' => 'Temas',
             'imagen' => 'Imagen Libro',
         ];
@@ -180,8 +182,8 @@ class Libros extends ActiveRecord
             return (10 === strlen($matches[1]))
                 ? 1   // ISBN-10
                 : 2;  // ISBN-13
-        }else{
-            $this->addError($attribute,"ISBN Invalido");
+        } else {
+            $this->addError($attribute, "ISBN Invalido");
         }
         return null;
     }

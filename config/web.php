@@ -63,19 +63,12 @@ $config = [
             // for the mailer to send real emails.
             'useFileTransport' => false,
             'transport' => [
-                'class' => 'Swift_SendmailTransport',
+                'class' => 'Swift_SmtpTransport',
                 'host'  => 'smtp.gmail.com',
-                'username' => 'user@mail.com', //no olvidar cambiar estos parametros
-                'password' => '123456', //por la cta kingstown
+                'username' => 'educacionks@gmail.com', //no olvidar cambiar estos parametros
+                'password' => 'schoolKS2020', //por la cta kingstown
                 'port' => '587',  //antes 587 para ssl 465
-                'encryption' => 'tls', //antes tls y ssl
-                'streamOptions' => [
-                    'ssl' => [
-                        'allow_self_signed' => true,
-                        'verify_peer' => false,
-                        'verify_peer_name' => false,
-                    ],
-                ],
+                'encryption' => 'tls', //antes tls y ssl                
             ],
         ],
         'log' => [

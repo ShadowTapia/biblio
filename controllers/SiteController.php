@@ -89,110 +89,94 @@ class SiteController extends Controller
     public function actionLogin()
     {
         $year = Anos::find()
-            ->where(['activo'=>'1'])
+            ->where(['activo' => '1'])
             ->one();
 
-        if (!\yii::$app->user->isGuest)
-        {
-            if (User::isUserAdmin(Yii::$app->user->identity->getId()))
-            {
-                Yii::$app->session->set('anoActivo',$year->idano);
-                Yii::$app->session->set('nameAno',$year->nombreano);
-                Yii::$app->session->set('adminUser',"admin");
-            }elseif (User::isUserBiblio(Yii::$app->user->identity->getId()))
-            {
-                Yii::$app->session->set('anoActivo',$year->idano);
-                Yii::$app->session->set('nameAno',$year->nombreano);
-                Yii::$app->session->set('biblioUser','biblio');
-            }elseif (User::isUserInspec(Yii::$app->user->identity->getId()))
-            {
-                Yii::$app->session->set('anoActivo',$year->idano);
-                Yii::$app->session->set('nameAno',$year->nombreano);
-                Yii::$app->session->set('InspecUser','Inspec');
-            }elseif (User::isUserProfe(Yii::$app->user->identity->getId()))
-            {
-                Yii::$app->session->set('anoActivo',$year->idano);
-                Yii::$app->session->set('nameAno',$year->nombreano);
+        if (!\yii::$app->user->isGuest) {
+            if (User::isUserAdmin(Yii::$app->user->identity->getId())) {
+                Yii::$app->session->set('anoActivo', $year->idano);
+                Yii::$app->session->set('nameAno', $year->nombreano);
+                Yii::$app->session->set('adminUser', "admin");
+            } elseif (User::isUserBiblio(Yii::$app->user->identity->getId())) {
+                Yii::$app->session->set('anoActivo', $year->idano);
+                Yii::$app->session->set('nameAno', $year->nombreano);
+                Yii::$app->session->set('biblioUser', 'biblio');
+            } elseif (User::isUserInspec(Yii::$app->user->identity->getId())) {
+                Yii::$app->session->set('anoActivo', $year->idano);
+                Yii::$app->session->set('nameAno', $year->nombreano);
+                Yii::$app->session->set('InspecUser', 'Inspec');
+            } elseif (User::isUserProfe(Yii::$app->user->identity->getId())) {
+                Yii::$app->session->set('anoActivo', $year->idano);
+                Yii::$app->session->set('nameAno', $year->nombreano);
                 Yii::$app->session->set('profeUser', 'profe');
-            }elseif (User::isUserFuncionario(Yii::$app->user->identity->getId()))
-            {
-                Yii::$app->session->set('anoActivo',$year->idano);
-                Yii::$app->session->set('nameAno',$year->nombreano);
+            } elseif (User::isUserFuncionario(Yii::$app->user->identity->getId())) {
+                Yii::$app->session->set('anoActivo', $year->idano);
+                Yii::$app->session->set('nameAno', $year->nombreano);
                 Yii::$app->session->set('funcionarioUser', 'funcionario');
-            }elseif (User::isUserAlumno(Yii::$app->user->identity->getId()))
-            {
-                Yii::$app->session->set('anoActivo',$year->idano);
-                Yii::$app->session->set('nameAno',$year->nombreano);
+            } elseif (User::isUserAlumno(Yii::$app->user->identity->getId())) {
+                Yii::$app->session->set('anoActivo', $year->idano);
+                Yii::$app->session->set('nameAno', $year->nombreano);
                 Yii::$app->session->set('alumnoUser', 'alumno');
             }
-            Yii::$app->session->set('userSessionTimeout',time() + Yii::$app->params['sessionTimeoutSeconds']);
+            Yii::$app->session->set('userSessionTimeout', time() + Yii::$app->params['sessionTimeoutSeconds']);
             return $this->goHome();
         }
 
         $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login())
-        {
-            if (User::isUserAdmin(Yii::$app->user->identity->getId()))
-            {
-                Yii::$app->session->set('anoActivo',$year->idano);
-                Yii::$app->session->set('nameAno',$year->nombreano);
-                Yii::$app->session->set('adminUser','admin');
-            }elseif (User::isUserBiblio(Yii::$app->user->identity->getId()))
-            {
-                Yii::$app->session->set('anoActivo',$year->idano);
-                Yii::$app->session->set('nameAno',$year->nombreano);
-                Yii::$app->session->set('biblioUser','biblio');
-            }elseif (User::isUserInspec(Yii::$app->user->identity->getId()))
-            {
-                Yii::$app->session->set('anoActivo',$year->idano);
-                Yii::$app->session->set('nameAno',$year->nombreano);
-                Yii::$app->session->set('InspecUser','Inspec');
-            }elseif (User::isUserProfe(Yii::$app->user->identity->getId()))
-            {
-                Yii::$app->session->set('anoActivo',$year->idano);
-                Yii::$app->session->set('nameAno',$year->nombreano);
+        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+            if (User::isUserAdmin(Yii::$app->user->identity->getId())) {
+                Yii::$app->session->set('anoActivo', $year->idano);
+                Yii::$app->session->set('nameAno', $year->nombreano);
+                Yii::$app->session->set('adminUser', 'admin');
+            } elseif (User::isUserBiblio(Yii::$app->user->identity->getId())) {
+                Yii::$app->session->set('anoActivo', $year->idano);
+                Yii::$app->session->set('nameAno', $year->nombreano);
+                Yii::$app->session->set('biblioUser', 'biblio');
+            } elseif (User::isUserInspec(Yii::$app->user->identity->getId())) {
+                Yii::$app->session->set('anoActivo', $year->idano);
+                Yii::$app->session->set('nameAno', $year->nombreano);
+                Yii::$app->session->set('InspecUser', 'Inspec');
+            } elseif (User::isUserProfe(Yii::$app->user->identity->getId())) {
+                Yii::$app->session->set('anoActivo', $year->idano);
+                Yii::$app->session->set('nameAno', $year->nombreano);
                 Yii::$app->session->set('profeUser', 'profe');
-            }elseif (User::isUserFuncionario(Yii::$app->user->identity->getId()))
-            {
-                Yii::$app->session->set('anoActivo',$year->idano);
-                Yii::$app->session->set('nameAno',$year->nombreano);
+            } elseif (User::isUserFuncionario(Yii::$app->user->identity->getId())) {
+                Yii::$app->session->set('anoActivo', $year->idano);
+                Yii::$app->session->set('nameAno', $year->nombreano);
                 Yii::$app->session->set('funcionarioUser', 'funcionario');
-            }elseif (User::isUserAlumno(Yii::$app->user->identity->getId()))
-            {
-                Yii::$app->session->set('anoActivo',$year->idano);
-                Yii::$app->session->set('nameAno',$year->nombreano);
+            } elseif (User::isUserAlumno(Yii::$app->user->identity->getId())) {
+                Yii::$app->session->set('anoActivo', $year->idano);
+                Yii::$app->session->set('nameAno', $year->nombreano);
                 Yii::$app->session->set('alumnoUser', 'alumno');
             }
-            Yii::$app->session->set('userSessionTimeout',time() + Yii::$app->params['sessionTimeoutSeconds']);
+            Yii::$app->session->set('userSessionTimeout', time() + Yii::$app->params['sessionTimeoutSeconds']);
             return $this->goBack();
-        }
-        else
-        {
-            return $this->render('login',['model' => $model, ]);
+        } else {
+            return $this->render('login', ['model' => $model,]);
         }
         // if (!\Yii::$app->user->isGuest) {
-//            if (User::isUserAdmin(Yii::$app->user->identity->id)) {
-//                //Yii::$app->session['adminUser'] = "admin";
-//                return $this->redirect(["site/admin"]);
-//            } elseif (User::isUserBiblio(Yii::$app->user->identity->id)) {
-//                //Yii::$app->session['biblioUser'] = "biblio";
-//                return $this->redirect(["site/biblio"]);
-//            }
-//            //return $this->goHome();
-//        }
-//
-//        $model = new LoginForm();
-//        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-//            if (User::isUserAdmin(Yii::$app->user->identity->id)) {
-//                //Yii::$app->session['adminUser'] = "admin";
-//                return $this->redirect(["site/admin"]);
-//            } elseif (User::isUserBiblio(Yii::$app->user->identity->id)) {
-//                //Yii::$app->session['biblioUser'] = "biblio";
-//                return $this->redirect(["site/biblio"]);
-//            }
-//        } else {
-//            return $this->render('login', ['model' => $model, ]);
-//        }
+        //            if (User::isUserAdmin(Yii::$app->user->identity->id)) {
+        //                //Yii::$app->session['adminUser'] = "admin";
+        //                return $this->redirect(["site/admin"]);
+        //            } elseif (User::isUserBiblio(Yii::$app->user->identity->id)) {
+        //                //Yii::$app->session['biblioUser'] = "biblio";
+        //                return $this->redirect(["site/biblio"]);
+        //            }
+        //            //return $this->goHome();
+        //        }
+        //
+        //        $model = new LoginForm();
+        //        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+        //            if (User::isUserAdmin(Yii::$app->user->identity->id)) {
+        //                //Yii::$app->session['adminUser'] = "admin";
+        //                return $this->redirect(["site/admin"]);
+        //            } elseif (User::isUserBiblio(Yii::$app->user->identity->id)) {
+        //                //Yii::$app->session['biblioUser'] = "biblio";
+        //                return $this->redirect(["site/biblio"]);
+        //            }
+        //        } else {
+        //            return $this->render('login', ['model' => $model, ]);
+        //        }
 
 
     }
@@ -202,23 +186,19 @@ class SiteController extends Controller
      */
     public function beforeAction($action)
     {
-        if (!parent::beforeAction($action))
-        {
+        if (!parent::beforeAction($action)) {
             return false;
         }
 
-        if (!Yii::$app->user->isGuest)
-        {
-            if (Yii::$app->session['userSessionTimeout'] < time())
-            {
+        if (!Yii::$app->user->isGuest) {
+            if (Yii::$app->session['userSessionTimeout'] < time()) {
                 Yii::$app->user->logout();
-            }else{
-                Yii::$app->session->set('userSessionTimeout',time() + Yii::$app->params['sessionTimeoutSeconds']);
+            } else {
+                Yii::$app->session->set('userSessionTimeout', time() + Yii::$app->params['sessionTimeoutSeconds']);
                 return true;
             }
         }
         return true;
-
     }
 
 
@@ -239,22 +219,22 @@ class SiteController extends Controller
             unset(Yii::$app->session['anoActivo']);
             unset(Yii::$app->session['nameAno']);
         }
-        if (isset(Yii::$app->session['InspecUser'])){
+        if (isset(Yii::$app->session['InspecUser'])) {
             unset(Yii::$app->session['InspecUser']);
             unset(Yii::$app->session['anoActivo']);
             unset(Yii::$app->session['nameAno']);
         }
-        if (isset(Yii::$app->session['profeUser'])){
+        if (isset(Yii::$app->session['profeUser'])) {
             unset(Yii::$app->session['profeUser']);
             unset(Yii::$app->session['anoActivo']);
             unset(Yii::$app->session['nameAno']);
         }
-        if (isset(Yii::$app->session['funcionarioUser'])){
+        if (isset(Yii::$app->session['funcionarioUser'])) {
             unset(Yii::$app->session['funcionarioUser']);
             unset(Yii::$app->session['anoActivo']);
             unset(Yii::$app->session['nameAno']);
         }
-        if (isset(Yii::$app->session['alumnoUser'])){
+        if (isset(Yii::$app->session['alumnoUser'])) {
             unset(Yii::$app->session['alumnoUser']);
             unset(Yii::$app->session['anoActivo']);
             unset(Yii::$app->session['nameAno']);
@@ -273,6 +253,7 @@ class SiteController extends Controller
     {
         $model = new ContactForm();
         if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
+            //Se crea la variable que leera la página contact
             Yii::$app->session->setFlash('contactFormSubmitted');
 
             return $this->refresh();
@@ -299,14 +280,11 @@ class SiteController extends Controller
     public function actionError()
     {
         $exception = Yii::$app->errorHandler->exception;
-        if ($exception instanceof NotFoundHttpException)
-        {
+        if ($exception instanceof NotFoundHttpException) {
             //Al no existir controles mas acciones finaliza aqui
             return $this->render('pnf');
-        }
-        else
-        {
-            return $this->render('error',compact('exception'));
+        } else {
+            return $this->render('error', compact('exception'));
         }
     }
 }
