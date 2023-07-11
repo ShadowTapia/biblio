@@ -24,7 +24,7 @@ class ContactForm extends Model
     {
         return [
             // name, email, subject and body are required
-            [['name', 'email', 'subject', 'body'], 'required','message'=>'Campo requerido'],
+            [['name', 'email', 'subject', 'body'], 'required', 'message' => 'Campo requerido'],
             // email has to be a valid email address
             ['email', 'email'],
             // verifyCode needs to be entered correctly
@@ -42,24 +42,33 @@ class ContactForm extends Model
         ];
     }
 
+    public static function clean_string($string)
+    {
+        $bad = array("content-type", "bcc:", "to:", "cc:", "href");
+
+        return str_replace($bad, "", $string);
+    }
+
     /**
      * Sends an email to the specified email address using the information collected by this model.
      * @param string $email the target email address
      * @return bool whether the model passes validation
      */
-    public function contact($email)
+    public function contact($email_to)
     {
-        $content = "<p>Email: " . $this->email . "</p>";
-        $content .= "<p>Nombre: " . $this->name . "</p>";
-        $content .= "<p>Asunto: " . $this->subject . "</p>";
-        $content .= "<p>Mensaje: " . $this->body . "</p>";
+        $content = "Email: " . $this->email . "\n";
+        $content .= "Nombre: " . $this->name . "\n";
+        $content .= "Asunto: " . $this->subject . "\n";
+        $content .= "Mensaje: " . $this->body . "\n";
         if ($this->validate()) {
-            Yii::$app->mailer->compose("@app/mail/layouts/html", ["content"=>$content])
-                ->setTo($email)
-                ->setFrom([$this->email => $this->name])
-                ->setSubject($this->subject)
-                ->setTextBody($this->body)
-                ->send();
+
+            $headers = "From: " . $this->email . "\r\n" .
+
+                "Reply-To: " . $this->email . "\r\n" .
+
+                "X-Mailer: PHP/" . phpversion();
+
+            @mail($email_to, $this->subject, $content, $headers);
 
             return true;
         }

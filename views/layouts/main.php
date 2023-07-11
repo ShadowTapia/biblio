@@ -211,7 +211,7 @@ AppAsset::register($this);
 
     <footer class="footer">
         <div class="container">
-            <p class="pull-left">&copy; <?= Yii::$app->params["title"] ?> <?= date('Y') ?></p>
+            <p class="pull-left">&copy; <?= Html::encode(Yii::$app->params["title"]) ?> <?= date('Y') ?></p>
         </div>
     </footer>
 

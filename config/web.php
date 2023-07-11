@@ -57,18 +57,13 @@ $config = [
             'maxSourceLines' => 20,
         ],
         'mailer' => [
-            'class' => 'yii\swiftmailer\Mailer',
+            'class' => \yii\symfonymailer\Mailer::class,
             // send all mails to a file by default. You have to set
             // 'useFileTransport' to false and configure a transport
             // for the mailer to send real emails.
             'useFileTransport' => false,
             'transport' => [
-                'class' => 'Swift_SmtpTransport',
-                'host'  => 'smtp.gmail.com',
-                'username' => 'educacionks@gmail.com', //no olvidar cambiar estos parametros
-                'password' => 'schoolKS2020', //por la cta kingstown
-                'port' => '587',  //antes 587 para ssl 465
-                'encryption' => 'tls', //antes tls y ssl                
+                'dsn' => 'sendmail://default?command=/usr/sbin/sendmail%20-oi%20-t',
             ],
         ],
         'log' => [

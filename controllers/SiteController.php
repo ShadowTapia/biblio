@@ -253,6 +253,7 @@ class SiteController extends Controller
     {
         $model = new ContactForm();
         if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
+
             //Se crea la variable que leera la página contact
             Yii::$app->session->setFlash('contactFormSubmitted');
 
