@@ -1,12 +1,26 @@
 <?php
 /* @var $this yii\web\View */
 
+
+use yii\helpers\Url;
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\widgets\Pjax;
+use yii\bootstrap\Modal;
+use yii\web\View;
 
 $this->title = 'Administrar Cursos';
 $this->params['breadcrumbs'][] = $this->title;
+?>
+
+<?php
+$this->registerJs(
+    "$('.custom_button').on('click', function(){
+        $('#modal').modal('show').find('#modalContent').load($(this).attr('value'));           
+    });",
+    View::POS_READY,
+    'my-button-handler'
+);
 ?>
 <?= \lavrentiev\widgets\toastr\NotificationFlash::widget([
     'options' => [
@@ -30,9 +44,19 @@ $this->params['breadcrumbs'][] = $this->title;
 <h1><?= Html::encode($this->title) ?></h1>
 
 <p>
-    <?= Html::a(Yii::t('app', 'Crear Cursos', ['modelClass' => 'cursos',]), ['crearcursos'], ['class' => 'btn btn-success', 'id' => 'modalButton']) ?>
+    <?= Html::button('Crear Cursos', ['value' => Url::to('crearcursos'), 'class' => 'btn btn-success', 'id' => 'modalButton']) ?>
 </p>
 
+<?php
+Modal::begin([
+    'header' => '<h4>Cursos</h4>',
+    'id' => 'modal',
+    'size' => 'modal-lg',
+]);
+echo "<div id='modalContent'></div>";
+
+Modal::end();
+?>
 <?php Pjax::begin(['id' => 'pjax-container']); ?>
 <div class="grid-view">
     <?= GridView::widget([
@@ -67,9 +91,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 'template' => '{update}',
                 'buttons' => [
                     'update' => function ($url, $model) {
-                        return Html::a("<span class='glyphicon glyphicon-pencil'></span>", [
-                            'updatecurso', 'id' => $model->idCurso
-                        ], ['class' => 'btn btn-circle btn-primary', 'title' => 'Actualizar']);
+                        return Html::button(
+                            "<span class='glyphicon glyphicon-pencil'></span>",
+                            [
+                                'value' => Url::to(['updatecurso', 'idcur' => $model->idCurso]), 'class' => 'btn btn-circle btn-primary btn-xs custom_button'
+                            ]
+                        );
                     },
                 ],
             ],

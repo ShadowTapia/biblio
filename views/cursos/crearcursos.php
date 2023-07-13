@@ -18,16 +18,21 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <?php $form = ActiveForm::begin(['method' => 'post', 'enableClientValidation' => true,]);
 ?>
-<div class="form-group col-xs-2">
-    <?= $form->field($model, "Nombre")->input("text", ['width:450px;'])->label('Nombre*') ?>
+<div class="row">
+    <div class="form-group col-xs-2">
+        <?= $form->field($model, "Nombre")->input("text", ['width:450px;'])->label('Nombre*') ?>
+    </div>
+    <div class="form-group col-xs-2">
+        <?= $form->field($model, "Orden")->input("text", ['width: 200px;'])->label('Orden') ?>
+    </div>
+    <div>
+        <?= $form->field($model, "visible")->widget(SwitchInput::class, ['type' => SwitchInput::CHECKBOX, 'pluginOptions' => ['handleWidth' => 40, 'onText' => '<i class="glyphicon glyphicon-ok"></i>', 'offText' => '<i class="glyphicon glyphicon-remove"></i>', 'onColor' => 'success', 'offColor' => 'danger',],])->label('Visible') ?>
+    </div>
 </div>
-<div class="form-group col-xs-1">
-    <?= $form->field($model, "Orden")->input("text", ['width: 200px;'])->label('Orden') ?>
+<div class="row">
+    <div class="col-md-2">
+        <?= Html::submitButton('Ingresar', ['class' => 'btn btn-primary']) ?>
+    </div>
 </div>
-<div class="form-group">
-    <?= $form->field($model, "visible")->widget(SwitchInput::class, ['type' => SwitchInput::CHECKBOX, 'pluginOptions' => ['size' => 'small', 'onText' => '<i class="glyphicon glyphicon-ok"></i>', 'offText' => '<i class="glyphicon glyphicon-remove"></i>', 'onColor' => 'success', 'offColor' => 'danger',],])->label('Visible') ?>
-</div>
-
-<?= Html::submitButton('Ingresar', ['class' => 'btn btn-primary']) ?>
 
 <?php $form->end() ?>
