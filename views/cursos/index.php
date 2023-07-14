@@ -22,6 +22,7 @@ $this->registerJs(
     'my-button-handler'
 );
 ?>
+
 <?= \lavrentiev\widgets\toastr\NotificationFlash::widget([
     'options' => [
         "closeButton" => true,

@@ -44,7 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'type' => SwitchInput::CHECKBOX, 'pluginOptions' =>
                     [
-                        'size' => 'small',
+                        'handleWidth' => 20,
                         'onText' => '<i class="glyphicon glyphicon-ok"></i>',
                         'offText' => '<i class="glyphicon glyphicon-remove"></i>',
                         'onColor' => 'success',
@@ -53,7 +53,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 ]
             )->label('Activo') ?>
         </div>
-
+    </div>
+    <div class="row">
         <div class="col-ms-2">
             <?= Html::submitButton('Modificar', ['class' => 'btn btn-primary']) ?>
         </div>
