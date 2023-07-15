@@ -78,17 +78,13 @@ class RegionController extends Controller
                         \Yii::$app->session->setFlash('success', 'Se ha creado una nueva Región-');
                         //Redireccionamos a la p�gina origen
                         return $this->redirect(['create']);
-
                     } else {
                         \Yii::$app->session->setFlash('error', 'Ocurrio un error, al ingresar la Región.-');
                     }
-                }
-                catch (\Exception $e) {
+                } catch (\Exception $e) {
                     $transaction->rollBack();
                     throw $e;
-                }
-                catch (\Throwable $e)
-                {
+                } catch (\Throwable $e) {
                     $transaction->rollBack();
                     throw $e;
                 }
@@ -109,60 +105,51 @@ class RegionController extends Controller
     public function actionUpdateregion($idregion)
     {
         $model = new FormUpdateRegiones;
-        
+
         $table = new Regiones;
-        
+
         //validaci�n mediante ajax
         if ($model->load(Yii::$app->request->post()) && Yii::$app->request->isAjax) {
             Yii::$app->response->format = Response::FORMAT_JSON;
             return ActiveForm::validate($model);
         }
-        
-        if ($model->load(Yii::$app->request->post()))
-        {
-            if ($model->validate()){
+
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->validate()) {
                 $transaction = $table::getDb()->beginTransaction();
-                try{
+                try {
                     $table = Regiones::findOne(["codRegion" => $idregion]);
-                    if ($table){
+                    if ($table) {
                         $table->region = mb_strtoupper($model->region);
                         $table->orden = $model->orden;
-                        if ($table->update())
-                        {
-                               $transaction->commit();
-                               \Yii::$app->session->setFlash('success', 'Se ha actualizado correctamente la <b>Región</b>.');
-
+                        if ($table->update()) {
+                            $transaction->commit();
+                            \Yii::$app->session->setFlash('success', 'Se ha actualizado correctamente la <b>Región</b>.');
                         } else {
-                               $transaction->rollBack();
-                               \Yii::$app->session->setFlash('error', 'La Región no fue cambiada.-');
-
+                            $transaction->rollBack();
+                            \Yii::$app->session->setFlash('error', 'La Región no fue cambiada.-');
                         }
                         return $this->redirect('create');
                     }
-                }
-                catch (\Exception $e)
-                {
+                } catch (\Exception $e) {
                     $transaction->rollBack();
                     throw $e;
-                }
-                catch (\Throwable $e)
-                {
+                } catch (\Throwable $e) {
                     $transaction->rollBack();
                     throw $e;
                 }
             } else {
-                $model->getErrors();  
+                $model->getErrors();
             }
         } else {
             $table = Regiones::findOne(["codRegion" => $idregion]);
-            if ($table)
-            {
+            if ($table) {
                 $model->region = $table->region;
-                $model->orden = $table->orden;   
-            }   
-        } 
-        
-        return $this->render('updateregion',compact('model'));
+                $model->orden = $table->orden;
+            }
+        }
+
+        return $this->renderAjax('updateregion', compact('model'));
     }
 
     /**
@@ -171,9 +158,9 @@ class RegionController extends Controller
      */
     public function actionCreate()
     {
-        $dataProvider = new ActiveDataProvider(['query' => Regiones::find(), ]);
+        $dataProvider = new ActiveDataProvider(['query' => Regiones::find(),]);
         $dataProvider->sort->defaultOrder = ['orden' => SORT_ASC]; //Ordenamos el resultado de la consulta
-        return $this->render('create',compact('dataProvider'));
+        return $this->render('create', compact('dataProvider'));
     }
 
     /**
@@ -188,7 +175,7 @@ class RegionController extends Controller
             //recordar hacer verificaci�n en tabla provincias antes de borrar la regi�n
             $table2 = Provincias::find()->where("codRegion=:codRegion", [":codRegion" => $id]);
             //Si existen provincias asociadas lanzamos la advertencia
-            if($table2->count()>0){
+            if ($table2->count() > 0) {
                 \Yii::$app->session->setFlash('error', 'Ocurrio un error, existen provincias asociadas a esta región.-');
                 return $this->redirect(['create']);
                 //echo "<meta http-equiv='refresh' content='3; " . Url::toRoute("region/create") .
@@ -210,20 +197,16 @@ class RegionController extends Controller
                         \Yii::$app->session->setFlash('error', 'Ocurrio un error, no se borro la Región.-');
                         return $this->redirect(['create']);
                     }
-                }
-                catch (\Exception $e) {
+                } catch (\Exception $e) {
+                    $transaction->rollBack();
+                    throw $e;
+                } catch (\Throwable $e) {
                     $transaction->rollBack();
                     throw $e;
                 }
-                catch (\Throwable $e)
-                {
-                    $transaction->rollBack();
-                    throw $e;
-                }
-
             }
-         }else{
+        } else {
             return $this->redirect(['create']);
-         }       
+        }
     }
 }
