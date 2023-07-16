@@ -87,39 +87,33 @@ class AutorController extends Controller
         }
 
         if ($model->load(Yii::$app->request->post())) {
-            if($model->validate())
-            {
+            if ($model->validate()) {
                 $table = new Autor();
                 $transaction = $table->getDb()->beginTransaction();
-                try
-                {
+                try {
                     $table->nombre = mb_strtoupper($model->nombre);
                     $table->nacionalidad = $model->nacionalidad;
-                    if($table->insert())
-                    {
+                    if ($table->insert()) {
                         $transaction->commit();
                         \Yii::$app->session->setFlash('success', 'Se ha ingresado correctamente el Autor.-');
-                    }else{
+                    } else {
                         $transaction->rollBack();
                         \Yii::$app->session->setFlash('error', 'Ocurrio un error, al ingresar el Autor.-');
                     }
                     return $this->redirect(['autor/index']);
-                }
-                catch (\Exception $e) {
+                } catch (\Exception $e) {
+                    $transaction->rollBack();
+                    throw $e;
+                } catch (\Throwable $e) {
                     $transaction->rollBack();
                     throw $e;
                 }
-                catch (\Throwable $e)
-                {
-                    $transaction->rollBack();
-                    throw $e;
-                }
-            }else{
+            } else {
                 $model->getErrors();
             }
         }
 
-        return $this->render('create', [
+        return $this->renderAjax('create', [
             'model' => $model,
         ]);
     }
@@ -135,55 +129,48 @@ class AutorController extends Controller
         $model = new FormUpdateAutor();
         $table = new Autor();
 
-        if ($model->load(Yii::$app->request->post()) && Yii::$app->request->isAjax)
-        {
+        if ($model->load(Yii::$app->request->post()) && Yii::$app->request->isAjax) {
             Yii::$app->response->format = Response::FORMAT_JSON;
             return ActiveForm::validate($model);
         }
 
         if ($model->load(Yii::$app->request->post())) {
-            if($model->validate())
-            {
+            if ($model->validate()) {
                 $transaction = $table->getDb()->beginTransaction();
-                try{
+                try {
                     $table = Autor::findOne(["idautor" => $id]);
-                    if($table)
-                    {
+                    if ($table) {
                         $table->nombre = mb_strtoupper($model->nombre);
                         $table->nacionalidad = $model->nacionalidad;
-                        if($table->update())
-                        {
+                        if ($table->update()) {
                             $transaction->commit();
-                            \Yii::$app->session->setFlash('success','El Autor se ha actualizado exitosamente.-');
-                        }else{
+                            \Yii::$app->session->setFlash('success', 'El Autor se ha actualizado exitosamente.-');
+                        } else {
                             $transaction->rollBack();
-                            \Yii::$app->session->setFlash('error','No se ha actualizado el Autor.-');
+                            \Yii::$app->session->setFlash('error', 'No se ha actualizado el Autor.-');
                         }
                         return $this->redirect(['autor/index']);
                     }
-                }
-                catch (\Exception $e) {
+                } catch (\Exception $e) {
+                    $transaction->rollBack();
+                    throw $e;
+                } catch (\Throwable $e) {
                     $transaction->rollBack();
                     throw $e;
                 }
-                catch (\Throwable $e) {
-                    $transaction->rollBack();
-                    throw $e;
-                }
-            }else{
+            } else {
                 $model->getErrors();
             }
-        }else{
-            $table = Autor::findOne(["idautor"=>$id]);
-            if($table)
-            {
+        } else {
+            $table = Autor::findOne(["idautor" => $id]);
+            if ($table) {
                 $model->idautor = $table->idautor;
                 $model->nombre = $table->nombre;
                 $model->nacionalidad = $table->nacionalidad;
             }
         }
 
-        return $this->render('update', [
+        return $this->renderAjax('update', [
             'model' => $model,
         ]);
     }
@@ -197,31 +184,25 @@ class AutorController extends Controller
     public function actionDelete($id)
     {
 
-        $tableLibro = Libros::find()->where("idautor=:idautor",[":idautor" => $id]);
-        if ($tableLibro->count()>0)
-        {
+        $tableLibro = Libros::find()->where("idautor=:idautor", [":idautor" => $id]);
+        if ($tableLibro->count() > 0) {
             \Yii::$app->session->setFlash('error', 'Ocurrió un error, existen Libros asociadas a este Autor.-');
             return $this->redirect(['index']);
-        }else{
+        } else {
             $table = new Autor();
             $transaction = $table->getDb()->beginTransaction();
-            try
-            {
-                if ($table->deleteAll("idautor=:idautor",[":idautor" => $id]))
-                {
+            try {
+                if ($table->deleteAll("idautor=:idautor", [":idautor" => $id])) {
                     $transaction->commit();
-                    \Yii::$app->session->setFlash('success', 'Se ha borrado correctamente el Autor '. $table->nombre);
-                }else{
+                    \Yii::$app->session->setFlash('success', 'Se ha borrado correctamente el Autor ' . $table->nombre);
+                } else {
                     $transaction->rollBack();
                     \Yii::$app->session->setFlash('error', 'Ocurrió un error, no se borro el Autor.-');
                 }
-            }
-            catch (\Exception $e) {
+            } catch (\Exception $e) {
                 $transaction->rollBack();
                 throw $e;
-            }
-            catch (\Throwable $e)
-            {
+            } catch (\Throwable $e) {
                 $transaction->rollBack();
                 throw $e;
             }
