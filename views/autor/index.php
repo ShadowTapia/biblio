@@ -105,11 +105,10 @@ $this->registerJs(
             'template' => '{view} {update} {delete}',
             'buttons' => [
                 'view' => function ($url, $model) {
-                    return Html::a(
+                    return Html::button(
                         "<span class='glyphicon glyphicon-info-sign'></span>",
-                        ['autor/view', 'id' => $model->idautor],
                         [
-                            'class' => 'btn btn-circle btn-primary btn-sm',
+                            'value' => Url::to(['autor/view', 'id' => $model->idautor]), 'class' => 'btn btn-circle btn-primary btn-sm custom_button',
                             'title' => 'Ver Autor'
                         ]
                     );
@@ -118,7 +117,8 @@ $this->registerJs(
                     return Html::button(
                         "<span class='glyphicon glyphicon-pencil'></span>",
                         [
-                            'value' => Url::to(['autor/update', 'id' => $model->idautor]), 'class' => 'btn btn-circle btn-success btn-sm custom_button', 'title' => 'Actualizar Autor'
+                            'value' => Url::to(['autor/update', 'id' => $model->idautor]), 'class' => 'btn btn-circle btn-success btn-sm custom_button',
+                            'title' => 'Actualizar Autor'
                         ]
                     );
                 },
