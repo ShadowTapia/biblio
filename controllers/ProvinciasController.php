@@ -13,6 +13,7 @@ use yii\web\Response;
 use yii\widgets\ActiveForm;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+
 /**
  * Class ProvinciasController
  * @package app\controllers
@@ -47,7 +48,8 @@ class ProvinciasController extends Controller
     {
         $dataProvider = new ActiveDataProvider([ //find() retorna un objeto de tipo query
             //codRegion0 el nombre de la propiedad q apunta al modelo Region
-        'query' => Provincias::find()->joinWith(['codRegion0 cod'])->orderBy('cod.orden'), ]);
+            'query' => Provincias::find()->joinWith(['codRegion0 cod'])->orderBy('cod.orden'),
+        ]);
 
         return $this->render('index', ['dataProvider' => $dataProvider]);
     }
@@ -83,19 +85,15 @@ class ProvinciasController extends Controller
                         $model->idProvincia = null;
                         $model->Provincia = null;
 
-                       \Yii::$app->session->setFlash('success', 'Se ha creado correctamente la Provincia.-');
-
+                        \Yii::$app->session->setFlash('success', 'Se ha creado correctamente la Provincia.-');
                     } else {
                         \Yii::$app->session->setFlash('error', utf8_encode('Ocurrió un error, al ingresar la Provincia.-'));
-
                     }
                     return $this->redirect('index');
-                }
-                catch (\Exception $e) {
+                } catch (\Exception $e) {
                     $transaction->rollBack();
                     throw $e;
-                }
-                catch (\Throwable $e) {
+                } catch (\Throwable $e) {
                     $transaction->rollBack();
                     throw $e;
                 }
@@ -116,7 +114,7 @@ class ProvinciasController extends Controller
         if ((int)$id) {
             //recordar hacer la verificaci�n en la tabla comunas
             $table2 = Comunas::find()->where("idProvincia=:idProvincia", [":idProvincia" =>
-                $id]);
+            $id]);
             //Si existen comunas asociadas a la provincia, lanzamos la advertencia
             if ($table2->count() > 0) {
                 \Yii::$app->session->setFlash('error', 'Ocurrio un error, existen Comunas asociadas a la Provincia.-');
@@ -128,14 +126,12 @@ class ProvinciasController extends Controller
                     if ($table::deleteAll("idProvincia=:idProvincia", [":idProvincia" => $id])) {
                         $transaction->commit();
                         \Yii::$app->session->setFlash('success', 'Se ha borrado correctamente la Provincia.-');
-
                     } else {
                         $transaction->rollBack();
                         \Yii::$app->session->setFlash('error', 'Ocurrio un error, no se borro la Provincia.-');
                     }
                     return $this->redirect('index');
-                }
-                catch (\Exception $e) {
+                } catch (\Exception $e) {
                     $transaction->rollBack();
                     throw $e;
                 }
@@ -173,29 +169,22 @@ class ProvinciasController extends Controller
                         if ($table->update()) {
                             $transaction->commit();
                             \Yii::$app->session->setFlash('success', 'La Provincia fue actualizada correctamente.-');
-
                         } else {
                             $transaction->rollBack();
                             \Yii::$app->session->setFlash('error', 'La Provincia no pudo ser actualizada.');
-
                         }
                         return $this->redirect('index');
                     }
-                }
-                catch (\Exception $e) {
+                } catch (\Exception $e) {
+                    $transaction->rollBack();
+                    throw $e;
+                } catch (\Throwable $e) {
                     $transaction->rollBack();
                     throw $e;
                 }
-                catch (\Throwable $e)
-                {
-                    $transaction->rollBack();
-                    throw $e;
-                }
-
             } else {
                 $model->getErrors();
             }
-
         } else {
             $table = Provincias::findOne(["idProvincia" => $id]);
             if ($table) {
@@ -204,7 +193,6 @@ class ProvinciasController extends Controller
             }
         }
 
-        return $this->render('update', ["model" => $model]);
+        return $this->renderAjax('update', ["model" => $model]);
     }
-
 }

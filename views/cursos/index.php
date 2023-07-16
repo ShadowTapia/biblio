@@ -95,7 +95,7 @@ Modal::end();
                         return Html::button(
                             "<span class='glyphicon glyphicon-pencil'></span>",
                             [
-                                'value' => Url::to(['updatecurso', 'idcur' => $model->idCurso]), 'class' => 'btn btn-circle btn-primary btn-xs custom_button'
+                                'value' => Url::to(['updatecurso', 'idcur' => $model->idCurso]), 'class' => 'btn btn-circle btn-primary custom_button', 'title' => 'Actualizar'
                             ]
                         );
                     },
