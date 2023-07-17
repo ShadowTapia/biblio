@@ -66,7 +66,7 @@ class CategoriasController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
+        return $this->renderAjax('view', [
             'model' => $this->findModel($id),
         ]);
     }
@@ -86,38 +86,33 @@ class CategoriasController extends Controller
         }
 
         if ($model->load(Yii::$app->request->post())) {
-            if($model->validate())
-            {
+            if ($model->validate()) {
                 $table = new Categorias();
                 $transaction = $table->getDb()->beginTransaction();
-                try{
+                try {
                     $table->categoria = mb_strtoupper($model->categoria);
-                    if($table->insert())
-                    {
+                    if ($table->insert()) {
                         $transaction->commit();
                         \Yii::$app->session->setFlash('success', 'Se ha ingresado correctamente la Categoría.-');
-                    }else{
+                    } else {
                         $transaction->rollBack();
                         \Yii::$app->session->setFlash('error', 'Ocurrió un error, al ingresar la Categoría.-');
                     }
                     return $this->redirect(['categorias/index']);
-                }
-                catch (\Exception $e) {
+                } catch (\Exception $e) {
+                    $transaction->rollBack();
+                    throw $e;
+                } catch (\Throwable $e) {
                     $transaction->rollBack();
                     throw $e;
                 }
-                catch (\Throwable $e)
-                {
-                    $transaction->rollBack();
-                    throw $e;
-                }
-            }else{
+            } else {
                 $model->getErrors();
             }
             //return $this->redirect(['view', 'id' => $model->idcategoria]);
         }
 
-        return $this->render('create', [
+        return $this->renderAjax('create', [
             'model' => $model,
         ]);
     }
@@ -133,53 +128,45 @@ class CategoriasController extends Controller
         $model = new FormUpdateCategorias();
         $table = new Categorias();
 
-        if ($model->load(Yii::$app->request->post()) && Yii::$app->request->isAjax)
-        {
+        if ($model->load(Yii::$app->request->post()) && Yii::$app->request->isAjax) {
             Yii::$app->response->format = Response::FORMAT_JSON;
             return ActiveForm::validate($model);
         }
 
         if ($model->load(Yii::$app->request->post())) {
-                if($model->validate())
-                {
-                    $transaction = $table->getDb()->beginTransaction();
-                    try
-                    {
-                        $table = Categorias::findOne(['idcategoria' => $id]);
-                        if($table)
-                        {
-                            $table->categoria = mb_strtoupper($model->categoria);
-                            if($table->update())
-                            {
-                                $transaction->commit();
-                                \Yii::$app->session->setFlash('success','La Categoría se ha actualizado exitosamente.-');
-                            }else{
-                                $transaction->rollBack();
-                                \Yii::$app->session->setFlash('error','No se ha actualizado la Categoría.-');
-                            }
-                            return $this->redirect(['categorias/index']);
+            if ($model->validate()) {
+                $transaction = $table->getDb()->beginTransaction();
+                try {
+                    $table = Categorias::findOne(['idcategoria' => $id]);
+                    if ($table) {
+                        $table->categoria = mb_strtoupper($model->categoria);
+                        if ($table->update()) {
+                            $transaction->commit();
+                            \Yii::$app->session->setFlash('success', 'La Categoría se ha actualizado exitosamente.-');
+                        } else {
+                            $transaction->rollBack();
+                            \Yii::$app->session->setFlash('error', 'No se ha actualizado la Categoría.-');
                         }
+                        return $this->redirect(['categorias/index']);
                     }
-                    catch (\Exception $e) {
-                        $transaction->rollBack();
-                        throw $e;
-                    }
-                    catch (\Throwable $e) {
-                        $transaction->rollBack();
-                        throw $e;
-                    }
-                }else{
-                    $model->getErrors();
+                } catch (\Exception $e) {
+                    $transaction->rollBack();
+                    throw $e;
+                } catch (\Throwable $e) {
+                    $transaction->rollBack();
+                    throw $e;
                 }
-        }else{
+            } else {
+                $model->getErrors();
+            }
+        } else {
             $table = Categorias::findOne(["idcategoria" => $id]);
-            if($table)
-            {
+            if ($table) {
                 $model->categoria = $table->categoria;
             }
         }
 
-        return $this->render('update', [
+        return $this->renderAjax('update', [
             'model' => $model,
         ]);
     }
@@ -193,39 +180,32 @@ class CategoriasController extends Controller
     public function actionDelete($id)
     {
         //Se debe hacer la busqueda de categorías por libro
-        $tableLibros = Libros::find()->where("idcategoria=:idcategoria",[":idcategoria" => $id]);
-        if ($tableLibros->count()>0)
-        {
+        $tableLibros = Libros::find()->where("idcategoria=:idcategoria", [":idcategoria" => $id]);
+        if ($tableLibros->count() > 0) {
             \Yii::$app->session->setFlash('error', 'Ocurrió un error, existen categorías asociadas a este Libro.-');
             return $this->redirect(['index']);
-        }else{
+        } else {
             $table = new Categorias();
 
             $transaction = $table->getDb()->beginTransaction();
-            try
-            {
-                if($table->deleteAll("idcategoria=:idcategoria",[":idcategoria"=>$id]))
-                {
+            try {
+                if ($table->deleteAll("idcategoria=:idcategoria", [":idcategoria" => $id])) {
                     $transaction->commit();
-                    \Yii::$app->session->setFlash('success', 'Se ha borrado correctamente la Categoría '. $table->categoria );
-                }else{
+                    \Yii::$app->session->setFlash('success', 'Se ha borrado correctamente la Categoría ' . $table->categoria);
+                } else {
                     $transaction->rollBack();
                     \Yii::$app->session->setFlash('error', 'Ocurrió un error, no se borro la Categoría.-');
                 }
-            }
-            catch (\Exception $e) {
+            } catch (\Exception $e) {
                 $transaction->rollBack();
                 throw $e;
-            }
-            catch (\Throwable $e)
-            {
+            } catch (\Throwable $e) {
                 $transaction->rollBack();
                 throw $e;
             }
 
             return $this->redirect(['index']);
         }
-
     }
 
     /**
