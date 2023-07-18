@@ -182,7 +182,7 @@ class CategoriasController extends Controller
         //Se debe hacer la busqueda de categorías por libro
         $tableLibros = Libros::find()->where("idcategoria=:idcategoria", [":idcategoria" => $id]);
         if ($tableLibros->count() > 0) {
-            \Yii::$app->session->setFlash('error', 'Ocurrió un error, existen categorías asociadas a este Libro.-');
+            \Yii::$app->session->setFlash('error', 'Ocurrió un error, esta categoría esta asociada al menos a un Libro.-');
             return $this->redirect(['index']);
         } else {
             $table = new Categorias();

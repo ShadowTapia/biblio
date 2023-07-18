@@ -66,7 +66,7 @@ class EditorialController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
+        return $this->renderAjax('view', [
             'model' => $this->findModel($id),
         ]);
     }
@@ -85,43 +85,36 @@ class EditorialController extends Controller
             return ActiveForm::validate($model);
         }
 
-        if($model->load(Yii::$app->request->post()))
-        {
-            if($model->validate())
-            {
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->validate()) {
                 $table = new Editorial();
                 $transaction = $table->getDb()->beginTransaction();
-                try
-                {
+                try {
                     $table->nombre = mb_strtoupper($model->nombre);
                     $table->direccion = $model->direccion;
                     $table->telefono = $model->telefono;
                     $table->mail = $model->mail;
-                    if($table->insert())
-                    {
+                    if ($table->insert()) {
                         $transaction->commit();
                         \Yii::$app->session->setFlash('success', 'Se ha ingresado correctamente la Editorial.-');
-                    }else{
+                    } else {
                         $transaction->rollBack();
                         \Yii::$app->session->setFlash('error', 'Ocurrio un error, al ingresar la Editorial.-');
                     }
                     return $this->redirect(['editorial/index']);
-                }
-                catch (\Exception $e) {
+                } catch (\Exception $e) {
+                    $transaction->rollBack();
+                    throw $e;
+                } catch (\Throwable $e) {
                     $transaction->rollBack();
                     throw $e;
                 }
-                catch (\Throwable $e)
-                {
-                    $transaction->rollBack();
-                    throw $e;
-                }
-            }else{
+            } else {
                 $model->getErrors();
             }
         }
 
-        return $this->render('create', [
+        return $this->renderAjax('create', [
             'model' => $model,
         ]);
     }
@@ -137,60 +130,53 @@ class EditorialController extends Controller
         $model = new FormUpdateEditorial();
         $table = new Editorial();
 
-        if ($model->load(Yii::$app->request->post()) && Yii::$app->request->isAjax)
-        {
+        if ($model->load(Yii::$app->request->post()) && Yii::$app->request->isAjax) {
             Yii::$app->response->format = Response::FORMAT_JSON;
             return ActiveForm::validate($model);
         }
 
         if ($model->load(Yii::$app->request->post())) {
 
-            if($model->validate())
-            {
+            if ($model->validate()) {
                 $transaction = $table->getDb()->beginTransaction();
-                try{
-                    $table = Editorial::findOne(["ideditorial"=>$id]);
-                    if($table)
-                    {
+                try {
+                    $table = Editorial::findOne(["ideditorial" => $id]);
+                    if ($table) {
                         $table->nombre = mb_strtoupper($model->nombre);
                         $table->direccion = $model->direccion;
                         $table->telefono = $model->telefono;
                         $table->mail = $model->mail;
-                        if($table->update())
-                        {
+                        if ($table->update()) {
                             $transaction->commit();
-                            \Yii::$app->session->setFlash('success','La Editorial se ha actualizado exitosamente.-');
-                        }else{
+                            \Yii::$app->session->setFlash('success', 'La Editorial se ha actualizado exitosamente.-');
+                        } else {
                             $transaction->rollBack();
-                            \Yii::$app->session->setFlash('error','No se ha actualizado la Editorial.-');
+                            \Yii::$app->session->setFlash('error', 'No se ha actualizado la Editorial.-');
                         }
                         return $this->redirect(['editorial/index']);
                     }
-                }
-                catch (\Exception $e) {
+                } catch (\Exception $e) {
+                    $transaction->rollBack();
+                    throw $e;
+                } catch (\Throwable $e) {
                     $transaction->rollBack();
                     throw $e;
                 }
-                catch (\Throwable $e) {
-                    $transaction->rollBack();
-                    throw $e;
-                }
-            }else{
+            } else {
                 $model->getErrors();
             }
-        }else{
-            $table = Editorial::findOne(["ideditorial"=>$id]);
-            if($table)
-            {
-                $model->ideditorial=$table->ideditorial;
-                $model->nombre=$table->nombre;
-                $model->direccion=$table->direccion;
-                $model->telefono=$table->telefono;
-                $model->mail=$table->mail;
+        } else {
+            $table = Editorial::findOne(["ideditorial" => $id]);
+            if ($table) {
+                $model->ideditorial = $table->ideditorial;
+                $model->nombre = $table->nombre;
+                $model->direccion = $table->direccion;
+                $model->telefono = $table->telefono;
+                $model->mail = $table->mail;
             }
         }
 
-        return $this->render('update', [
+        return $this->renderAjax('update', [
             'model' => $model,
         ]);
     }
@@ -204,38 +190,32 @@ class EditorialController extends Controller
     public function actionDelete($id)
     {
         //Se debe realizar la busqueda de Editorial por Libro
-        $tableEditorial = Libros::find()->where("ideditorial=:ideditorial",[":ideditorial" => $id]);
-        if ($tableEditorial->count()>0)
-        {
+        $tableEditorial = Libros::find()->where("ideditorial=:ideditorial", [":ideditorial" => $id]);
+        if ($tableEditorial->count() > 0) {
             \Yii::$app->session->setFlash('error', 'Ocurrió un error, existen Editoriales  asociadas a este Libro.-');
             return $this->redirect(['index']);
-        }else{
+        } else {
             $table = new Editorial();
 
             $transaction = $table->getDb()->beginTransaction();
-            try{
-                if($table->deleteAll("ideditorial=:ideditorial",[":ideditorial"=>$id]))
-                {
+            try {
+                if ($table->deleteAll("ideditorial=:ideditorial", [":ideditorial" => $id])) {
                     $transaction->commit();
-                    \Yii::$app->session->setFlash('success', 'Se ha borrado correctamente la Editorial '. $table->nombre );
-                }else{
+                    \Yii::$app->session->setFlash('success', 'Se ha borrado correctamente la Editorial ' . $table->nombre);
+                } else {
                     $transaction->rollBack();
                     \Yii::$app->session->setFlash('error', 'Ocurrió un error, no se borro la Editorial.-');
                 }
-            }
-            catch (\Exception $e) {
+            } catch (\Exception $e) {
                 $transaction->rollBack();
                 throw $e;
-            }
-            catch (\Throwable $e)
-            {
+            } catch (\Throwable $e) {
                 $transaction->rollBack();
                 throw $e;
             }
 
             return $this->redirect(['index']);
         }
-
     }
 
     /**
