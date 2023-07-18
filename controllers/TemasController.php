@@ -66,7 +66,7 @@ class TemasController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
+        return $this->renderAjax('view', [
             'model' => $this->findModel($id),
         ]);
     }
@@ -86,38 +86,33 @@ class TemasController extends Controller
         }
 
         if ($model->load(Yii::$app->request->post())) {
-            if($model->validate())
-            {
+            if ($model->validate()) {
                 $table = new Temas();
                 $transaction = $table->getDb()->beginTransaction();
-                try
-                {
+                try {
                     $table->nombre = mb_strtoupper($model->nombre);
                     $table->codtemas = $model->codtemas;
-                    if($table->insert()){
+                    if ($table->insert()) {
                         $transaction->commit();
                         \Yii::$app->session->setFlash('success', 'Se ha ingresado correctamente el Tema.-');
-                    }else{
+                    } else {
                         $transaction->rollBack();
                         \Yii::$app->session->setFlash('error', 'Ocurrió un error, al ingresar el Tema.-');
                     }
                     return $this->redirect(['temas/index']);
-                }
-                catch (\Exception $e) {
+                } catch (\Exception $e) {
+                    $transaction->rollBack();
+                    throw $e;
+                } catch (\Throwable $e) {
                     $transaction->rollBack();
                     throw $e;
                 }
-                catch (\Throwable $e)
-                {
-                    $transaction->rollBack();
-                    throw $e;
-                }
-            }else{
+            } else {
                 $model->getErrors();
             }
         }
 
-        return $this->render('create', [
+        return $this->renderAjax('create', [
             'model' => $model,
         ]);
     }
@@ -133,57 +128,48 @@ class TemasController extends Controller
         $model = new FormUpdateTemas();
         $table = new Temas();
 
-        if ($model->load(Yii::$app->request->post()) && Yii::$app->request->isAjax)
-        {
+        if ($model->load(Yii::$app->request->post()) && Yii::$app->request->isAjax) {
             Yii::$app->response->format = Response::FORMAT_JSON;
             return ActiveForm::validate($model);
         }
 
-        if ($model->load(Yii::$app->request->post()))
-        {
-            if ($model->validate())
-            {
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->validate()) {
                 $transaction = $table->getDb()->beginTransaction();
-                try
-                {
-                    $table = Temas::findOne(['idtemas'=>$id]);
-                    if ($table)
-                    {
+                try {
+                    $table = Temas::findOne(['idtemas' => $id]);
+                    if ($table) {
                         $table->nombre = mb_strtoupper($model->nombre);
                         $table->codtemas = $model->codtemas;
-                        if ($table->update())
-                        {
+                        if ($table->update()) {
                             $transaction->commit();
-                            \Yii::$app->session->setFlash('success','El Tema se ha actualizado exitosamente.-');
-                        }else{
+                            \Yii::$app->session->setFlash('success', 'El Tema se ha actualizado exitosamente.-');
+                        } else {
                             $transaction->rollBack();
-                            \Yii::$app->session->setFlash('error','No se ha actualizado el Tema.-');
+                            \Yii::$app->session->setFlash('error', 'No se ha actualizado el Tema.-');
                         }
                         return $this->redirect(['temas/index']);
                     }
-                }
-                catch (\Exception $e) {
+                } catch (\Exception $e) {
+                    $transaction->rollBack();
+                    throw $e;
+                } catch (\Throwable $e) {
                     $transaction->rollBack();
                     throw $e;
                 }
-                catch (\Throwable $e) {
-                    $transaction->rollBack();
-                    throw $e;
-                }
-            }else{
+            } else {
                 $model->getErrors();
             }
-        }else{
-            $table = Temas::findOne(['idtemas'=>$id]);
-            if ($table)
-            {
+        } else {
+            $table = Temas::findOne(['idtemas' => $id]);
+            if ($table) {
                 $model->idtemas = $table->idtemas;
                 $model->nombre = $table->nombre;
                 $model->codtemas = $table->codtemas;
             }
         }
 
-        return $this->render('update', [
+        return $this->renderAjax('update', [
             'model' => $model,
         ]);
     }
@@ -196,39 +182,32 @@ class TemasController extends Controller
      */
     public function actionDelete($id)
     {
-        $tableLibros = Libros::find()->where("idtemas=:idtemas",[":idtemas" => $id]);
-        if ($tableLibros->count()>0)
-        {
+        $tableLibros = Libros::find()->where("idtemas=:idtemas", [":idtemas" => $id]);
+        if ($tableLibros->count() > 0) {
             \Yii::$app->session->setFlash('error', 'Ocurrió un error, existen Temas  asociadas a este Libro.-');
             return $this->redirect(['index']);
-        }else{
+        } else {
             $table = new Temas();
 
             $transaction = $table->getDb()->beginTransaction();
-            try
-            {
-                if($table->deleteAll("idtemas=:idtemas",[":idtemas"=>$id]))
-                {
+            try {
+                if ($table->deleteAll("idtemas=:idtemas", [":idtemas" => $id])) {
                     $transaction->commit();
-                    \Yii::$app->session->setFlash('success', 'Se ha borrado correctamente el tema '. $table->nombre );
-                }else{
+                    \Yii::$app->session->setFlash('success', 'Se ha borrado correctamente el tema ' . $table->nombre);
+                } else {
                     $transaction->rollBack();
                     \Yii::$app->session->setFlash('error', 'Ocurrió un error, no se borro el Tema.-');
                 }
-            }
-            catch (\Exception $e) {
+            } catch (\Exception $e) {
                 $transaction->rollBack();
                 throw $e;
-            }
-            catch (\Throwable $e)
-            {
+            } catch (\Throwable $e) {
                 $transaction->rollBack();
                 throw $e;
             }
 
             return $this->redirect(['index']);
         }
-
     }
 
     /**
