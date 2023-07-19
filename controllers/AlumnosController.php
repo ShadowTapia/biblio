@@ -988,7 +988,7 @@ class AlumnosController extends Controller
             }
         }
 
-        return $this->render('cambiocurso', compact('model', 'name'));
+        return $this->renderAjax('cambiocurso', compact('model', 'name'));
     }
 
     /**

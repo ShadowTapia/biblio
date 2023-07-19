@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: chelo
@@ -7,8 +8,10 @@
  */
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 use kartik\grid\GridView;
 use yii\widgets\Pjax;
+use yii\bootstrap\Modal;
 
 $this->title = "Listado de alumnos para cambio de curso";
 $this->params['breadcrumbs'][] = $this->title;
@@ -45,14 +48,36 @@ $this->registerJs(
                     }else{
                          x.style.display="none";
                     }
-            });'
+    });
+    
+    function init_click_handlers(){
+        $(".custom_button").on("click", function(){
+            $("#modal").modal("show").find("#modalContent").load($(this).attr("value"));           
+        });        
+    }
+    init_click_handlers();//first run
+    $("#alumnos").on("pjax:success", function(){
+        init_click_handlers();
+    });'
 );
 ?>
 <div class="alumnos-index">
     <h1><?= Html::encode($this->title) ?></h1>
+
+    <?php
+    Modal::begin([
+        'header' => '<h4>Cambio de curso</h4>',
+        'id' => 'modal',
+        'size' => 'modal-lg',
+    ]);
+    echo "<div id='modalContent'></div>";
+
+    Modal::end();
+    ?>
+
     <h6>*No incluye alumnos retirados</h6>
     <!-- Renderizamos el combo de consulta -->
-    <?= $this->render('_form',['model' => $model,]) ?>
+    <?= $this->render('_form', ['model' => $model,]) ?>
 
     <div id="toggleSearch">
         <?php Pjax::begin([
@@ -66,13 +91,13 @@ $this->registerJs(
         $gridColumns = [
             [
                 'class' => 'yii\grid\SerialColumn',
-                'header'=>'',
-                'headerOptions'=>['class'=>'kartik-sheet-style'],
+                'header' => '',
+                'headerOptions' => ['class' => 'kartik-sheet-style'],
             ],
             [
                 'attribute' => 'rutalumno',
                 'label' => 'RUN',
-                'value' => function($model) {
+                'value' => function ($model) {
                     return Yii::$app->formatter->asDecimal($model->rutalumno, 0) . "-" . $model->digrut;
                 }
             ],
@@ -80,7 +105,7 @@ $this->registerJs(
                 'attribute' => 'nombrealu',
                 'label' => 'Nombre',
                 'format' => 'html',
-                'value' => function($model){
+                'value' => function ($model) {
                     return !empty($model->nombrealu) ? $model->nombrealu : '<span class="glyphicon glyphicon-question-sign"></span>';
                 }
             ],
@@ -88,7 +113,7 @@ $this->registerJs(
                 'attribute' => 'paternoalu',
                 'label' => 'A. Paterno',
                 'format' => 'html',
-                'value' => function($model){
+                'value' => function ($model) {
                     return !empty($model->paternoalu) ? $model->paternoalu : '<span class="glyphicon glyphicon-question-sign"></span>';
                 }
             ],
@@ -96,20 +121,26 @@ $this->registerJs(
                 'attribute' => 'maternoalu',
                 'label' => 'A. Materno',
                 'format' => 'html',
-                'value' => function($model){
+                'value' => function ($model) {
                     return !empty($model->maternoalu) ? $model->maternoalu : '<span class="glyphicon glyphicon-question-sign"></span>';
                 }
             ],
             [
-                    'class'=> '\kartik\grid\ActionColumn',
-                    'header'=> 'Acciones',
-                    'template'=> ' {update} ',
-                    'buttons'=>[
-                            'update'=>function($url,$model){
-                                return Html::a("<span class='glyphicon glyphicon-pencil'></span>",['alumnos/cambiocurso','id'=>$model->idalumno, 'name' => $model->nombrealu . " " . $model->paternoalu],
-                                    ['class'=>'btn btn-circle btn-success btn-sm','title'=>'Actualizar Curso']);
-                            },
-                    ],
+                'class' => '\kartik\grid\ActionColumn',
+                'header' => 'Acciones',
+                'template' => ' {update} ',
+                'buttons' => [
+                    'update' => function ($url, $model) {
+                        return Html::button(
+                            "<span class='glyphicon glyphicon-pencil'></span>",
+                            [
+                                'value' => Url::to(['alumnos/cambiocurso', 'id' => $model->idalumno, 'name' => $model->nombrealu . " " . $model->paternoalu]),
+                                'class' => 'btn btn-circle btn-success btn-sm custom_button',
+                                'title' => 'Actualizar Curso',
+                            ]
+                        );
+                    },
+                ],
             ]
         ];
         ?>
@@ -117,8 +148,14 @@ $this->registerJs(
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
             'columns' => $gridColumns,
-            'export'=>false, //evita para que aparezca el menu exportar en el panel
+            'export' => false, //evita para que aparezca el menu exportar en el panel
             'pjax' => true,
+            'pjaxSettings' => [
+                'options' => [
+                    'enablePushState' => false,
+                    'enableReplaceState' => true,
+                ]
+            ],
             'bordered' => true,
             'striped' => false,
             'condensed' => false,
