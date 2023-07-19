@@ -262,7 +262,7 @@ class ApoderadosController extends Controller
             }
         }
 
-        return $this->render('consultarutapo', ["model" => $model]);
+        return $this->renderAjax('consultarutapo', ["model" => $model]);
     }
 
     /**
