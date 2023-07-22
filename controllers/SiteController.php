@@ -274,6 +274,7 @@ class SiteController extends Controller
         return $this->render('about');
     }
 
+
     /**
      * @return string
      * Manejador de errores

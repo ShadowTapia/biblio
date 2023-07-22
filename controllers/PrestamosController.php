@@ -18,7 +18,6 @@ use app\models\apoderados\FormApoOnlyRut;
 use app\models\ejemplar\Ejemplar;
 use app\models\libros\Libros;
 use app\models\libros\LibrosSearch;
-use Codeception\Command\Console;
 use yii\helpers\Json;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -26,9 +25,7 @@ use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\filters\AccessControl;
 use yii\base\Exception;
-use yii\base\Request;
 use yii\db\StaleObjectException;
-use yii\helpers\Console as HelpersConsole;
 
 /**
  * PrestamosController implements the CRUD actions for Prestamos model.
@@ -90,6 +87,10 @@ class PrestamosController extends Controller
         ]);
     }
 
+    /**
+     * 
+     * Se encarga de desplegar el formulario de prestamos con códigos de barra
+     */
     public function actionLend()
     {
         $modelEjemplar = new Ejemplarbarra();
