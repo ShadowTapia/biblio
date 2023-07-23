@@ -10,7 +10,7 @@ use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
 use bluezed\scrollTop\ScrollTop;
-use yii\bootstrap\Modal;
+
 
 AppAsset::register($this);
 ?>
@@ -31,16 +31,6 @@ AppAsset::register($this);
 </head>
 
 <body>
-    <?php
-    Modal::begin([
-        'header' => '<h4>Prestar Libro</h4>',
-        'id' => 'modal',
-        'size' => 'modal-sm',
-    ]);
-    echo "<div id='modalContent'></div>";
-
-    Modal::end();
-    ?>
     <?php $this->beginBody() ?>
     <?= ScrollTop::widget() ?>
     <div class="wrap">
