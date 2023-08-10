@@ -47,11 +47,11 @@ $this->params['breadcrumbs'][] = $this->title;
                     </div>
                 </div>
 
-                <!-- <div class="form-group">
-         <div class="col-lg-offset-1 col-lg-11">
-             <a href="<?= Url::toRoute('site/recoverpass') ?>">Recuperar Acceso</a>
-         </div>
-    </div> -->
+                <div class="form-group">
+                    <div class="col-lg-offset-1 col-lg-11">
+                        <a href="<?= Url::toRoute('site/recoverpass') ?>">Recuperar Acceso</a>
+                    </div>
+                </div>
 
 
                 <?php ActiveForm::end(); ?>
