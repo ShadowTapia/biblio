@@ -339,7 +339,8 @@ class AlumnosController extends Controller
     public function actionElegirpupils()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => Alumnos::find()->joinWith(['pivots pi'])->where(['idCurso' => 29])->andWhere(['idano' => Yii::$app->session->get('anoActivo')])->orderBy('paternoalu')->addOrderBy('maternoalu'), 'pagination' => ['pagesize' => 50,],
+            'query' => Alumnos::find()->joinWith(['pivots pi'])->where(['idCurso' => 29])->andWhere(['idano' => Yii::$app->session->get('anoActivo')])->orderBy('paternoalu')->addOrderBy('maternoalu'),
+            'pagination' => ['pagesize' => 50,],
         ]);
         return $this->render('elegirpupils', ['dataProvider' => $dataProvider]);
     }
@@ -365,15 +366,22 @@ class AlumnosController extends Controller
             Yii::$app->response->format = Response::FORMAT_RAW;
             $pdf = new Pdf([
                 'mode' => Pdf::MODE_UTF8, // leaner size using standard fonts
-                'format' => Pdf::FORMAT_FOLIO, 'destination' => Pdf::DEST_BROWSER, 'content' =>
-                $content, 'cssFile' => '@vendor/kartik-v/yii2-mpdf/src/assets/kv-alumno.css',
+                'format' => Pdf::FORMAT_FOLIO,
+                'destination' => Pdf::DEST_BROWSER,
+                'content' =>
+                $content,
+                'cssFile' => '@vendor/kartik-v/yii2-mpdf/src/assets/kv-alumno.css',
                 'options' => [ // any mpdf options you wish to set
-                ], 'methods' => [
+                ],
+                'methods' => [
                     'SetTitle' => 'Sistema Administración Bibliotecaria - Listado Retirados',
                     'SetSubject' => 'Generado por Sistema Administración Bibliotecaria - The Kingstown School',
                     'SetHeader' => ['The Kingstown School - Sistema Administración Bibliotecaria: ' .
-                        date("r")], 'SetFooter' => ['|Page {PAGENO}|'], 'SetAuthor' =>
-                    'Marcelo Tapia D.', 'SetCreator' => 'Marcelo Tapia D.',
+                        date("r")],
+                    'SetFooter' => ['|Page {PAGENO}|'],
+                    'SetAuthor' =>
+                    'Marcelo Tapia D.',
+                    'SetCreator' => 'Marcelo Tapia D.',
                 ]
             ]);
             return $pdf->render();
@@ -410,15 +418,22 @@ class AlumnosController extends Controller
             Yii::$app->response->format = Response::FORMAT_RAW;
             $pdf = new Pdf([
                 'mode' => Pdf::MODE_UTF8, // leaner size using standard fonts
-                'format' => Pdf::FORMAT_FOLIO, 'destination' => Pdf::DEST_BROWSER, 'content' =>
-                $content, 'cssFile' => '@vendor/kartik-v/yii2-mpdf/src/assets/kv-alumno.css',
+                'format' => Pdf::FORMAT_FOLIO,
+                'destination' => Pdf::DEST_BROWSER,
+                'content' =>
+                $content,
+                'cssFile' => '@vendor/kartik-v/yii2-mpdf/src/assets/kv-alumno.css',
                 'options' => [ // any mpdf options you wish to set
-                ], 'methods' => [
+                ],
+                'methods' => [
                     'SetTitle' => 'Sistema Administración Bibliotecaria - Listado por Curso',
                     'SetSubject' => 'Generado por Sistema Administración Bibliotecaria - The Kingstown School',
                     'SetHeader' => ['The Kingstown School - Sistema Administración Bibliotecaria: ' .
-                        date("r")], 'SetFooter' => ['|Page {PAGENO}|'], 'SetAuthor' =>
-                    'Marcelo Tapia D.', 'SetCreator' => 'Marcelo Tapia D.',
+                        date("r")],
+                    'SetFooter' => ['|Page {PAGENO}|'],
+                    'SetAuthor' =>
+                    'Marcelo Tapia D.',
+                    'SetCreator' => 'Marcelo Tapia D.',
                 ]
             ]);
             return $pdf->render();
@@ -757,42 +772,43 @@ class AlumnosController extends Controller
         }
         if ($model->load(Yii::$app->request->post()) && $modelPivot->load(Yii::$app->request->post())) {
             if ($model->validate() && $modelPivot->validate()) {
-                $transaction = $tableAlumnos::getDb()->beginTransaction();
+                //Aqui comienza el nuevo codigo para el ingreso de datos
+                $aluinsert = false;
+                $db = Yii::$app->db;
+                $transaction = $db->beginTransaction();
                 try {
-                    $tableAlumnos->rutalumno = $this->quitarStringless($model->rutalumno);
-                    $tableAlumnos->digrut = $this->devolverDigito($model->rutalumno);
-                    $tableAlumnos->nombrealu = mb_strtoupper($model->nombrealu);
-                    $tableAlumnos->paternoalu = mb_strtoupper($model->paternoalu);
-                    $tableAlumnos->maternoalu = mb_strtoupper($model->maternoalu);
-                    $tableAlumnos->fechanac = Yii::$app->formatter->asDate($model->fechanac, "yyyy-MM-dd");
-                    $tableAlumnos->calle = $model->calle;
-                    $tableAlumnos->nro = $model->nro;
-                    $tableAlumnos->depto = $model->depto;
-                    $tableAlumnos->block = $model->block;
-                    $tableAlumnos->villa = $model->villa;
-                    $tableAlumnos->codRegion = $model->codRegion;
-                    $tableAlumnos->idProvincia = $model->idProvincia;
-                    $tableAlumnos->codComuna = $model->codComuna;
-                    $tableAlumnos->sexo = $model->sexo;
-                    $tableAlumnos->email = $model->email;
-                    $tableAlumnos->fono = $model->fono;
-                    $tableAlumnos->nacionalidad = $model->nacionalidad;
-                    $tableAlumnos->fechaing = Yii::$app->formatter->asDate($model->fechaing, "yyyy-MM-dd");
-                    if ($tableAlumnos->save(false)) {
-                        $transaction->commit();
-                        $aluinsert = true;
-                    } else {
-                        $transaction->rollBack();
-                        $aluinsert = false;
-                        \Yii::$app->session->setFlash('error', 'Se ha producido un error al querer ingresar este Alumno(a).');
-                    }
+                    $db->createCommand()->insert('alumnos', [
+                        'rutalumno' => $this->quitarStringless($model->rutalumno),
+                        'digrut' => $this->devolverDigito($model->rutalumno),
+                        'nombrealu' => mb_strtoupper($model->nombrealu),
+                        'paternoalu' => mb_strtoupper($model->paternoalu),
+                        'maternoalu' => mb_strtoupper($model->maternoalu),
+                        'fechanac' => Yii::$app->formatter->asDate($model->fechanac, "yyyy-MM-dd"),
+                        'calle' => $model->calle,
+                        'nro' => $model->nro,
+                        'depto' => $model->depto,
+                        'block' => $model->block,
+                        'villa' => $model->villa,
+                        'codRegion' => $model->codRegion,
+                        'idProvincia' => $model->idProvincia,
+                        'codComuna' => $model->codComuna,
+                        'sexo' => $model->sexo,
+                        'email' => $model->email,
+                        'fono' => $model->fono,
+                        'nacionalidad' => $model->nacionalidad,
+                        'fechaing' => Yii::$app->formatter->asDate($model->fechaing, "yyyy-MM-dd")
+                    ])->execute();
+                    $transaction->commit();
+                    $aluinsert = true;
                 } catch (\Exception $e) {
                     $transaction->rollBack();
+                    \Yii::$app->session->setFlash('error', 'Se ha producido un error al ingresar este alumno');
                     throw $e;
                 } catch (\Throwable $e) {
                     $transaction->rollBack();
                     throw $e;
                 }
+                //Fin codigo nuevo                
                 if ($aluinsert == true) {
                     $tableAlumnos = Alumnos::findOne(["rutalumno" => $this->quitarStringless($model->rutalumno)]);
                     $transaction = $tablePivot::getDb()->beginTransaction();

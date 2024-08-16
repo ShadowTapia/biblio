@@ -142,8 +142,13 @@ class PrestamosController extends Controller
                                 \Yii::$app->session->setFlash('error', 'Error la fecha de prestamo no puede ser mayor a la fecha de devolución.');
                                 return $this->redirect(['prestamos/lend']);
                             } else {
-                                if ($this->saveLend($modelAlumno->rutalumno, $iejemplar, $modelEjemplar->norden, $model->fechapres, $model->fechadev, $model->notas) == true) {
-                                    return $this->redirect(['prestamos/index']);
+                                if (!empty($modelAlumno->rutalumno)) {
+                                    if ($this->saveLend($modelAlumno->rutalumno, $iejemplar, $modelEjemplar->norden, $model->fechapres, $model->fechadev, $model->notas) == true) {
+                                        return $this->redirect(['prestamos/index']);
+                                    }
+                                } else {
+                                    \Yii::$app->session->setFlash('error', 'Error el rut del alumno no puede estar en blanco.');
+                                    return $this->redirect(['prestamos/lend']);
                                 }
                             }
                         } else {
@@ -590,7 +595,7 @@ class PrestamosController extends Controller
                     $db = Yii::$app->db;
                     $transaction = $db->beginTransaction();
                     try {
-                        $db->createCommand('prestamos', [
+                        $db->createCommand()->insert('prestamos', [
                             'idUser' => $iUser,
                             'idejemplar' => $id,
                             'norden' => $inorden,

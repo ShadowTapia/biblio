@@ -1,10 +1,12 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: chelo
  * Date: 03-04-2021
  * Time: 22:15
  */
+
 use yii\helpers\Html;
 use kartik\grid\GridView;
 use app\models\ejemplar\EjemplarSearch;
@@ -36,83 +38,81 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
     <?php Pjax::begin(); ?>
     <?php
-        $gridColumns = [
-            [
-                'class' => 'yii\grid\SerialColumn',
-                'headerOptions' => ['width' => '20px'],
-                'header' => 'N°',
-                'contentOptions' => ['style' => 'width: 20px;', 'class' => 'text-center'],
-            ],
-            [
-                'class' => 'kartik\grid\ExpandRowColumn',
-                'width' => '50px',
-                'value' => function ($model, $key, $index, $column) {
-                    return GridView::ROW_COLLAPSED;
-                },
-                'detail' => function($model, $key, $index, $column){
-                    $searchModel = new EjemplarSearch();
-                    $searchModel->idLibros = $model->idLibros;
-                    $searchModel->disponible = 1;
-                    $dataProvider2 = $searchModel->searchEjemplares(Yii::$app->request->queryParams);
-                    if($model->numejem->numdispos>0)
-                    {
-                        return Yii::$app->controller->renderPartial('view', ['model'=> $model, 'dataProvider2' => $dataProvider2]);
-                    }else{
-                        return null;
-                    }
-
-                },
-                'expandOneOnly' => true
-            ],
-            //Título
-            [
-                'attribute' => 'titulo',
-                'label' => 'Título',
-                'format' => 'html',
-                'value' => function($model){
-                    return !empty($model->titulo) ? $model->titulo : '<span class="glyphicon glyphicon-question-sign"></span>';
+    $gridColumns = [
+        [
+            'class' => 'yii\grid\SerialColumn',
+            'headerOptions' => ['width' => '20px'],
+            'header' => 'N°',
+            'contentOptions' => ['style' => 'width: 20px;', 'class' => 'text-center'],
+        ],
+        [
+            'class' => 'kartik\grid\ExpandRowColumn',
+            'width' => '50px',
+            'value' => function ($model, $key, $index, $column) {
+                return GridView::ROW_COLLAPSED;
+            },
+            'detail' => function ($model, $key, $index, $column) {
+                $searchModel = new EjemplarSearch();
+                $searchModel->idLibros = $model->idLibros;
+                $searchModel->disponible = 1; //Ojo debe ser 1 para libro disponible
+                $dataProvider2 = $searchModel->searchEjemplares(Yii::$app->request->queryParams);
+                if ($model->numejem->numdispos > 0) {
+                    return Yii::$app->controller->renderPartial('view', ['model' => $model, 'dataProvider2' => $dataProvider2]);
+                } else {
+                    return null;
                 }
-            ],
-            //Subtítulo
-            [
-                'attribute' => 'subtitulo',
-                'label' => 'Sub Título',
-                'format' => 'html',
-                'value' => function($model){
-                    return !empty($model->subtitulo) ? $model->subtitulo : '<span class="glyphicon glyphicon-question-sign"></span>';
-                }
-            ],
-            //Autor
-            [
-                'attribute' => 'idautor',
-                'headerOptions' => ['width' => '300'],
-                'label' => 'Autor',
-                'format' => 'html',
-                'value' => function($model){
-                    return !empty($model->idautor0->nombre) ? $model->idautor0->nombre : '<span class="glyphicon glyphicon-question-sign"></span>';
-                }
-            ],
-            //Número de ejemplares
-            [
-                'attribute' => 'numejem',
-                'headerOptions' => ['width' => '120'],
-                'label' => 'N° Ejemplares',
-                'format' => 'html',
-                'value' => function($model){
-                    return $model->numejem->numlibros;
-                }
-            ],
-            //N°s disponibles
-            [
-                'attribute' => 'numdispos',
-                'headerOptions' => ['width' => '120'],
-                'label' => 'N° Disponibles',
-                'format' => 'html',
-                'value' => function($model){
-                    return $model->numejem->numdispos;
-                }
-            ],
-        ];
+            },
+            'expandOneOnly' => true
+        ],
+        //Título
+        [
+            'attribute' => 'titulo',
+            'label' => 'Título',
+            'format' => 'html',
+            'value' => function ($model) {
+                return !empty($model->titulo) ? $model->titulo : '<span class="glyphicon glyphicon-question-sign"></span>';
+            }
+        ],
+        //Subtítulo
+        [
+            'attribute' => 'subtitulo',
+            'label' => 'Sub Título',
+            'format' => 'html',
+            'value' => function ($model) {
+                return !empty($model->subtitulo) ? $model->subtitulo : '<span class="glyphicon glyphicon-question-sign"></span>';
+            }
+        ],
+        //Autor
+        [
+            'attribute' => 'idautor',
+            'headerOptions' => ['width' => '300'],
+            'label' => 'Autor',
+            'format' => 'html',
+            'value' => function ($model) {
+                return !empty($model->idautor0->nombre) ? $model->idautor0->nombre : '<span class="glyphicon glyphicon-question-sign"></span>';
+            }
+        ],
+        //Número de ejemplares
+        [
+            'attribute' => 'numejem',
+            'headerOptions' => ['width' => '120'],
+            'label' => 'N° Ejemplares',
+            'format' => 'html',
+            'value' => function ($model) {
+                return $model->numejem->numlibros;
+            }
+        ],
+        //N°s disponibles
+        [
+            'attribute' => 'numdispos',
+            'headerOptions' => ['width' => '120'],
+            'label' => 'N° Disponibles',
+            'format' => 'html',
+            'value' => function ($model) {
+                return $model->numejem->numdispos;
+            }
+        ],
+    ];
     ?>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -128,9 +128,9 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
         'panel' => [
             'type' => 'primary',
-            'heading' => '<h3 class="panel-title">Listado de Libros a prestar ' .'</h3>',
-            ]
-        ]);
+            'heading' => '<h3 class="panel-title">Listado de Libros a prestar ' . '</h3>',
+        ]
+    ]);
     ?>
     <?php Pjax::end(); ?>
 
